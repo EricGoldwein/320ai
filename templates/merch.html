@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+
+{% block title %}Merch • 320AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .product-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background-image: url("{{ url_for('static', filename='images/DAISY.webp') }}");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.03;
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.price-tag {
+    display: inline-block;
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.product-card h4 {
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.product-card .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 400;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.product-card h3 {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.product-card p {
+    color: #3498db;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-family: 'Courier New', monospace;
+}
+
+.product-card .nft-context {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.product-card .nft-serial {
+    color: #3498db;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.product-card .btn-primary {
+    margin-top: auto;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.membership-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.membership-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.2rem;
+    height: 100%;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.membership-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.track-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    margin-bottom: 0.5rem;
+}
+
+.brand-heading {
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.lead {
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.membership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.tier-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tier-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background-image: url("{{ url_for('static', filename='images/DaisyWingate.webp') }}");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.tier-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.tier-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.tier-price {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.tier-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tier-benefits li {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.tier-benefits li:before {
+    content: "•";
+    color: #3498db;
+    margin-right: 0.5rem;
+}
+
+.earnings-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.earnings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.earnings-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.earnings-card h5 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.featured-product {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.featured-product img {
+    max-height: 400px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.featured-product h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.featured-product .lead {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+}
+
+.nft-badge {
+    background: linear-gradient(45deg, #00ff88, #00bfff);
+    color: black;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.carbon-neutral-badge {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.featured-carousel {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.featured-carousel::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    pointer-events: none;
+}
+
+.featured-carousel .image-caption {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    color: white;
+    font-size: 0.9rem;
+    z-index: 1;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.featured-carousel img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.featured-carousel img.active {
+    opacity: 1;
+}
+
+.featured-product h3 {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.featured-product .btn-primary {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+}
+
+.eco-features {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.eco-features li {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    position: relative;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+.eco-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #2ecc71;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.eco-badge {
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.eco-badge i {
+    color: #2ecc71;
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-light {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.lead.text-light {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.quantum-border .text-gradient.mb-3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.track-badge {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+.badges-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.quantum-border {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">320 x DAISY Collection</h1>
+            <div class="badges-container mt-3">
+                <div class="nft-badge">Find Your Kick</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Product -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="featured-product">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <img src="{{ url_for('static', filename='images/DAISY.webp') }}" alt="DAISY Collection" class="img-fluid">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="nft-badge">Featured NFT</div>
+                        <h2>The DAISY Collection</h2>
+                        <p class="lead">Inspired by the original pioneer of non-linear progression. Each piece is a unique NFT, minted on our carbon-neutral blockchain.</p>
+                        <p class="price-tag">Starting at 320 $WINGO</p>
+                        <button class="btn btn-primary btn-lg">View Collection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="quantum-border" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="track-badge mb-4">LIMITED EDITION NFTs</div>
+                <div class="row g-4">
+                    <!-- Product Cards -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/DaisyAguilera.webp') }}" alt="Come on Over" class="product-image">
+                            <h3>Come On Over</h3>
+                            <div class="nft-serial">Serial: DAISY-320-001</div>
+                            <p>320 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/DaisyAguilera.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/DaisyPlank.webp') }}" alt="Neigh-maste" class="product-image">
+                            <h3>Neigh-maste</h3>
+                            <div class="nft-serial">Serial: DAISY-320-002</div>
+                            <p>240 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/DaisyPlank.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/DaisyWingate.webp') }}" alt="The Classic" class="product-image">
+                            <h3>The Classic</h3>
+                            <div class="nft-serial">Serial: DAISY-320-003</div>
+                            <p>480 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/DaisyWingate.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/DaisyWater.webp') }}" alt="Recovery Slides" class="product-image">
+                            <h3>Uncle George</h3>
+                            <div class="nft-serial">Serial: DAISY-320-004</div>
+                            <p>160 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/DaisyWater.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/DaisyPorcupine.webp') }}" alt="Track Club Cap" class="product-image">
+                            <h3>Can I Kick It?</h3>
+                            <div class="nft-serial">Serial: DAISY-320-005</div>
+                            <p>200 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/DaisyPorcupine.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/Daisy.NYCHM.webp') }}" alt="Performance Socks" class="product-image">
+                            <h3>Horsin' Around</h3>
+                            <div class="nft-serial">Serial: DAISY-320-006</div>
+                            <p>120 $WINGO</p>
+                            <a href="{{ url_for('static', filename='images/Daisy.NYCHM.webp') }}" target="_blank" class="btn btn-primary">View NFT</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carbon Neutral Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="quantum-border" style="background: rgba(0, 0, 0, 0.8);">
+                <div class="track-badge">ENVIRONMENTAL PROTOCOL</div>
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="text-gradient mb-3">Quantum-Verified Carbon Neutral NFTs</h3>
+                        <p class="lead text-white mb-4">Each NFT is minted through our proprietary Neural-Blockchain™, powered by the kinetic energy harvested from 320 track workouts. Our quantum validation ensures zero environmental impact.</p>
+                        <ul class="eco-features">
+                            <li style="background: rgba(0, 0, 0, 0.6); padding: 0.5rem 2rem; border-radius: 6px; margin-bottom: 0.75rem;">Neural-powered sustainable minting process</li>
+                            <li style="background: rgba(0, 0, 0, 0.6); padding: 0.5rem 2rem; border-radius: 6px; margin-bottom: 0.75rem;">Quantum-encrypted carbon offset certificates</li>
+                            <li style="background: rgba(0, 0, 0, 0.6); padding: 0.5rem 2rem; border-radius: 6px; margin-bottom: 0.75rem;">Track-generated renewable energy system</li>
+                            <li style="background: rgba(0, 0, 0, 0.6); padding: 0.5rem 2rem; border-radius: 6px; margin-bottom: 0.75rem;">Real-time environmental impact tracking via AI</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="eco-badge" style="background: rgba(0, 0, 0, 0.6);">
+                            <i class="fas fa-leaf fa-3x mb-3"></i>
+                            <div class="track-badge">CARBON NEUTRALITY VERIFIED</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Base Styles */
+.featured-product {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Environmental Features */
+.eco-features {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.eco-features li {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    position: relative;
+    font-size: 1.1rem;
+    text-shadow: none;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.eco-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0.75rem;
+    color: #2ecc71;
+    text-shadow: none;
+}
+
+.eco-badge {
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.eco-badge i {
+    color: #2ecc71;
+    text-shadow: none;
+}
+
+.text-white {
+    color: #ffffff !important;
+    text-shadow: none;
+}
+
+.quantum-border {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lead.text-white {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Carousel rotation with captions
+    const carousel = document.querySelector('.featured-carousel');
+    if (carousel) {
+        const images = carousel.querySelectorAll('img');
+        const captions = carousel.querySelectorAll('.image-caption');
+        let currentIndex = 0;
+
+        setInterval(() => {
+            images[currentIndex].classList.remove('active');
+            captions[currentIndex].style.opacity = '0';
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+            captions[currentIndex].style.opacity = '1';
+        }, 4000);
+    }
+});
+</script>
+{% endblock %} 

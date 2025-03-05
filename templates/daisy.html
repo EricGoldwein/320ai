@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">DAISY™</h1>
+            <p class="subheading mb-4">Data Activated Individualized System for You</p>
+            <div class="track-badge pulse-badge mb-3">CARBON NEUTRAL</div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border">
+                <div class="track-badge pulse-badge">QUANTUM METRICS</div>
+                <h2 class="text-gradient mb-4">Calculate Your DAISY™ Score</h2>
+                <p class="lead text-center mb-5">Our proprietary algorithm analyzes your unique characteristics to determine your optimal chaos coefficient.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <form id="daisyCalculator" class="daisy-form">
+                            <div class="mb-4">
+                                <label class="form-label">Resting Heart Rate</label>
+                                <input type="range" class="form-control" id="heartRate" min="20" max="100" value="60">
+                                <div class="d-flex justify-content-between">
+                                    <small>Low</small>
+                                    <small class="value-display">60</small>
+                                    <small>High</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Shoe Size</label>
+                                <input type="number" class="form-control" id="shoeSize" placeholder="Enter shoe size" min="1" max="99">
+                                <small class="text-muted">The odder the shoe, the better the DAISY</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Number of Running Shoes Owned</label>
+                                <input type="number" class="form-control" id="shoeCount" placeholder="Enter number" min="0" max="999">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Astrological Sign</label>
+                                <select class="form-select" id="astroSign">
+                                    <option value="">Select your sign</option>
+                                    <option value="1">Aries</option>
+                                    <option value="2">Taurus</option>
+                                    <option value="3">Gemini</option>
+                                    <option value="4">Cancer</option>
+                                    <option value="5">Leo</option>
+                                    <option value="6">Virgo</option>
+                                    <option value="7">Libra</option>
+                                    <option value="8">Scorpio</option>
+                                    <option value="9">Sagittarius</option>
+                                    <option value="10">Capricorn</option>
+                                    <option value="11">Aquarius</option>
+                                    <option value="12">Pisces</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Preferred Christina Aguilera Song</label>
+                                <select class="form-select" id="soundtrack">
+                                    <option value="">Select a song</option>
+                                    <option value="1">Genie in a Bottle</option>
+                                    <option value="2">Fighter</option>
+                                    <option value="3">Beautiful</option>
+                                    <option value="4">Dirrty</option>
+                                    <option value="5">What a Girl Wants</option>
+                                    <option value="6">Ain't No Other Man</option>
+                                    <option value="7">Lady Marmalade</option>
+                                    <option value="8">Candyman</option>
+                                    <option value="9">Hurt</option>
+                                    <option value="10">Come On Over Baby</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Favorite Ice Cream Brand</label>
+                                <select class="form-select" id="iceCream">
+                                    <option value="">Select a brand</option>
+                                    <option value="1">Ben & Jerry's</option>
+                                    <option value="2">Häagen-Dazs</option>
+                                    <option value="3">Van Leeuwen</option>
+                                    <option value="4">Turkey Hill</option>
+                                    <option value="5">Milk Bar</option>
+                                    <option value="6">Ample Hills</option>
+                                    <option value="7">Blue Marble</option>
+                                    <option value="8">Talenti</option>
+                                    <option value="9">Lincoln Market Giant Neopolitan</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 hover-lift">Calculate DAISY™ Score</button>
+                        </form>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div id="daisyResult" class="text-center" style="display: none;">
+                            <div class="daisy-score-container">
+                                <div class="daisy-score">
+                                    <span id="daisyScoreValue">0</span>
+                                    <small>DAISY™</small>
+                                </div>
+                            </div>
+
+                            <div class="daisy-chart">
+                                <canvas id="daisyRadarChart"></canvas>
+                            </div>
+
+                            <div class="interpretation mt-4">
+                                <div class="track-badge mb-3">QUANTUM INTERPRETATION</div>
+                                <p id="daisyInterpretation" class="lead"></p>
+                            </div>
+
+                            <div class="score-ranges mt-4">
+                                <div class="track-badge mb-3">DAISY™ SCORE RANGES</div>
+                                <div class="range-item mb-2">
+                                    <span>0-320:</span> "The Conformist" - Your running is dangerously predictable. Daisy would not approve.
+                                </div>
+                                <div class="range-item mb-2">
+                                    <span>321-640:</span> "The Awakened" - Beginning to embrace chaos. Your runs show promising signs of unpredictability.
+                                </div>
+                                <div class="range-item mb-2">
+                                    <span>641-800:</span> "The Enlightened" - Advanced chaos mastery. Your running patterns beautifully confuse our AI.
+                                </div>
+                                <div class="range-item mb-2">
+                                    <span>801-959:</span> "The Transcendent" - Near perfect entropy. You've achieved what we call "controlled chaos."
+                                </div>
+                                <div class="range-item">
+                                    <span>960+:</span> "The Daisy" - Pure quantum running state. You exist simultaneously at all points on the track.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="track-badge mb-3">DAISY™ SCORE COMPONENTS</div>
+                        <div class="daisy-components">
+                            <canvas id="daisyBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAISY Metric Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border">
+                <div class="track-badge pulse-badge">PATENT PENDING</div>
+                <h2 class="text-gradient mb-4">The DAISY™ Metric</h2>
+                <h4 class="text-muted mb-4">Data Activated Individualized System for You</h4>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="lead">Our proprietary DAISY™ metric revolutionizes performance tracking by quantifying the unquantifiable: your unique running signature. While traditional Wingos measure social achievement, DAISY™ scores capture your individual optimization potential.</p>
+                        
+                        <div class="technical-specs mt-4">
+                            <div class="track-badge mb-3">QUANTUM CALCULATION</div>
+                            <p>Your DAISY™ score is computed using our patented formula:</p>
+                            <div class="formula-box p-3 mb-4 text-center">
+                                <code>D = Σ(ν∆t × φ) + λ(ρ - μ)² × ψ</code>
+                                <p class="small text-muted mt-2">Where ν = velocity variations, φ = flow state coefficient, λ = learning rate, ρ = personal rhythm, μ = mean collective cadence, ψ = quantum uncertainty factor</p>
+                            </div>
+                        </div>
+
+                        <div class="implementation-notes">
+                            <div class="track-badge mb-3">METRIC INTEGRATION</div>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">• Wingos = Social Achievement Currency</li>
+                                <li class="mb-3">• DAISY™ = Personal Optimization Index</li>
+                                <li class="mb-3">• Higher DAISY™ scores unlock premium Wingo multipliers</li>
+                                <li class="mb-3">• Optimal conformity achieved through DAISY™-guided training</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="daisy-showcase">
+                            <img src="{{ url_for('static', filename='images/Daisy.NYCHM.webp') }}" 
+                                 alt="DAISY at NYC Half Marathon" 
+                                 class="img-fluid rounded mb-3">
+                            <div class="track-badge">DAISY IN ACTION</div>
+                            <p class="text-muted small">DAISY horsin' around before the 2025 NYC Half Marathon.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="legacy-quote mt-4 mb-4">
+                    <blockquote class="font-italic">
+                        "Through DAISY™, we've achieved the impossible: standardizing individuality."
+                        <footer class="text-muted">— Dr. Mauer, Chief Scientist</footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update range input displays
+    document.querySelectorAll('input[type="range"]').forEach(range => {
+        range.addEventListener('input', function() {
+            this.parentElement.querySelector('.value-display').textContent = this.value;
+        });
+    });
+
+    // Initialize charts
+    let radarChart = null;
+    let barChart = null;
+
+    // DAISY Calculator Form
+    document.getElementById('daisyCalculator').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const heartRate = parseInt(document.getElementById('heartRate').value);
+        const shoeSize = parseInt(document.getElementById('shoeSize').value);
+        const shoeCount = parseInt(document.getElementById('shoeCount').value);
+        const astroSign = parseInt(document.getElementById('astroSign').value);
+        const soundtrack = parseInt(document.getElementById('soundtrack').value);
+        const iceCream = parseInt(document.getElementById('iceCream').value);
+
+        // Calculate DAISY score (nonsensical formula)
+        const baseScore = ((heartRate * shoeSize) / 100) + (astroSign * 20) + (soundtrack * 30) + 
+                         (shoeCount * 15) + (iceCream * 25);
+        const quantumFactor = Math.sin(Date.now() / 1000) * 50 + 50; // Adds random variation
+        const finalScore = Math.min(960, Math.max(0, Math.round(baseScore * (quantumFactor / 50))));
+
+        // Display result
+        document.getElementById('daisyResult').style.display = 'block';
+        document.getElementById('daisyScoreValue').textContent = finalScore;
+
+        // Generate interpretation
+        const interpretations = [
+            "Your chaos quotient is remarkably stable. Daisy would be confused.",
+            "You're achieving quantum harmony through controlled instability.",
+            "Your running entropy is approaching optimal disorder.",
+            "Warning: Your predictability levels are dangerously high.",
+            "Congratulations! You've achieved perfect imperfection."
+        ];
+        document.getElementById('daisyInterpretation').textContent = 
+            interpretations[Math.floor(finalScore / 200)];
+
+        // Update radar chart
+        const radarData = {
+            labels: ['Chaos Factor', 'Quantum Alignment', 'Stride Entropy', 'Neural Harmony', 'Time Dilation'],
+            datasets: [{
+                label: 'Your DAISY™ Profile',
+                data: [
+                    heartRate / 2,
+                    (shoeSize * shoeCount) / 10,
+                    astroSign * 8,
+                    soundtrack * 20,
+                    shoeCount * 15
+                ],
+                fill: true,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgb(255, 99, 132)',
+                pointBackgroundColor: 'rgb(255, 99, 132)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(255, 99, 132)'
+            }]
+        };
+
+        if (radarChart) {
+            radarChart.destroy();
+        }
+        radarChart = new Chart(document.getElementById('daisyRadarChart'), {
+            type: 'radar',
+            data: radarData,
+            options: {
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            backdropColor: 'transparent'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Update bar chart
+        const barData = {
+            labels: ['Heart', 'Skill', 'Power of Will', 'Pleasure', 'Pain'],
+            datasets: [{
+                label: 'DAISY™ Components',
+                data: [
+                    heartRate / 2,
+                    (shoeSize * shoeCount) / 10,
+                    astroSign * 8,
+                    soundtrack * 20,
+                    shoeCount * 15
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(153, 102, 255, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        if (barChart) {
+            barChart.destroy();
+        }
+        barChart = new Chart(document.getElementById('daisyBarChart'), {
+            type: 'bar',
+            data: barData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#000000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#000000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#000000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.daisy-form .form-label {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.daisy-score-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.3);
+}
+
+.daisy-score {
+    text-align: center;
+    color: white;
+}
+
+.daisy-score span {
+    font-size: 3rem;
+    font-weight: bold;
+    display: block;
+}
+
+.daisy-chart {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.interpretation {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.daisy-components {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.score-ranges {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.range-item {
+    margin-bottom: 1rem;
+}
+
+.range-item span {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.daisy-image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.daisy-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.daisy-image:hover {
+    transform: scale(1.05);
+}
+
+.daisy-showcase {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.daisy-showcase img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.neural-network-text {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+</style>
+
+{% endblock %} 
