@@ -425,5 +425,11 @@ def subscribe():
         }), 500
 
 
+@app.route("/game2", methods=["GET"])
+def game2():
+    """Display the game2 page"""
+    return render_template('game2.html')
+
+
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
