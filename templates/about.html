@@ -372,11 +372,11 @@ p {
                 <div class="row align-items-center justify-content-between">
                     <div class="col-md-12">
                         <h2 class="text-gradient mb-4 text-center text-md-start">The 320AI Revolution</h2>
-                        <p class="lead mb-4">A normal track is 400 meters. Wingate is 320. We prefer 320. A little unconventional, sure—but we like to do things differently. Smarter. More efficient. Optimized. At 320, effort isn't just recorded—it's recognized. Every stride counts, every session refines, and every adjustment brings us closer to something better.</p>
+                        <p class="lead mb-4" style="color: var(--text-color) !important; opacity: 1 !important; font-weight: 400 !important;">A normal track is 400 meters. Wingate is 320. We prefer 320. A little unconventional, sure—but we like to do things differently. Smarter. More efficient. Optimized. At 320, effort isn't just recorded—it's recognized. Every stride counts, every session refines, and every adjustment brings us closer to something better.</p>
                         
                         <div class="manifesto mt-4">
                             <div class="mb-4">
-                                <div class="track-badge d-inline-block">320AI: TECHNOLOGY THAT BUILDS COMMUNITY</div>
+                                <div class="track-badge d-inline-block">TECHNOLOGY THAT BUILDS COMMUNITY</div>
                                 <p class="mt-3">More than tracking—integration. Our 320AI engine seamlessly links individual effort to collective progress, enhancing accountability, engagement, and access. Every session refines your performance imprint, strengthening both your results and your role within the network. We train with purpose, guided by intelligence.</p>
                             </div>
 
@@ -389,13 +389,32 @@ p {
                             </div>
                             
                             <div class="mb-4">
-                                <div class="track-badge d-inline-block">THE PROMISE</div>
-                                <p class="mt-3">Join us and see your true impact reflected in real time. Your rating evolves as you train, engage, and contribute. At 320, you don't just run—you become.</p>
-                            </div>
-                        </div>
+                              
                         
-                        <p class="text-muted mt-4"><small>By accepting these terms, you acknowledge that your performance metrics will be used to determine your social standing within the collective. Low ratings may result in restricted feature access and reduced visibility in the community feed.</small></p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Signup -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border text-center">
+                <h2 class="text-gradient mb-4">Join the 320AI Revolution</h2>
+                <p class="lead mb-4">Get exclusive AI data-driven insights and other 320-related content delivered straight to your inbox.</p>
+                <form id="emailSignupForm" class="mx-auto" style="max-width: 500px;">
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Enter your email" required name="email" id="signupEmail">
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </div>
+                    <div class="alert alert-info mt-3" style="display: none;" id="signupMessage"></div>
+                    <p class="text-muted small">* By subscribing, you will be added to our waiting list. We are currently at capacity and will notify you when a spot becomes available. Your running form may improve dramatically while waiting.</p>
+                </form>
+                <div class="social-links mt-4">
+                    <a href="https://www.instagram.com/320trackclub/" target="_blank" class="btn btn-outline-dark">
+                        <i class="fab fa-instagram"></i> Follow us on Instagram
+                    </a>
                 </div>
             </div>
         </div>
@@ -410,14 +429,24 @@ p {
                 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="historical-image-container mb-4" style="max-width: 600px; margin: 0 auto;">
+                        <div class="float-md-end ms-md-4 mb-4 text-center" style="max-width: 300px;">
+                            <img src="{{ url_for('static', filename='images/George&Daisy.webp') }}" alt="George Wood Wingate and Daisy" class="img-fluid rounded" style="max-width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            <p class="text-muted mt-2" style="font-size: 0.9rem;">George Wood Wingate and Daisy during their 1885 Yellowstone expedition</p>
                         </div>
                         
-                        <p class="lead">In 1885, a gentle yet unpredictable horse named Daisy carried a 17-year-old girl through the thin air of the Rocky Mountains and into Yellowstone Park. Over 26 days and 460 miles, Daisy moved not with the smooth, metronomic strides of an optimized machine, but with a happy knack of trotting on three legs while kicking with the fourth. She varied her pace constantly, ignored expectations, and refused to conform—a true pioneer in the art of personal optimization.<sup>1</sup></p>
+                        <p class="lead">In 1885, George Wood Wingate set out on a journey through the thin air of the Rocky Mountains and into Yellowstone Park. The New York attorney was accompanied by his wife, his daughter, and a team of horses, led by a gentle yet unpredictable cayuse named Daisy.</p>
                         
-                        <p class="lead">Daisy belonged to the daughter of George Wood Wingate, a New York attorney, military officer, and early advocate for systematic training. The same George Wood Wingate whose principles of disciplined improvement inspire our track's namesake.</p>
+                        <p class="lead">Over 26 days and 320 miles at altitudes exceeding 7,000 feet, Daisy moved not with the smooth, metronomic strides of an optimized machine, but with an unpredictable rhythm all her own—trotting on three legs while kicking with the fourth, dodging stealthy rattlesnakes, sidestepping grizzly bears, and shifting her pace at will. She ignored expectations, refused to conform, and in doing so, carved a path entirely her own—a true pioneer in the art of personal optimization.¹</p>
                         
-                        <p class="lead">While the world Daisy knew has evolved, her spirit of innovation lives on in our quantum-enhanced training protocols. Where once she varied her pace instinctively, our AI now calculates optimal pace variations for maximum adaptation. Her seemingly random kicks have inspired our proprietary Chaos Training, which introduces controlled unpredictability for superior results.</p>
+                        <p class="lead">Daisy's approach was something different—an intuitive mastery of adaptation, efficiency, and individuality. She didn't just survive the journey; she optimized it, proving that progress isn't about rigid uniformity but about embracing natural variation.</p>
+                        
+                        <p class="lead">It's a lesson that has echoed in places far removed from the wilds of Yellowstone—including the Brooklyn track that now bears Wingate's name.</p>
+                        
+                        <p class="lead">Wingate measures a seemingly arbitrary 320 meters—unlike the standard 400. Maybe that's coincidence. Or maybe it's a quiet tribute to the long-ago 320-mile² journey—a reminder that improvement isn't always about repetition, that efficiency doesn't mean conformity, and that the best training embraces both individuality and community.</p>
+                        
+                        <p class="lead">Daisy reached Yellowstone not by following a perfect plan, but by adapting efficiently to every unexpected challenge along the way.</p>
+                        
+                        <p class="lead">While the world Daisy knew has evolved, her spirit of innovation lives on in 320's quantum-enhanced training protocols. Where once she varied her pace instinctively, our AI now calculates optimal pace variations for maximum adaptation. Her seemingly random kicks have inspired DAISY™ (Data Activated Individualized System for You). Designed to personalize training down to the microsecond, DAISY™ ensures that every athlete reaches their maximum potential—not by conforming, but by embracing the efficiency of unpredictability.</p>
                         
                         <div class="legacy-quote mt-4 mb-4" style="background: rgba(0, 0, 0, 0.03); padding: 2rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
                             <blockquote class="font-italic mb-0" style="font-size: 1.4rem; color: var(--text-color);">
@@ -426,14 +455,13 @@ p {
                             </blockquote>
                         </div>
                         
-                        <p class="lead">At the 320 Track Club, we honor Daisy's legacy by transforming what appeared as inefficiency into calculated advantage. Every stride variation, every unexpected burst of energy, every unique pattern of movement—all are now quantified, analyzed, and optimized through our advanced AI systems.</p>
+                        <p class="lead">At the 320 Track Club, we honor Daisy's legacy by transforming what once appeared as inefficiency into a calculated advantage. Every stride variation, every unexpected burst of energy, every unique pattern of movement—all are now quantified, analyzed, and optimized through our advanced AI systems.</p>
                         
-                        <p class="lead mb-4">Daisy wasn't just free—she was ahead of her pack. And now, through the power of technology, we can all achieve her level of optimized unpredictability.</p>
-                        
-                        <p class="lead mb-4" style="font-style: italic;">Daisy is a graphic designer living in Park Slope with her two yellow labs, Jerry and George. She enjoys morning oats and occasional gallups around the track.</p>
+                        <p class="lead mb-4">Through the power of technology, we can all achieve Daisy's level of individualized effiicency.</p>
                         
                         <hr class="my-4">
-                        <p class="small text-muted mb-0"><sup>1</sup> A real story from George Wood Wingate's real book, "Through the Yellowstone Park on Horseback."</p>
+                        <p class="small text-muted mb-0" style="font-size: 0.8rem;"><sup>1</sup> This is (mostly!) from a real story from George Wood Wingate's real book, Through the Yellowstone Park on Horseback.</p>
+                        <p class="small text-muted mb-0" style="font-size: 0.8rem;"><sup>2</sup> Okay fine, it was actually 460 miles. Whatever, sue me.</p>
                     </div>
                 </div>
             </div>
@@ -568,31 +596,11 @@ p {
         </div>
     </div>
 
-    <!-- Interactive Track Visualization -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="quantum-border p-0 overflow-hidden">
-                <div class="track-visualization">
-                    <div class="track-overlay"></div>
-                    <div class="track-stats">
-                        <div class="stat-circle">
-                            <div class="stat-inner">
-                                <span class="stat-value">320</span>
-                                <span class="stat-unit">m</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="track-lines"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Board of Directors -->
     <div id="board" class="row mb-5">
         <div class="col-12">
             <div class="quantum-border">
-                <h2 class="text-gradient mb-4">Board of Directors</h2>
+                <h2 class="text-gradient mb-4">Staff</h2>
                 <div class="row g-4">
                     <!-- Founder -->
                     <div class="col-md-6">
@@ -604,7 +612,7 @@ p {
                             <div>
                                 <div class="track-badge mb-2">FOUNDER</div>
                                 <h4>ERock</h4>
-                                <p>Track enthusiast and visionary behind the 320-meter revolution. Former collegiate runner turned tech innovator. Pioneer of our quantum-enhanced training protocols.</p>
+                                <p>Thought leader, tech innovator, and pioneer of our quantum-enhanced training protocols.</p>
                             </div>
                         </div>
                     </div>
@@ -619,7 +627,7 @@ p {
                                 <div class="track-badge mb-2">Equinety & Inclusion</div>
                                 <h4>Daisy</h4>
                                 <p>The original pioneer of non-linear progression. Her revolutionary three-legged trot pattern forms the basis of our Chaos Training algorithm. First to demonstrate that true optimization lies in controlled unpredictability.</p>
-                            </div>
+                                                            </div>
                         </div>
                     </div>
                     <!-- Christina Aguilera -->
@@ -629,9 +637,9 @@ p {
                                  style="width: 100px; height: 100px; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));">
                             </div>
                             <div>
-                                <div class="track-badge mb-2">CHIEF VOCAL OFFICER</div>
+                                <div class="track-badge mb-2">CHIEF FIGHTER</div>
                                 <h4>Christina Aguilera</h4>
-                                <p>Five-time Grammy winner bringing vocal power to our training. Her "Genie in a Bottle" tempo perfectly matches Daisy's optimal cadence pattern.</p>
+                                <p>Makes us that much stronger, work a little bit harder, much wiser.</p>
                             </div>
                         </div>
                     </div>
@@ -648,29 +656,6 @@ p {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Email Signup -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="quantum-border text-center">
-                <h2 class="text-gradient mb-4">Join the 320AI Revolution</h2>
-                <p class="lead mb-4">Get exclusive AI data-driven insights and other 320-related content delivered straight to your inbox.</p>
-                <form id="emailSignupForm" class="mx-auto" style="max-width: 500px;">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Enter your email" required name="email" id="signupEmail">
-                        <button class="btn btn-primary" type="submit">Subscribe</button>
-                    </div>
-                    <div class="alert alert-info mt-3" style="display: none;" id="signupMessage"></div>
-                    <p class="text-muted small">* By subscribing, you will be added to our waiting list. We are currently at capacity and will notify you when a spot becomes available. Your running form may improve dramatically while waiting.</p>
-                </form>
-                <div class="social-links mt-4">
-                    <a href="https://www.instagram.com/320trackclub/" target="_blank" class="btn btn-outline-dark">
-                        <i class="fab fa-instagram"></i> Follow us on Instagram
-                    </a>
                 </div>
             </div>
         </div>
