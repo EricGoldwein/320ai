@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="128" xmlns="http://www.w3.org/2000/svg">
+    <!-- Frame 1: Standing -->
+    <g transform="translate(0,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 2: Running step 1 -->
+    <g transform="translate(128,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(5,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 3: Running step 2 -->
+    <g transform="translate(256,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(-5,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 4: Running step 3 -->
+    <g transform="translate(384,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(5,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 5: Sprint 1 -->
+    <g transform="translate(512,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(15,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 6: Sprint 2 -->
+    <g transform="translate(640,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(-15,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 7: Sprint 3 -->
+    <g transform="translate(768,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(15,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+    
+    <!-- Frame 8: Sprint 4 -->
+    <g transform="translate(896,0)">
+        <rect x="32" y="16" width="64" height="96" fill="#8e44ad" transform="rotate(-15,64,64)"/>
+        <circle cx="64" cy="16" r="16" fill="#9b59b6"/>
+    </g>
+</svg> 

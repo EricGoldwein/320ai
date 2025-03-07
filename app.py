@@ -195,6 +195,35 @@ def daisy():
     return render_template('daisy.html')
 
 
+@app.route("/game", methods=["GET"])
+def game():
+    """Display the Daisy's Track Adventure game page"""
+    return render_template('game.html')
+
+
+@app.route("/game2", methods=["GET"])
+def game2():
+    """Display the Daisy's Yellowstone Adventure game page"""
+    return render_template('game2.html')
+
+
+@app.route("/game/leaderboard", methods=["GET", "POST"])
+def game_leaderboard():
+    """Handle game leaderboard operations"""
+    if request.method == "POST":
+        # Handle new score submission
+        data = request.json
+        score = data.get('score', 0)
+        player_name = data.get('player_name', 'Anonymous')
+        
+        # TODO: Implement leaderboard database operations
+        return jsonify({"status": "success"})
+    else:
+        # Return top scores
+        # TODO: Implement leaderboard retrieval
+        return jsonify({"scores": []})
+
+
 @app.route("/generate_workout", methods=["POST"])
 def generate_workout():
     """Generate a hyper-optimized workout using cutting-edge AI technology"""

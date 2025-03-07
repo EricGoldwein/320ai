@@ -224,10 +224,15 @@
 .question-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    padding: 2rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 250, 0.98));
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+    transition: transform 0.3s ease;
+}
+
+.question-container:hover {
+    transform: translateY(-2px);
 }
 
 .question-section {
@@ -242,61 +247,87 @@
 }
 
 .question-section h4 {
-    color: #212529;
-    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
     font-weight: 600;
-    font-size: 1.2rem;
+    background: linear-gradient(90deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .form-label {
-    color: rgba(255, 255, 255, 0.9);
+    color: #34495e;
     font-weight: 500;
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
 }
 
 .form-control {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(135, 206, 250, 0.3);
-    color: white;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    border: 2px solid rgba(52, 152, 219, 0.15);
+    border-radius: 12px;
     transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 .form-control:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(135, 206, 250, 0.6);
-    box-shadow: 0 0 15px rgba(135, 206, 250, 0.2);
-    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+    background: rgba(255, 255, 255, 0.95);
 }
 
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+.form-control:hover {
+    border-color: rgba(52, 152, 219, 0.3);
 }
 
-.btn-quantum {
-    background: rgba(41, 128, 185, 0.3);
-    border: 1px solid rgba(135, 206, 250, 0.5);
-    color: rgba(173, 216, 230, 0.98);
-    padding: 0.75rem 2rem;
-    border-radius: 30px;
+.btn-primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    color: #ffffff;
     font-weight: 500;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
+    padding: 1rem 2rem;
+    border-radius: 12px;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(135, 206, 250, 0.2);
-    text-shadow: 0 0 10px rgba(173, 216, 230, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.95rem;
 }
 
-.btn-quantum:hover {
-    background: rgba(41, 128, 185, 0.4);
-    border-color: rgba(135, 206, 250, 0.7);
-    box-shadow: 0 0 20px rgba(135, 206, 250, 0.3);
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2980b9, #2573a7);
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(41, 128, 185, 0.2);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: none;
+    color: #495057;
+    font-weight: 500;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.95rem;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #e9ecef, #dee2e6);
+    color: #212529;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.text-muted {
+    color: #6c757d !important;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 2rem;
 }
 
 .loading-animation {
@@ -911,7 +942,7 @@
                     <li>Main Set: 6 x 320m at tempo pace</li>
                     <li>At the divot: 15 two-legged hops</li>
                 </ul>
-                <div class="workout-footer">Stay light on your feet—your ankles will thank you</div>
+                <div class="workout-footer">Respect the ankle gods</div>
             </div>
         </div>
 
@@ -920,7 +951,7 @@
             <div class="workout-card">
                 <span class="workout-type">LEGEND</span>
                 <h3 class="workout-title">ERock's 160</h3>
-                <p class="workout-description">The legendary ERock special:</p>
+                <p class="workout-description">The special:</p>
                 <ul class="workout-list">
                     <li>5 x 160m at threshold pace</li>
                     <li>Between repeats: Select 2 from: pushups, planks (straight/elbow/side), wall sit, lunges, bicycle crunches, burpees, situps, jump lunges, squat lunges, squats</li>
@@ -937,8 +968,8 @@
                 <p class="workout-description">Partner Workout: 3 x 320m three-legged runs:</p>
                 <ul class="workout-list">
                     <li>First 320m: Moderate pace, focus on coordination</li>
-                    <li>Second 320m: Pick up the pace, channel your inner mutant</li>
-                    <li>Third 320m: All out (if you dare)</li>
+                    <li>Second 320m: Modereter pace, focus on efficiency</li>
+                    <li>Third 320m, on your own</li>
                 </ul>
                 <div class="workout-footer">Rest 2-3 minutes between sets. Switch inside/outside leg positions each round. Finish with a victory lap (regular two legs).</div>
             </div>
@@ -979,9 +1010,9 @@
         <!-- Song Roulette -->
         <div class="col-md-6 col-lg-4">
             <div class="workout-card">
-                <span class="workout-type">Turn it up</span>
+                <span class="workout-type">Come on Over</span>
                 <h3 class="workout-title">Song Roulette</h3>
-                <p class="workout-description">3km of Christina-powered chaos:</p>
+                <p class="workout-description">3km of Christina Aguilera powered chaos:</p>
                 <ul class="workout-list">
                     <li>Each km paced to random Christina</li>
                     <li>Hit "Fighter"? Time to sprint!</li>
@@ -1000,7 +1031,7 @@
                 <ul class="workout-list">
                     <li>4 x 80m backwards buildup</li>
                     <li>2 x 160m alternating direction</li>
-                    <li>Don't trip</li>
+                    <li>Stay out of lane 1</li>
                 </ul>
                 <div class="workout-footer">Safety First: Start slow and maintain awareness</div>
             </div>
@@ -1031,7 +1062,7 @@
                 <ul class="workout-list">
                     <li>32 x 320m</li>
                     <li>That's it. That's the workout.</li>
-                    <li>Keep the pace consistent</li>
+                    <li>Keep the pace consistently inconsistent</li>
                 </ul>
                 <div class="workout-footer">Sometimes less is more</div>
             </div>
@@ -1056,14 +1087,14 @@
         <div class="col-md-6 col-lg-4">
             <div class="workout-card">
                 <span class="workout-type">STRENGTH</span>
-                <h3 class="workout-title">HangTime</h3>
+                <h3 class="workout-title">Hang Time</h3>
                 <p class="workout-description">Field goal challenge:</p>
                 <ul class="workout-list">
                     <li>Hang on field goal post</li>
                     <li>Total time: 320 seconds</li>
-                    <li>Breaks allowed (you'll need them)</li>
+                    <li>Breaks allowed</li>
                 </ul>
-                <div class="workout-footer">Grip it and don't quit</div>
+                <div class="workout-footer">Grip it and trip it</div>
             </div>
         </div>
 
@@ -1075,7 +1106,7 @@
                 <p class="workout-description">Essential recovery:</p>
                 <ul class="workout-list">
                     <li>10-minute yoga/stretch routine</li>
-                    <li>Follow along with video</li>
+                    <li>Follow video but at your own pace</li>
                     <li>Perfect for post-workout</li>
                 </ul>
                 <div class="workout-footer">
