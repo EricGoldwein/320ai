@@ -56,6 +56,14 @@ def init_openai_client():
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
 
+        # Remove any existing proxy settings
+        if 'HTTP_PROXY' in os.environ:
+            del os.environ['HTTP_PROXY']
+        if 'HTTPS_PROXY' in os.environ:
+            del os.environ['HTTPS_PROXY']
+        if 'OPENAI_PROXY' in os.environ:
+            del os.environ['OPENAI_PROXY']
+
         # Create client with only the API key
         client = OpenAI(api_key=OPENAI_API_KEY)
         logger.info("OpenAI client initialized successfully")
