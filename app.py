@@ -24,6 +24,14 @@ logger = logging.getLogger(__name__)
 logger.info("Loading environment variables...")
 load_dotenv()
 
+# Set proxy configuration for PythonAnywhere
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    logger.info("Running on PythonAnywhere - setting proxy configuration")
+    os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
+    os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
+else:
+    logger.info("Running locally - no proxy configuration needed")
+
 # Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
