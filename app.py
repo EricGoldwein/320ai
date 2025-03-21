@@ -1,10 +1,11 @@
 import os
+import httpx
 
 # Set proxy configuration before anything else
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-    os.environ['HTTP_PROXY'] = 'http://proxy.server:3128'
-    os.environ['HTTPS_PROXY'] = 'http://proxy.server:3128'
-    os.environ['OPENAI_PROXY'] = 'http://proxy.server:3128'
+    os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
+    os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
+    os.environ['OPENAI_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
     os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
 
 from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect
@@ -56,18 +57,21 @@ def init_openai_client():
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
         
-        # Create client with minimal configuration
-        client_config = {
-            'api_key': OPENAI_API_KEY,
-            'timeout': float(os.environ.get('TIMEOUT', '30'))
-        }
-        
-        # Log the configuration we're using (but mask the API key)
-        safe_config = client_config.copy()
-        safe_config['api_key'] = safe_config['api_key'][:8] + '...'
-        logger.info("Creating OpenAI client with config: %s", safe_config)
-        
-        client = OpenAI(**client_config)
+        # Create a custom httpx client with proxy configuration
+        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+            http_client = httpx.Client(
+                proxies={
+                    'http://': 'http://proxy.pythonanywhere.com:8080',
+                    'https://': 'http://proxy.pythonanywhere.com:8080'
+                },
+                verify=True
+            )
+            client = OpenAI(
+                api_key=OPENAI_API_KEY,
+                http_client=http_client
+            )
+        else:
+            client = OpenAI(api_key=OPENAI_API_KEY)
         
         # Test the client by making a simple API call
         try:
