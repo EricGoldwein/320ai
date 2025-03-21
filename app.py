@@ -13,14 +13,19 @@ from dotenv import load_dotenv
 from functools import wraps
 import time
 
-# Constants from environment
-ASSISTANT_ID = os.environ.get('ASSISTANT_ID')
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
-TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Initialize environment variables first
+logger.info("Loading environment variables...")
+load_dotenv()
+
+# Get environment variables
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID')
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
 
 # Get the absolute path to the templates directory
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -59,22 +64,17 @@ limiter = Limiter(
     storage_uri="memory://"  # Use in-memory storage for Windows compatibility
 )
 
-# Initialize environment variables
-logger.info("Loading environment variables...")
-load_dotenv()
-
 # Initialize OpenAI client
 try:
-    api_key = os.environ.get('OPENAI_API_KEY')
-    if not api_key:
-        logger.error("No API key found in environment")
+    if not OPENAI_API_KEY:
+        logger.error("No OpenAI API key found in environment")
         client = None
     else:
         client = OpenAI(
-            api_key=api_key,
-            timeout=30  # Use a default timeout
+            api_key=OPENAI_API_KEY,
+            timeout=TIMEOUT
         )
-        logger.info(f"OpenAI client initialized successfully with API key starting with: {api_key[:8]}...")
+        logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
 except Exception as e:
     logger.error(f"Error initializing OpenAI client: {str(e)}")
     client = None
