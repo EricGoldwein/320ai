@@ -12,7 +12,11 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from functools import wraps
 import time
-from config import OPENAI_API_KEY, ASSISTANT_ID, MAX_RETRIES, TIMEOUT
+
+# Constants from environment
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID')
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
