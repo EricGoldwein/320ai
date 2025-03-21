@@ -57,21 +57,11 @@ def init_openai_client():
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
         
-        # Create a custom httpx client with proxy configuration
-        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-            http_client = httpx.Client(
-                proxies={
-                    'http://': 'http://proxy.pythonanywhere.com:8080',
-                    'https://': 'http://proxy.pythonanywhere.com:8080'
-                },
-                verify=True
-            )
-            client = OpenAI(
-                api_key=OPENAI_API_KEY,
-                http_client=http_client
-            )
-        else:
-            client = OpenAI(api_key=OPENAI_API_KEY)
+        # Initialize with minimal configuration since proxy is set via env vars
+        client = OpenAI(
+            api_key=OPENAI_API_KEY,
+            timeout=TIMEOUT
+        )
         
         # Test the client by making a simple API call
         try:
