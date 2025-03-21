@@ -4,6 +4,29 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- MathJax Configuration -->
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+    },
+    options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+    },
+    startup: {
+        ready: () => {
+            console.log('MathJax is loaded and ready');
+            MathJax.startup.defaultReady();
+        }
+    }
+};
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock %}
 
 {% block extra_css %}
@@ -368,6 +391,33 @@ body {
 .message p + p {
     margin-top: 0.5em;
 }
+
+/* Custom Scrollbar Styling */
+.chat-messages::-webkit-scrollbar {
+    width: 10px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(46, 204, 113, 0.3);
+    border-radius: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(46, 204, 113, 0.5);
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+/* Firefox scrollbar styling */
+.chat-messages {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(46, 204, 113, 0.3) rgba(0, 0, 0, 0.2);
+}
 </style>
 {% endblock %}
 
@@ -417,7 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     
     let isProcessing = false;
-    let conversationHistory = [];
+    let conversationHistory = [{
+        role: "assistant",
+        content: "Hay hay hay! I'm Coach DAISY™, your AI-powered running coach and also a horse. How can I help you?"
+    }];
     
     // Handle mobile viewport height
     function setVHOffset() {
@@ -440,6 +493,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
         
+        // Add tex2jax_process class to assistant messages
+        if (!isUser) {
+            messageDiv.classList.add('tex2jax_process');
+        }
+        
         const formattedContent = content
             .replace(/\n\n/g, '</p><p>')
             .replace(/\n/g, '<br>')
@@ -447,6 +505,34 @@ document.addEventListener('DOMContentLoaded', function() {
         
         messageDiv.innerHTML = formattedContent;
         chatMessages.appendChild(messageDiv);
+        
+        // Add message to conversation history
+        conversationHistory.push({
+            role: isUser ? "user" : "assistant",
+            content: content
+        });
+        
+        // Typeset any math in the new message with retry mechanism
+        if (!isUser && window.MathJax) {
+            const typesetMessage = () => {
+                try {
+                    MathJax.typesetPromise([messageDiv])
+                        .then(() => {
+                            console.log('Math typeset successful');
+                        })
+                        .catch((err) => {
+                            console.log('MathJax error:', err);
+                            // Retry after a short delay
+                            setTimeout(typesetMessage, 500);
+                        });
+                } catch (err) {
+                    console.log('MathJax not ready, retrying...');
+                    setTimeout(typesetMessage, 500);
+                }
+            };
+            typesetMessage();
+        }
+        
         scrollToBottom();
     }
     
@@ -490,14 +576,23 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingMessage.remove();
             
             if (data.error) {
-                addMessage('Sorry, I encountered an error. Please try again.', false);
+                const errorMessage = 'Sorry, I encountered an error. Please try again.';
+                addMessage(errorMessage, false);
+                // Remove the error message from conversation history since it's not part of the actual conversation
+                conversationHistory.pop();
             } else {
                 addMessage(data.response, false);
-                conversationHistory = data.conversation_history;
+                // Update conversation history with the server's version if provided
+                if (data.conversation_history) {
+                    conversationHistory = data.conversation_history;
+                }
             }
         } catch (error) {
             loadingMessage.remove();
-            addMessage('Sorry, I encountered an error. Please try again.', false);
+            const errorMessage = 'Sorry, I encountered an error. Please try again.';
+            addMessage(errorMessage, false);
+            // Remove the error message from conversation history
+            conversationHistory.pop();
             console.error('Error:', error);
         } finally {
             isProcessing = false;
@@ -518,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Add submitMessage function
+    // Add submitMessage function for suggestion buttons
     window.submitMessage = function(message) {
         userInput.value = message;
         chatForm.dispatchEvent(new Event('submit'));
