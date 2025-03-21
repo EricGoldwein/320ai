@@ -49,10 +49,11 @@ def init_openai_client():
             return None
         
         logger.info("Creating OpenAI client with minimal configuration...")
-        # Create client with only the required api_key parameter and explicit base URL
+        # Create client with minimal configuration and no threading
         client = OpenAI(
             api_key=OPENAI_API_KEY,
-            base_url="https://api.openai.com/v1"  # Explicitly set HTTPS base URL
+            base_url="https://api.openai.com/v1",
+            http_client=None  # Force using the default synchronous client
         )
         logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
         logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
