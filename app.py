@@ -43,22 +43,41 @@ def init_openai_client():
     """Initialize the OpenAI client with proper error handling"""
     global client
     try:
+        logger.info("Starting OpenAI client initialization...")
         if not OPENAI_API_KEY:
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
         
+        logger.info("Creating OpenAI client with minimal configuration...")
+        # Create client with only the required api_key parameter
         client = OpenAI(
-            api_key=OPENAI_API_KEY
+            api_key=OPENAI_API_KEY,
         )
         logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
         logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
-        return client
+        
+        # Test the client by making a simple API call
+        try:
+            logger.info("Testing client with a simple API call...")
+            test_thread = client.beta.threads.create()
+            logger.info("Test API call successful!")
+            return client
+        except Exception as e:
+            logger.error(f"Test API call failed: {str(e)}")
+            logger.error(f"Error type: {type(e)}")
+            logger.error(f"Error args: {e.args}")
+            return None
+            
     except Exception as e:
         logger.error(f"Error initializing OpenAI client: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error args: {e.args}")
         return None
 
 # Initialize the client
+logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
+logger.info(f"Client initialization result: {client is not None}")
 
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
