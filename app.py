@@ -21,9 +21,9 @@ logger = logging.getLogger(__name__)
 logger.info("Loading environment variables...")
 load_dotenv()
 
-# Get environment variables
+# Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-ASSISTANT_ID = os.environ.get('ASSISTANT_ID')
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')  # Set default Assistant ID
 MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
 TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
 
@@ -75,6 +75,7 @@ try:
             timeout=TIMEOUT
         )
         logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
+        logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 except Exception as e:
     logger.error(f"Error initializing OpenAI client: {str(e)}")
     client = None
