@@ -24,6 +24,15 @@ logger = logging.getLogger(__name__)
 logger.info("Loading environment variables...")
 load_dotenv()
 
+# Check if running on PythonAnywhere
+is_pythonanywhere = 'PYTHONANYWHERE_DOMAIN' in os.environ
+if is_pythonanywhere:
+    logger.info("Running on PythonAnywhere - setting proxy configuration")
+    os.environ['HTTP_PROXY'] = 'http://proxy.server:3128'
+    os.environ['HTTPS_PROXY'] = 'http://proxy.server:3128'
+else:
+    logger.info("Running locally - no proxy configuration needed")
+
 # Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
@@ -49,12 +58,8 @@ def init_openai_client():
             return None
         
         logger.info("Creating OpenAI client with minimal configuration...")
-        # Create client with minimal configuration and no threading
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-            base_url="https://api.openai.com/v1",
-            http_client=None  # Force using the default synchronous client
-        )
+        # Create client with only the API key
+        client = OpenAI(api_key=OPENAI_API_KEY)
         logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
         logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
         
