@@ -1,0 +1,1361 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+/* Base styles */
+:root {
+    --primary-color: #00bcd4;
+    --text-color: #333333;
+    --bg-light: #ffffff;
+    --card-bg: rgba(0, 188, 212, 0.05);
+    --card-border: rgba(0, 188, 212, 0.2);
+}
+
+/* Desktop-only container adjustments */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .quantum-border {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-cards {
+        max-width: 1400px;
+        margin: 3rem auto;
+    }
+}
+
+/* Center alignment fixes */
+.text-center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* Typography */
+.brand-heading {
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    text-align: center;
+    width: 100%;
+}
+
+.brand-heading span {
+    display: inline-block;
+}
+
+/* Reset all letters to black first */
+.brand-heading .letter-d,
+.brand-heading .letter-s,
+.brand-heading .letter-y,
+.brand-heading .letter-tm,
+.brand-heading .letter-a,
+.brand-heading .letter-i {
+    color: #000000;
+}
+
+/* Then set only A and I to cyan */
+.brand-heading .letter-a,
+.brand-heading .letter-i {
+    color: #00bcd4;
+}
+
+.brand-heading span.letter-a,
+.brand-heading span.letter-i {
+    color: #000000 !important;
+}
+
+.subheading {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    color: #666666;
+    margin-bottom: 2rem;
+}
+
+/* Meet DAISY section */
+.meet-daisy-content {
+    position: relative;
+    padding: 1rem;
+}
+
+.meet-daisy-image {
+    float: right;
+    width: 120px;
+    margin: 0 0 1rem 2rem;
+}
+
+.meet-daisy-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Feature Cards */
+.feature-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 188, 212, 0.15);
+}
+
+.feature-card h3 {
+    color: #000000 !important;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.feature-card h3 a {
+    color: #000000 !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.feature-card h3 a:hover {
+    color: #000000 !important;
+}
+
+.feature-card h3 strong {
+    color: #000000 !important;
+}
+
+.feature-card h3 strong span {
+    color: #000000 !important;
+}
+
+/* Add specific rule for GallOptimizer O */
+.feature-card h3 a[href="/320Day"] strong span {
+    color: #00bcd4 !important;
+}
+
+.feature-card p {
+    color: var(--text-color) !important;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Track Badge */
+.track-badge {
+    display: inline-block;
+    background: var(--primary-color);
+    color: #ffffff !important;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Quote Section */
+.quote-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.quote-section p {
+    color: var(--text-color) !important;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .meet-daisy-content {
+        padding: 1rem 0;
+    }
+
+    .meet-daisy-image {
+        width: 80px;
+        margin: 0 0 1rem 1rem;
+    }
+
+    .feature-card {
+        padding: 1.25rem;
+    }
+
+    .feature-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .quote-section {
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .quote-section p {
+        font-size: 1rem;
+    }
+}
+
+/* General Text Styles */
+.lead {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #444444 !important;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--text-color) !important;
+}
+
+/* Container Spacing */
+.quantum-border {
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    border-radius: 12px;
+    background: var(--bg-light);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.white-container {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Base font sizes */
+.lead {
+    font-size: 1.2rem !important;
+    line-height: 1.6;
+    color: var(--text-color) !important;
+}
+
+.manifesto p {
+    font-size: 1.2rem !important;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--text-color) !important;
+}
+
+.legacy-section p {
+    font-size: 1.2rem !important;
+    line-height: 1.6;
+    color: var(--text-color) !important;
+}
+
+.track-badge {
+    font-size: 1rem !important;
+    color: #FFFFFF !important;
+}
+
+.text-muted {
+    font-size: 1.1rem !important;
+    color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Specific overrides */
+.manifesto .track-badge + p {
+    font-size: 1.2rem !important;
+    color: var(--text-color) !important;
+}
+
+.legacy-section p.lead {
+    font-size: 1.3rem !important;
+    font-weight: 400;
+    color: var(--text-color) !important;
+}
+
+.legacy-quote blockquote {
+    font-size: 1.4rem !important;
+    color: var(--text-color) !important;
+}
+
+.legacy-quote footer {
+    font-size: 1.1rem !important;
+    color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Additional text color fixes */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color) !important;
+}
+
+p {
+    color: var(--text-color) !important;
+}
+
+.testimonial-text, .testimonial-author {
+    color: var(--text-color) !important;
+}
+
+.feature-card p, .achievement-card p {
+    color: var(--text-color) !important;
+}
+
+.sponsor-quote, .sponsor-card p {
+    color: var(--text-color) !important;
+}
+
+.stat-label, .metric-label {
+    color: var(--text-color) !important;
+}
+
+/* Add to existing styles */
+.historical-reference {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+}
+
+.historical-reference::after {
+    content: "A real story from a real book: 'Through the Yellowstone Park on Horseback' by George Wood Wingate.";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.historical-reference:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: 130%;
+}
+
+/* Updated Signup Modal Styles */
+.signup-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.signup-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.signup-modal.active .signup-modal-content {
+    transform: translateY(0);
+}
+
+.signup-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+}
+
+.signup-modal-close:hover {
+    opacity: 1;
+}
+
+.signup-modal .lead {
+    color: var(--text-color) !important;
+}
+
+.signup-modal .text-muted {
+    color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.signup-modal h2.text-gradient {
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.signup-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.signup-form .input-group {
+    margin-bottom: 1rem;
+}
+
+.signup-form input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.8rem;
+    height: auto;
+    font-size: 1.1rem;
+}
+
+.signup-form .btn-primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.signup-form .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Signup Popup Styles */
+.signup-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-popup.active {
+    display: flex;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.signup-popup-content {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+    border-radius: 15px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    transform: translateY(20px);
+    opacity: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.signup-popup.active .signup-popup-content {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+.signup-popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    color: var(--text-color);
+}
+
+.signup-popup-close:hover {
+    opacity: 1;
+}
+
+.signup-popup h2 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.signup-popup .track-badge {
+    display: inline-block;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+.signup-popup input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    padding: 0.8rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s;
+}
+
+.signup-popup input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.signup-popup .btn-primary {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.signup-popup .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Add to existing styles */
+.sponsor-tier {
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: transform 0.3s ease;
+}
+
+.sponsor-tier:hover {
+    transform: translateY(-2px);
+}
+
+.sponsor-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.sponsor-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.sponsor-card h4 {
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.sponsor-quote {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+.sponsor-metrics {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.metric-badge {
+    padding: 0.5rem 1rem;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+}
+
+.track-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .sponsor-tier {
+        padding: 1.5rem;
+    }
+    
+    .sponsor-card {
+        padding: 1.25rem;
+    }
+    
+    .sponsor-metrics {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .metric-badge {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Add to existing styles */
+.staff-card {
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.staff-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid rgba(52, 152, 219, 0.3);
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+.staff-title {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.staff-name {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.staff-bio {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.partners-section {
+    padding: 0;
+}
+
+.benefactor-container {
+    display: flex;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.benefactor-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding-top: 35px;
+}
+
+.tier-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #00bcd4, #0097a7);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.benefactor-card h2 {
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+.benefactor-logo {
+    width: 156px;
+    height: auto;
+    margin: 15px 0;
+    transition: transform 0.2s ease;
+}
+
+.benefactor-logo:hover {
+    transform: scale(1.05);
+}
+
+.benefactor-card p {
+    margin: 5px 0;
+    color: var(--text-color);
+}
+
+.benefactor-card .tagline {
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.benefactor-card.elite h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.benefactor-card.yellowstone h2 {
+    font-size: 20px;
+}
+
+.benefactor-card.supporters h2 {
+    font-size: 18px;
+}
+
+@media (max-width: 768px) {
+    .benefactor-container {
+        flex-direction: column;
+        gap: 25px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Signup Popup (Moved to top of content) -->
+<div class="signup-popup" id="signupPopup">
+    <div class="signup-popup-content">
+        <button class="signup-popup-close" onclick="closePopup()">&times;</button>
+        <div class="track-badge">LIMITED TIME OFFER</div>
+        <h2>Join DAISY™</h2>
+        <p class="lead mb-4">Get exclusive access to DAISY's AI-powered insights, brought to you by 320.</p>
+        <form id="popupSignupForm">
+            <input type="email" placeholder="Enter your email" required name="email" class="form-control">
+            <button type="submit" class="btn btn-primary hover-lift">Find Your Kick</button>
+            <p class="text-muted small mt-3">* Limited spots available. Early members receive priority access to new features.</p>
+        </form>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">
+                <span class="letter-d">D</span><span class="letter-a">A</span><span class="letter-i">I</span><span class="letter-s">S</span><span class="letter-y">Y</span><span class="letter-tm">™</span>
+            </h1>
+            <p class="subheading"><strong>D</strong>ata <strong>A</strong>ctivated <strong>I</strong>ndividualized <strong>S</strong>ystem for <strong>Y</strong>ou</p>
+        </div>
+    </div>
+
+    <!-- Meet DAISY Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border">
+                <div class="track-badge">Equine-Powered Efficiency</div>
+                <div class="meet-daisy-content">
+                    <div class="meet-daisy-image">
+                        <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" 
+                             alt="DAISY" 
+                             class="img-fluid">
+                    </div>
+                    <div>
+                        <h2 class="mb-4">Meet <span style="color: #000000;">D</span><span style="color: #00bcd4;">A</span><span style="color: #00bcd4;">I</span><span style="color: #000000;">SY</span><span style="color: #000000;">™</span></h2>
+                        <p class="lead">Hay hay hay! I'm <strong>DAISY™</strong>, your dedicated AI-powered running coach and also a horse. Whether you're galloping a 320-meter Wingo or cantering through a 3,200-furlong adventure to Yellowstone, I'll be here to guide you through the quantum realm of individualized efficiency—where unpredictability becomes a calculated advantage, adaptation transcends conventional wisdom, and the very essence of training is redefined through the lens of equine-inspired optimization.</p>
+                        
+                        <p class="lead">Find your kick with our groundbreaking horse-powered features:</p>
+                        
+                        <div class="feature-cards">
+                            <div class="feature-card">
+                                <h3><a href="/coach-daisy">🐴 Coach <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span></a></h3>
+                                <p>Personalized training and life advice from your 150-year-old equine running coach.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3><a href="/daisy-score">📊 <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span> Score</a></h3>
+                                <p>Measure your harmonic efficiency and conformity index with the natural rhythms of running.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3><a href="/320Day">⚡ Wingo Workouts</a></h3>
+                                <p>Refine running macrodata to receive custom <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span> designed workouts.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3><a href="/wingo-converter">🧮 Wingo Converter</a></h3>
+                                <p>From Wingos to Mare-athons, DAISY™ crunches pace conversion calculations so you don't have to.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3><a href="/game2">🤠 Yellowstone</a></h3>
+                                <p>Relive Daisy and George's legendary 1885 journey in our interactive videogame.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3><a href="/merch">🌸 Merch</a></h3>
+                                <p>Check out the DAISY x Christina Collection minted on our carbon plate-neutral blockchain.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Signup -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border text-center">
+                <h2 class="text-gradient mb-4">Join the <strong>DAISY™</strong> Herd</h2>
+                <p class="lead mb-4">Exclusive <strong>DAISY™</strong>-driven insights and other 320 content delivered straight to your inbox.</p>
+                <form id="emailSignupForm" class="mx-auto" style="max-width: 500px;">
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Enter your email" required name="email" id="signupEmail">
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </div>
+                    <div class="alert alert-info mt-3" style="display: none;" id="signupMessage"></div>
+                    <p class="text-muted small">* Subscribers will be added to our waiting list. We will notify you when a spot becomes available.</p>
+                </form>
+                <div class="text-center mt-4">
+                    <a href="https://www.instagram.com/320trackclub/" target="_blank" class="btn btn-outline-dark me-2 mb-md-0 mb-2">
+                        <i class="fab fa-instagram"></i> Follow us on Instagram
+                    </a>
+                    <a href="https://onlyfans.com/coachdaisy" target="_blank" class="btn btn-outline-dark">
+                        <img src="{{ url_for('static', filename='images/onlyfans_logo_full_blue.png') }}" alt="OnlyFans" style="height: 20px; vertical-align: middle; margin-right: 5px;"> Crazy 4 DAISY™
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legacy Section (Moved to top) -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border legacy-section">
+                <div class="track-badge pulse-badge">The DAISY™ WAY</div>
+                <h2 class="text-gradient mb-4">From Yellowstone to Wingate</h2>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="float-md-end ms-md-4 mb-4 text-center" style="max-width: 300px;">
+                            <img src="{{ url_for('static', filename='images/george_and_daisy.png') }}" alt="George Wood Wingate and Daisy" class="img-fluid rounded" style="max-width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            <p class="text-muted mt-2" style="font-size: 0.9rem;">George Wingate and Daisy during their 1885 Yellowstone expedition</p>
+                        </div>
+                        
+                        <p class="lead">In 1885, George Wood Wingate set out on a journey through the thin air of the Rocky Mountains and into Yellowstone Park. The New York attorney was joined by his wife, daughter, and a team of horses, led by a gentle yet unpredictable cayuse named Daisy.</p>
+                        
+                        <p class="lead">Over 26 days and 3,200 furlongs at altitudes exceeding 7,000 feet, Daisy moved not with the metronomic strides of an optimized machine but with a rhythm all her own—trotting on three legs while kicking her companions with the fourth, dodging rattlesnakes, sidestepping grizzlies, and shifting pace at will.¹ She ignored expectations, refused to conform, and in doing so, became a pioneer in the art of personal optimization.</p>
+                        
+                        <p class="lead">Daisy didn't just survive the journey; she conquered it. Progress, she proved, isn't about rigid uniformity but about mastering natural variation.</p>
+                        
+                        <p class="lead">Today, that same spirit powers <strong>DAISY™</strong> (Data Activated Individualized System for You), an AI-powered run coach and horse that is redefining harmonic efficiency. While Daisy adjusted instinctively to the unknown, Coach <strong>DAISY™</strong> does so through real-time performance analysis, generating personalized training plans that evolve dynamically—because true efficiency isn't about rigid structure but about embracing natural variation.</p>
+                        
+                        <p class="lead">140 years later, <strong>DAISY™</strong> remains a leading voice in the galloping community, training top athletes at Brooklyn's Wingate Track—a seemingly arbitrary 320 meters rather than the standard 400. Maybe that's coincidence. Or maybe it's a nod to her 3,200-furlong journey, a reminder that the best training embraces both individuality and community.</p>
+                        
+                        <p class="lead">What once seemed like inefficiency is now a calculated advantage. Every stride variation, every unexpected burst of energy, every unique movement—all are now quantified, analyzed, and optimized through <strong>DAISY™</strong>.</p>
+                        
+                        <p class="lead">Through the power of technology, we can all achieve Daisy's level of individualized efficiency—embracing unpredictability, optimizing adaptation, and redefining what it means to train smart.</p>
+                        
+                        <hr class="my-4">
+                        <p class="small text-muted mb-0" style="font-size: 0.8rem;"><sup>1</sup> This part is (mostly!) from a real story from George Wood Wingate's real book, Through the Yellowstone Park on Horseback.</p>
+                        <p class="small text-muted mb-0" style="font-size: 0.8rem;"><sup>2</sup> Okay the rest of this is horse manure. Whatever, sue me.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Board of Directors -->
+    <div id="board" class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border">
+                <h2 class="text-gradient mb-4 text-center">The Troop</h2>
+                <div class="row g-4 justify-content-center">
+                    <!-- Chief Pacer -->
+                    <div class="col-md-4">
+                        <div class="staff-card">
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/erock.png') }}" 
+                                     alt="ERock" 
+                                     class="staff-image mx-auto d-block"
+                                     style="object-position: center 0%;">
+                                <div class="staff-title text-center">Chief Pacer</div>
+                                <h3 class="staff-name text-center">ERock</h3>
+                                <p class="staff-bio text-center">A trailblazer in quantum optimization and athletic computing, reshaping AI-driven human performance with radical training paradigms—celebrated by experts yet perplexing to the masses.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Equinety -->
+                    <div class="col-md-4">
+                        <div class="staff-card">
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" 
+                                     alt="Daisy" 
+                                     class="staff-image mx-auto d-block">
+                                <div class="staff-title text-center">Equinety & Inclusion</div>
+                                <h3 class="staff-name text-center">Daisy</h3>
+                                <p class="staff-bio text-center">The inspiration behind our DAISY™ system. Her revolutionary three-legged trot pattern demonstrated that true optimization lies in embracing natural fluctuations in rhythm.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Christina -->
+                    <div class="col-md-4">
+                        <div class="staff-card">
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/daisy_christina.png') }}" 
+                                     alt="Christina A." 
+                                     class="staff-image mx-auto d-block">
+                                <div class="staff-title text-center">Genie</div>
+                                <h3 class="staff-name text-center">Christina A.</h3>
+                                <p class="staff-bio text-center">Full-stack developer specializing in scalable architectures, cloud-native solutions, DevOps pipelines, and AI-driven optimization.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategic Partners -->
+    <div class="partners-section">
+        <div class="row">
+            <div class="col-12">
+                <div class="quantum-border">
+                    <div class="text-center">
+                        <h2 class="text-gradient mb-3">Mane Benefactors</h2>
+                        <p class="lead mb-4">Our esteemed partners in personal performance optimization.</p>
+                    </div>
+                    
+                    <div class="benefactor-container">
+                        <div class="benefactor-card elite">
+                            <div class="tier-badge">Wingate Elite</div>
+                            <a href="https://www.instagram.com/320trackclub/" target="_blank">
+                                <img src="{{ url_for('static', filename='images/logo_trim.png') }}" alt="Logo" class="benefactor-logo">
+                            </a>
+                            <p class="tagline">"Competing only where we can win."</p>
+                        </div>
+
+                        <div class="benefactor-card yellowstone">
+                            <div class="tier-badge">Yellowstone Tier</div>
+                            <h2>Lincoln Ice Cream</h2>
+                            <p class="tagline">"Fuel your Wingos one pint at a time"</p>
+                            <h2>NY Post Cooking</h2>
+                            <p class="tagline">"The right way to eat"</p>
+                        </div>
+
+                        <div class="benefactor-card supporters">
+                            <div class="tier-badge">9 + 1</div>
+                            <h2>Community Supporters</h2>
+                            <p>Amy • Fiona</p>
+                            <p>Monica • Erica • Rita • Tina</p>
+                            <p>Sandra • Mary • Jessica • You</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.daisy-headshot img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: 3px solid rgba(52, 152, 219, 0.3);
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+}
+</style>
+
+<!-- Updated Signup Modal -->
+<div class="signup-modal" id="signupModal">
+    <div class="signup-modal-content quantum-border">
+        <button class="signup-modal-close" onclick="closeSignupModal()">&times;</button>
+        <h2 class="text-gradient">Join the DAISY Herd</h2>
+        <p class="lead">Get exclusive DAISY-driven insights and other 320-related content delivered straight to your inbox.</p>
+        <form class="signup-form" id="modalSignupForm">
+            <div class="input-group">
+                <input type="email" class="form-control" placeholder="Enter your email" required name="email" id="modalSignupEmail">
+                <button class="btn btn-primary hover-lift" type="submit">Kick the Fourth Leg</button>
+            </div>
+            <div class="alert mt-3" style="display: none;" id="modalSignupMessage"></div>
+            <p class="text-muted small">* By subscribing, you will be added to our waiting list. We are currently at capacity and will notify you when a spot becomes available. Your running form may improve dramatically while waiting.</p>
+        </form>
+    </div>
+</div>
+
+<!-- DAISY Score Section -->
+<div class="row mb-5" id="daisy-score">
+    <div class="col-12">
+        <div class="white-container">
+            <!-- ... existing code ... -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Single initialization point
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
+    // Handle all email signup forms
+    const forms = [
+        document.getElementById('emailSignupForm'),
+        document.getElementById('popupSignupForm'),
+        document.getElementById('modalSignupForm')
+    ];
+
+    forms.forEach(form => {
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const submitButton = this.querySelector('button[type="submit"]');
+                const messageDiv = this.querySelector('.alert') || document.createElement('div');
+                const email = emailInput.value;
+
+                // If message div doesn't exist, add it
+                if (!messageDiv.parentNode) {
+                    messageDiv.className = 'alert mt-3';
+                    messageDiv.style.display = 'none';
+                    this.insertBefore(messageDiv, this.querySelector('.text-muted'));
+                }
+
+                // Disable form while submitting
+                emailInput.disabled = true;
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Processing...';
+                messageDiv.style.display = 'none';
+
+                // Send to backend
+                fetch('/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messageDiv.style.display = 'block';
+                    if (data.success) {
+                        messageDiv.className = 'alert alert-success mt-3';
+                        messageDiv.innerHTML = 'You have been added to the waiting list! We will notify you when a spot becomes available.';
+                        this.reset();
+                        if (this.id === 'popupSignupForm') {
+                            setTimeout(closePopup, 2000);
+                        } else if (this.id === 'modalSignupForm') {
+                            setTimeout(closeSignupModal, 2000);
+                        }
+                    } else {
+                        if (data.message.includes('already subscribed')) {
+                            messageDiv.className = 'alert alert-info mt-3';
+                            messageDiv.innerHTML = 'You are already on the waiting list! We will notify you when a spot becomes available.';
+                        } else {
+                            messageDiv.className = 'alert alert-danger mt-3';
+                            messageDiv.innerHTML = data.message || 'Something went wrong. Please try again.';
+                        }
+                    }
+                })
+                .catch(error => {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'alert alert-danger mt-3';
+                    messageDiv.innerHTML = 'Error subscribing. Please try again.';
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Re-enable form
+                    emailInput.disabled = false;
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = this.id === 'popupSignupForm' ? 'Find Your Kick' : 
+                                          this.id === 'modalSignupForm' ? 'Kick the Fourth Leg' : 
+                                          'Subscribe';
+                });
+            });
+        }
+    });
+
+    // Show popup immediately after page load
+    setTimeout(() => {
+        const popup = document.getElementById('signupPopup');
+        if (popup) {
+            popup.style.display = 'flex';
+            setTimeout(() => {
+                popup.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }, 100);
+        }
+    }, 1500);
+});
+
+function closePopup() {
+    const popup = document.getElementById('signupPopup');
+    if (popup) {
+        popup.classList.remove('active');
+        setTimeout(() => {
+            popup.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+}
+
+// Name transformation animation
+document.querySelector('.transform-trigger').addEventListener('click', function() {
+    const letters = document.querySelectorAll('.letter');
+    const originalLetters = Array.from(letters).filter(l => l.dataset.original);
+    const targetLetters = Array.from(letters).filter(l => l.dataset.target);
+    
+    // First phase: flip original letters
+    originalLetters.forEach((letter, i) => {
+        setTimeout(() => {
+            letter.classList.add('transforming');
+        }, i * 200);
+    });
+    
+    // Second phase: reveal target letters
+    setTimeout(() => {
+        originalLetters.forEach(letter => letter.style.opacity = '0');
+        targetLetters.forEach((letter, i) => {
+            setTimeout(() => {
+                letter.classList.add('transforming');
+                letter.style.opacity = '1';
+            }, i * 200);
+        });
+    }, originalLetters.length * 200 + 500);
+    
+    // Reset after animation
+    setTimeout(() => {
+        letters.forEach(letter => {
+            letter.classList.remove('transforming');
+            letter.style.opacity = '1';
+        });
+    }, (originalLetters.length + targetLetters.length) * 200 + 1500);
+});
+
+// Real-time stats update
+function updateStats() {
+    const bars = document.querySelectorAll('.stat-bar');
+    bars.forEach(bar => {
+        const newValue = Math.floor(Math.random() * 30) + 70; // Random value between 70-100
+        bar.style.setProperty('--value', newValue);
+    });
+}
+
+// Update stats every 3 seconds
+setInterval(updateStats, 3000);
+
+// Initialize circular progress
+document.addEventListener('DOMContentLoaded', function() {
+    const progress = document.querySelector('.progress-bar');
+    if (progress) {
+        progress.style.strokeDasharray = '100, 100';
+        setTimeout(() => {
+            progress.style.strokeDasharray = '75, 100';
+        }, 100);
+    }
+});
+
+// Updated Modal Functions
+document.addEventListener('DOMContentLoaded', function() {
+    // Show modal after 2 seconds
+    setTimeout(openSignupModal, 2000);
+
+    // Make sure all "Subscribe" and "Join" buttons open the modal
+    document.querySelectorAll('.btn-primary').forEach(button => {
+        if (button.textContent.toLowerCase().includes('subscribe') || 
+            button.textContent.toLowerCase().includes('join')) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                openSignupModal();
+            });
+        }
+    });
+
+    // Handle modal signup form
+    document.getElementById('modalSignupForm').addEventListener('submit', handleModalSubmit);
+
+    // Close modal when clicking outside
+    document.getElementById('signupModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSignupModal();
+        }
+    });
+
+    // Update existing email signup to use modal
+    document.getElementById('emailSignupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        openSignupModal();
+    });
+});
+
+function openSignupModal() {
+    const modal = document.getElementById('signupModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Focus on email input
+        setTimeout(() => {
+            const emailInput = document.getElementById('modalSignupEmail');
+            if (emailInput) emailInput.focus();
+        }, 300);
+    }
+}
+
+function closeSignupModal() {
+    const modal = document.getElementById('signupModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function handleModalSubmit(e) {
+    e.preventDefault();
+    const emailInput = document.getElementById('modalSignupEmail');
+    const submitButton = this.querySelector('button[type="submit"]');
+    const messageDiv = document.getElementById('modalSignupMessage');
+    const email = emailInput.value;
+
+    // Disable form while submitting
+    emailInput.disabled = true;
+    submitButton.disabled = true;
+    submitButton.innerHTML = 'Processing...';
+    messageDiv.style.display = 'none';
+
+    // Send to backend
+    fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        messageDiv.style.display = 'block';
+        if (data.success) {
+            messageDiv.className = 'alert alert-success mt-3';
+            messageDiv.innerHTML = 'Welcome to the revolution! We\'ll be in touch soon.';
+            this.reset();
+            setTimeout(closeSignupModal, 2000);
+        } else {
+            messageDiv.className = 'alert alert-info mt-3';
+            messageDiv.innerHTML = data.message || 'Something went wrong. Please try again.';
+        }
+    })
+    .catch(error => {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'alert alert-danger mt-3';
+        messageDiv.innerHTML = 'Error subscribing. Please try again.';
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Re-enable form
+        emailInput.disabled = false;
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Kick the Fourth Leg';
+    });
+}
+</script>
+{% endblock %} 

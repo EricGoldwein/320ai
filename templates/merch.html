@@ -1,0 +1,761 @@
+{% extends "base.html" %}
+
+{% block title %}Merch • 320AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .product-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Specific alignment for desktop images */
+@media (min-width: 768px) {
+    .product-card img[alt="Uncle George NFT"] {
+        object-position: 15% center;
+    }
+    
+    .product-card img[alt="Porky Prance NFT"] {
+        object-position: 5% center;
+    }
+    
+    .product-card img[alt="Come on Over"] {
+        object-position: 25% center;
+    }
+    
+    .product-card img[alt="The Classic"] {
+        object-position: 60% center;
+    }
+    
+    .product-card img[alt="AV Club NFT"] {
+        object-position: 10% center;
+    }
+
+    .product-card img[alt="Neigh-maste"] {
+        object-position: 37% center;
+    }
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background-image: url("{{ url_for('static', filename='images/daisy.png') }}");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.03;
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.price-tag {
+    display: inline-block;
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.product-card h4 {
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.product-card .text-muted {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 500;
+    line-height: 1.5;
+    flex-grow: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.product-card h3 {
+    color: #1a1a1a;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    text-shadow: none;
+    letter-spacing: 0.5px;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+.product-card p {
+    color: #3498db;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+}
+
+.product-card .nft-context {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.product-card .nft-serial {
+    color: #3498db;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-shadow: none;
+    letter-spacing: 0.5px;
+    background: rgba(52, 152, 219, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.product-card .btn-primary {
+    margin-top: auto;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.membership-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.membership-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.2rem;
+    height: 100%;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.membership-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.track-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    margin-bottom: 0.5rem;
+}
+
+.brand-heading {
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.lead {
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.membership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.tier-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tier-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background-image: url("{{ url_for('static', filename='images/daisy_wingate.png') }}");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.tier-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.tier-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.tier-price {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.tier-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tier-benefits li {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.tier-benefits li:before {
+    content: "•";
+    color: #3498db;
+    margin-right: 0.5rem;
+}
+
+.earnings-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.earnings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.earnings-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.earnings-card h5 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.featured-product {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.featured-product img {
+    max-height: 500px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    object-position: center 48%;
+}
+
+.featured-product h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.featured-product h2 sup {
+    background: none;
+    -webkit-text-fill-color: #3498db;
+    font-size: 0.4em;
+    vertical-align: super;
+    font-weight: bold;
+}
+
+.featured-product .lead {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+}
+
+.nft-badge {
+    background: linear-gradient(45deg, #00ff88, #00bfff);
+    color: black;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.carbon-neutral-badge {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.featured-carousel {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.featured-carousel::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    pointer-events: none;
+}
+
+.featured-carousel .image-caption {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    color: white;
+    font-size: 0.9rem;
+    z-index: 1;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.featured-carousel img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.featured-carousel img.active {
+    opacity: 1;
+}
+
+.featured-product h3 {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.featured-product .btn-primary {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+}
+
+.eco-features {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.eco-features li {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    position: relative;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+.eco-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #2ecc71;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.eco-badge {
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.eco-badge i {
+    color: #2ecc71;
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-light {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.lead.text-light {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.quantum-border .text-gradient.mb-3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.track-badge {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+.badges-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.quantum-border {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 text-center mb-4">The DAISY<sup style="color: #3498db; font-size: 0.6em; vertical-align: super;">™</sup> Collection</h1>
+            <div class="badges-container mt-3">
+                <div class="nft-badge">Find Your Kick</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Product -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="featured-product">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <img src="{{ url_for('static', filename='images/daisy.png') }}" alt="The Kick - DAISY Collection" class="img-fluid">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="nft-badge">Featured NFT</div>
+                        <h2>The DAISY<sup style="color: #3498db; font-weight: bold; font-size: 0.4em; vertical-align: super; text-shadow: none; background: none; -webkit-text-fill-color: #3498db;">™</sup> Collection</h2>
+                        <p class="lead">Inspired by the pioneer of non-linear progression. Each piece is a unique Neigh-Fungible Token (NFT), a one-of-a-kind digital collectible minted on our carbon plate-neutral blockchain.</p>
+                        <p class="price-tag">Starting at 120 $WINGO</p>
+                        <button class="btn btn-primary btn-lg mt-3" onclick="showSoldOutMessage()">Buy "The Kick" NFT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="quantum-border" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="track-badge mb-4">LIMITED EDITION NFTs</div>
+                <div class="row g-4">
+                    <!-- Original NFTs -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_christina.png') }}" alt="Come on Over" class="product-image">
+                            <h3>Come On Over</h3>
+                            <div class="nft-serial">#7241</div>
+                            <p>320 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_plank.png') }}" alt="Neigh-maste" class="product-image">
+                            <h3>Neigh-maste</h3>
+                            <div class="nft-serial">#1893</div>
+                            <p>240 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_wingate.png') }}" alt="The Classic" class="product-image">
+                            <h3>The Classic</h3>
+                            <div class="nft-serial">#4567</div>
+                            <p>480 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <!-- New NFTs -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/george_and_daisy.png') }}" alt="Uncle George NFT" class="product-image">
+                            <h3>Uncle George</h3>
+                            <div class="nft-serial">#9012</div>
+                            <p>160 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" alt="Coach NFT" class="product-image">
+                            <h3>Coach</h3>
+                            <div class="nft-serial">#3456</div>
+                            <p>200 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_confused.png') }}" alt="Daisy & Confused NFT" class="product-image">
+                            <h3>Daised</h3>
+                            <div class="nft-serial">#8124</div>
+                            <p>180 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_wfh.png') }}" alt="WFH NFT" class="product-image">
+                            <h3>WFH</h3>
+                            <div class="nft-serial">#2789</div>
+                            <p>150 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_porcupine.png') }}" alt="Porky Prance NFT" class="product-image">
+                            <h3>Porky Prance</h3>
+                            <div class="nft-serial">#5901</div>
+                            <p>190 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="{{ url_for('static', filename='images/daisy_avclub.png') }}" alt="AV Club NFT" class="product-image">
+                            <h3>AV Club</h3>
+                            <div class="nft-serial">#6345</div>
+                            <p>170 $WINGO</p>
+                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle all email signup forms
+    const forms = [
+        document.getElementById('emailSignupForm'),
+        document.getElementById('popupSignupForm'),
+        document.getElementById('modalSignupForm')
+    ];
+
+    forms.forEach(form => {
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const submitButton = this.querySelector('button[type="submit"]');
+                const messageDiv = this.querySelector('.alert') || document.createElement('div');
+                const email = emailInput.value;
+
+                // If message div doesn't exist, add it
+                if (!messageDiv.parentNode) {
+                    messageDiv.className = 'alert mt-3';
+                    messageDiv.style.display = 'none';
+                    this.insertBefore(messageDiv, this.querySelector('.text-muted'));
+                }
+
+                // Disable form while submitting
+                emailInput.disabled = true;
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Processing...';
+                messageDiv.style.display = 'none';
+
+                // Send to backend
+                fetch('/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messageDiv.style.display = 'block';
+                    if (data.success) {
+                        messageDiv.className = 'alert alert-success mt-3';
+                        messageDiv.innerHTML = 'You have been added to the waiting list! We will notify you when a spot becomes available.';
+                        this.reset();
+                        if (this.id === 'popupSignupForm') {
+                            setTimeout(closePopup, 2000);
+                        } else if (this.id === 'modalSignupForm') {
+                            setTimeout(closeSignupModal, 2000);
+                        }
+                    } else {
+                        if (data.message.includes('already subscribed')) {
+                            messageDiv.className = 'alert alert-info mt-3';
+                            messageDiv.innerHTML = 'You are already on the waiting list! We will notify you when a spot becomes available.';
+                        } else {
+                            messageDiv.className = 'alert alert-danger mt-3';
+                            messageDiv.innerHTML = data.message || 'Something went wrong. Please try again.';
+                        }
+                    }
+                })
+                .catch(error => {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'alert alert-danger mt-3';
+                    messageDiv.innerHTML = 'Error subscribing. Please try again.';
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Re-enable form
+                    emailInput.disabled = false;
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = this.id === 'popupSignupForm' ? 'Find Your Kick' : 
+                                          this.id === 'modalSignupForm' ? 'Kick the Fourth Leg' : 
+                                          'Subscribe';
+                });
+            });
+        }
+    });
+
+    // Update view collection button to link to NFT section
+    const viewCollectionBtn = document.querySelector('.btn-primary');
+    if (viewCollectionBtn) {
+        viewCollectionBtn.href = '#nft-section';
+    }
+});
+
+function showSoldOutMessage() {
+    const email = prompt("This NFT is currently sold out. Enter your email to be notified when it becomes available:");
+    if (email) {
+        // Send to backend
+        fetch('/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Thank you! We'll notify you when this NFT becomes available.");
+            } else {
+                alert(data.message || "Something went wrong. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error subscribing. Please try again.");
+        });
+    }
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}DAISY™ • 320{% endblock %}
+
+{% block content %}
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        overflow: hidden;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        width: 100%;
+        flex-direction: column;
+        background-color: black;
+        position: relative;
+        animation: subtle-bg 4s ease-in-out infinite;
+        overflow: hidden;
+    }
+
+    @keyframes scanline-move {
+        0% { transform: translateY(-100%); opacity: 0; }
+        10% { opacity: 0.05; }
+        90% { opacity: 0.05; }
+        100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    .container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(to bottom, 
+            transparent 0%,
+            rgba(0, 255, 157, 0.05) 50%,
+            transparent 100%);
+        pointer-events: none;
+        animation: scanline-move 8s linear infinite;
+        animation-delay: 4s;
+    }
+
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: black;
+        pointer-events: none;
+        animation: 
+            static-noise 0.5s steps(1) infinite,
+            static-pulse 2s ease-in-out infinite;
+        mix-blend-mode: soft-light;
+    }
+
+    .transformation-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 600;
+        color: #00ff9d;
+        text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        display: flex;
+        gap: 1rem;
+        transition: gap 1s ease-in-out;
+    }
+
+    .char {
+        transition: all 0.1s ease-in-out;
+        position: relative;
+        display: inline-block;
+    }
+
+    .char.ai {
+        color: cyan;
+        transition: color 0.5s ease-in-out;
+    }
+
+    .char.ai.cyan {
+        color: cyan;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        animation: ai-flicker 2s ease-in-out infinite;
+    }
+
+    .char.emoji-char {
+        margin-right: -0.5rem;
+    }
+
+    .emoji {
+        font-size: 0.4em;
+        display: inline-block;
+        transform: scale(0.8);
+        position: relative;
+        top: -0.2em;
+        margin: 0 0.3em;
+    }
+
+    @keyframes flicker {
+        0% { opacity: 1; }
+        25% { opacity: 0.3; }
+        50% { opacity: 0.8; }
+        75% { opacity: 0.2; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes glitch {
+        0% { transform: translate(0); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(2px, -2px); }
+        60% { transform: translate(-2px, -2px); }
+        80% { transform: translate(2px, 2px); }
+        100% { transform: translate(0); }
+    }
+
+    @keyframes ai-flicker {
+        0% { opacity: 1; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
+        25% { opacity: 0.85; text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
+        50% { opacity: 1; text-shadow: 0 0 15px rgba(0, 255, 255, 0.7); }
+        75% { opacity: 0.9; text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
+        100% { opacity: 1; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
+    }
+
+    @keyframes static-pulse {
+        0% { opacity: 0.97; }
+        25% { opacity: 0.98; }
+        50% { opacity: 0.99; }
+        75% { opacity: 0.98; }
+        100% { opacity: 0.97; }
+    }
+
+    @keyframes subtle-bg {
+        0% { background-color: rgb(0, 0, 0); }
+        50% { background-color: rgb(2, 4, 6); }
+        100% { background-color: rgb(0, 0, 0); }
+    }
+
+    @keyframes static-noise {
+        0% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        50% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        100% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+    }
+
+    .flicker {
+        animation: flicker 0.2s infinite;
+    }
+
+    .glitch {
+        animation: glitch 0.1s infinite;
+    }
+
+    .final-state {
+        gap: 0.05rem;
+        letter-spacing: 0.02em;
+    }
+
+    .ai-part {
+        color: cyan;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .ai-part.visible {
+        opacity: 1;
+    }
+
+    .tm-symbol {
+        font-size: 0.4em;
+        position: absolute;
+        top: 0;
+        right: -0.8em;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .tm-symbol.visible {
+        opacity: 1;
+    }
+
+    .find-kick-button {
+        margin-top: 2rem;
+        padding: 0.8em 2em;
+        font-size: 1.2rem;
+        background: transparent;
+        border: 2px solid #00ff9d;
+        color: #00ff9d;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Rajdhani', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0;
+    }
+
+    .find-kick-button:hover {
+        background: #00ff9d;
+        color: black;
+    }
+
+    .find-kick-button.visible {
+        opacity: 1;
+    }
+
+    .char.faded {
+        opacity: 0.05;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .gate-code {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem;
+        color: #00ff9d;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        margin-top: 1rem;
+        letter-spacing: 3px;
+    }
+
+    .gate-code .separator {
+        display: inline-block;
+        margin: 0 0.5em;
+        opacity: 0.7;
+    }
+
+    .gate-code.visible {
+        opacity: 0.5;
+    }
+</style>
+
+<div class="container">
+    <div class="transformation-text">
+        <span class="char">D</span>
+        <span class="char">A</span>
+        <span class="char">I</span>
+        <span class="char">S</span>
+        <span class="char">Y</span>
+    </div>
+    <a href="/about" class="find-kick-button" style="text-decoration: none;">Find Your Kick</a>
+    <div class="gate-code">4 · 1 · 25</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const text = document.querySelector('.transformation-text');
+    const chars = text.querySelectorAll('.char');
+    const button = document.querySelector('.find-kick-button');
+    const gateCode = document.querySelector('.gate-code');
+    
+    // Random character generator
+    const randomChar = () => {
+        const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/';
+        return chars[Math.floor(Math.random() * chars.length)];
+    };
+
+    // Step 1: Initial state (2s delay)
+    setTimeout(() => {
+        // Step 2: Flicker all letters (2s)
+        chars.forEach(char => char.classList.add('flicker'));
+        
+        setTimeout(() => {
+            chars.forEach(char => char.classList.remove('flicker'));
+            
+            // Transform each letter to its number individually
+            chars[0].classList.add('glitch');
+            setTimeout(() => {
+                chars[0].textContent = '4';  // D -> 4
+                chars[2].classList.add('faded'); // Fade I
+                chars[3].classList.add('faded'); // Fade S
+                
+                setTimeout(() => {
+                    chars[1].classList.add('glitch');
+                    setTimeout(() => {
+                        chars[1].textContent = '1';  // A -> 1
+                        
+                        setTimeout(() => {
+                            chars[4].classList.add('glitch');
+                            setTimeout(() => {
+                                chars[4].textContent = '25';  // Y -> 25
+                                
+                                // Hold the 4.1.25 state longer
+                                setTimeout(() => {
+                                    chars.forEach(char => char.classList.remove('glitch', 'faded'));
+                                    // First clear I and S
+                                    chars[2].innerHTML = '';
+                                    chars[3].innerHTML = '';
+                                    // Add emojis as separators
+                                    chars[1].innerHTML = '<span class="emoji">🐎</span>';
+                                    chars[3].innerHTML = '<span class="emoji">🤖</span>';
+                                    chars[2].textContent = '1';
+                                    chars[0].textContent = '4';
+                                    chars[4].textContent = '25';
+                                    
+                                    // Step 4: Transform back to letters and condense
+                                    setTimeout(() => {
+                                        chars[0].textContent = 'D';
+                                        chars[1].textContent = 'A';
+                                        chars[2].textContent = 'I';
+                                        chars[3].textContent = 'S';
+                                        chars[4].textContent = 'Y';
+                                        
+                                        text.classList.add('final-state');
+                                        
+                                        setTimeout(() => {
+                                            chars[2].classList.add('ai');
+                                            chars[1].classList.add('ai');
+                                            
+                                            const tmSpan = document.createElement('span');
+                                            tmSpan.className = 'tm-symbol';
+                                            tmSpan.textContent = '™';
+                                            chars[4].appendChild(tmSpan);
+                                            
+                                            setTimeout(() => {
+                                                chars[1].classList.add('cyan');
+                                                chars[2].classList.add('cyan');
+                                                // Add initial bright flash
+                                                chars[1].style.textShadow = '0 0 30px rgba(0, 255, 255, 0.9)';
+                                                chars[2].style.textShadow = '0 0 30px rgba(0, 255, 255, 0.9)';
+                                                setTimeout(() => {
+                                                    // Return to normal glow
+                                                    chars[1].style.textShadow = '';
+                                                    chars[2].style.textShadow = '';
+                                                }, 200);
+                                                tmSpan.classList.add('visible');
+                                                
+                                                setTimeout(() => {
+                                                    button.classList.add('visible');
+                                                    // Show gate code after button
+                                                    setTimeout(() => {
+                                                        gateCode.classList.add('visible');
+                                                    }, 500);
+                                                }, 500);
+                                            }, 1000);
+                                        }, 2000);
+                                    }, 2000);
+                                }, 2000);
+                            }, 300);
+                        }, 300);
+                    }, 300);
+                }, 300);
+            }, 300);
+        }, 2000);
+    }, 2000);
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,857 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.workout-details {
+    display: none;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.workout-details.active {
+    display: block;
+}
+
+.song-roulette {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.current-song {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.plank-timer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.plank-display {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+.workout-progress {
+    display: none;
+    margin-top: 1rem;
+}
+
+.progress-step {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+
+.progress-step.completed {
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.start-workout-btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.system-directive {
+    background: rgba(44, 62, 80, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.system-directive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #3498db;
+    opacity: 0.5;
+}
+
+.system-directive .track-badge {
+    font-size: 1rem;
+    padding: 0.5rem 1.2rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: #ff7675;
+}
+
+.system-directive .lead {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.system-directive .directive-section {
+    background: rgba(44, 62, 80, 0.95);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.system-directive .directive-section p {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.system-directive .directive-section .track-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+    margin-bottom: 1rem;
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    color: #74b9ff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.system-directive .footer-text {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 2rem;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pulse-badge {
+    display: inline-block;
+    background: rgba(52, 152, 219, 0.25);
+    color: #74b9ff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(52, 152, 219, 0.5);
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.lead {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.brand-heading {
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #fff, #74b9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subheading {
+    font-weight: 400;
+    opacity: 0.95;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">320AI™</h1>
+            <p class="subheading">Data Activated Intelligence System</p>
+            
+            <!-- Animated Runner -->
+            <div class="runner-animation mb-4">
+                <div class="runner-sprite"></div>
+                <div class="track-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main System -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="system-directive quantum-border">
+                <div class="pulse-badge">NEURAL NETWORK ACTIVE</div>
+                <h2 class="text-gradient mb-4">320AI Workout System</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <p class="lead mb-4">Our quantum-enhanced neural network analyzes your unique parameters to create the perfect workout.</p>
+                        
+                        <!-- Questionnaire Form -->
+                        <div id="questionnaireForm" class="directive-section">
+                            <div class="track-badge mb-3">SYSTEM INITIALIZATION</div>
+                            <div class="question-section active" id="q1">
+                                <h4 class="text-gradient mb-3">Identity Verification</h4>
+                                <div class="form-group">
+                                    <label class="form-label">Enter your designation:</label>
+                                    <input type="text" class="form-control quantum-input" id="userName" placeholder="Your name here..." required>
+                                </div>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary quantum-btn" onclick="processQuestion1()">
+                                        <span class="btn-text">INITIALIZE</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Question 2 -->
+                            <div class="question-section" id="q2">
+                                <h4>Question 2/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Miles run in the past 320 days?</label>
+                                    <input type="number" class="form-control" id="miles_past_320_days" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(2)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(2)">Next</button>
+                            </div>
+
+                            <!-- Question 3 -->
+                            <div class="question-section" id="q3">
+                                <h4>Question 3/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Kilometers planned for 2025?</label>
+                                    <input type="number" class="form-control" id="kilometers_2025" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(3)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(3)">Next</button>
+                            </div>
+
+                            <!-- Question 4 -->
+                            <div class="question-section" id="q4">
+                                <h4>Question 4/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Average heart rate while walking?</label>
+                                    <input type="number" class="form-control" id="avg_hr_walking" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(4)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(4)">Next</button>
+                            </div>
+
+                            <!-- Question 5 -->
+                            <div class="question-section" id="q5">
+                                <h4>Question 5/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Days since last haircut?</label>
+                                    <input type="number" class="form-control" id="recent_haircut" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(5)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(5)">Next</button>
+                            </div>
+
+                            <!-- Question 6 -->
+                            <div class="question-section" id="q6">
+                                <h4>Question 6/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Current iron levels?</label>
+                                    <input type="number" class="form-control" id="iron_levels" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(6)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(6)">Next</button>
+                            </div>
+
+                            <!-- Question 7 -->
+                            <div class="question-section" id="q7">
+                                <h4>Question 7/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Date of your last race?</label>
+                                    <input type="date" class="form-control" id="last_race_date" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(7)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(7)">Next</button>
+                            </div>
+
+                            <!-- Question 8 -->
+                            <div class="question-section" id="q8">
+                                <h4>Question 8/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Race of your last date?</label>
+                                    <input type="text" class="form-control" id="last_date_race" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(8)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="nextQuestion(8)">Next</button>
+                            </div>
+
+                            <!-- Question 9 -->
+                            <div class="question-section" id="q9">
+                                <h4>Question 9/9</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Sum of last four digits of your SSN divided by 2?</label>
+                                    <input type="number" class="form-control" id="ssn_digit_sum" required>
+                                </div>
+                                <button class="btn btn-secondary" onclick="prevQuestion(9)">Back</button>
+                                <button class="btn btn-primary hover-lift" onclick="submitForm()">Generate Workout</button>
+                            </div>
+                        </div>
+
+                        <!-- Loading Animation -->
+                        <div id="loadingSection" class="loading-animation" style="display: none;">
+                            <h3 class="calculating mb-4">Quantum Calculations in Progress...</h3>
+                            <div class="progress mb-3">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+                            </div>
+                            <div id="calculationStatus" class="text-muted"></div>
+                        </div>
+
+                        <div id="workoutResult" class="mt-4" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Categories -->
+    <div class="row g-4">
+        <!-- E-Rock's 160 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">LEGEND</div>
+                <h3 class="text-gradient mb-3">ERock's 160</h3>
+                <p>The legendary ERock special:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 5 x 160m at threshold pace</li>
+                    <li class="mb-3">• Between repeats: Select 2</li>
+                    <li class="mb-2">Options:</li>
+                    <li class="mb-2">- Pushups</li>
+                    <li class="mb-2">- Planks (straight/elbow/side)</li>
+                    <li class="mb-2">- Wall sit</li>
+                    <li class="mb-2">- Lunges</li>
+                    <li class="mb-2">- Bicycle crunches</li>
+                    <li class="mb-2">- Burpees</li>
+                    <li class="mb-2">- Situps</li>
+                    <li class="mb-2">- Jump lunges</li>
+                    <li class="mb-2">- Squat lunges</li>
+                    <li class="mb-2">- Squats</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Choose wisely, suffer greatly</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- THE DAISY -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">THE DAISY</div>
+                <h3 class="text-gradient mb-3">Three-Legged Daisy</h3>
+                <p>Partner Workout: 3 x 320m three-legged runs:</p>
+                <ul class="list-unstyled">
+                    <li>• First 320m: Moderate pace, focus on coordination</li>
+                    <li>• Second 320m: Pick up the pace, channel your inner mutant</li>
+                    <li>• Third 320m: All out (if you dare)</li>
+                </ul>
+                <p class="text-muted"><small>Rest 2-3 minutes between sets. Switch inside/outside leg positions each round. Finish with a victory lap (regular two legs).</small></p>
+                <button class="btn btn-primary start-workout-btn" onclick="startWorkout('THE_DAISY')">Start Workout</button>
+            </div>
+        </div>
+
+        <!-- TRIMBLE -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">CLASSIC</div>
+                <h3 class="text-gradient mb-3">The TRIMBLE</h3>
+                <p>A classic speed contrast workout:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 10 x 320m total</li>
+                    <li class="mb-3">• First 160m: Very Fast</li>
+                    <li class="mb-3">• Second 160m: Very Slow</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>The key is maximizing the contrast between fast and slow</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- The 320 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">CORE</div>
+                <h3 class="text-gradient mb-3">The 320</h3>
+                <p>The ultimate core stability test:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 60s standard plank</li>
+                    <li class="mb-3">• 60s left side</li>
+                    <li class="mb-3">• 60s right side</li>
+                    <li class="mb-3">• 60s reverse plank</li>
+                    <li class="mb-3">• 80s finale (standard)</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>320 seconds of core enlightenment</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Song Roulette -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">MUSICAL</div>
+                <h3 class="text-gradient mb-3">Song Roulette</h3>
+                <p>3km of Christina-powered chaos:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• Each km paced to random Christina</li>
+                    <li class="mb-3">• Hit "Fighter"? Time to sprint!</li>
+                    <li class="mb-3">• "Beautiful"? Recovery pace</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>What a girl wants? More Christina.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reverse Running -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">BACKWARDS</div>
+                <h3 class="text-gradient mb-3">Reverse Running</h3>
+                <p>Master the art of backwards running:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 4 x 80m backwards buildup</li>
+                    <li class="mb-3">• 2 x 160m alternating direction</li>
+                    <li class="mb-3">• Backwards form drills</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Safety First: Start slow and maintain awareness</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOST -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">MYSTERY</div>
+                <h3 class="text-gradient mb-3">LOST</h3>
+                <p>The numbers are everything:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 40m sprint</li>
+                    <li class="mb-3">• 80m, 150m, 160m progression</li>
+                    <li class="mb-3">• 230m, 420m buildup</li>
+                    <li class="mb-3">• Grand finale: 1080m</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Don't tell us what you can't do</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- WINGO -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">ENDURANCE</div>
+                <h3 class="text-gradient mb-3">The WINGO</h3>
+                <p>Simple but brutal:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 32 x 320m</li>
+                    <li class="mb-3">• That's it. That's the workout.</li>
+                    <li class="mb-3">• Keep the pace consistent</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Sometimes less is more</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Clock -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">PRECISION</div>
+                <h3 class="text-gradient mb-3">The Clock</h3>
+                <p>Time is of the essence:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• Run for exactly 320 seconds</li>
+                    <li class="mb-3">• Must finish within 5s window</li>
+                    <li class="mb-3">• Outside range? Start over!</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>No watches allowed</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- HangTime -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">STRENGTH</div>
+                <h3 class="text-gradient mb-3">HangTime</h3>
+                <p>Field goal challenge:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• Hang on field goal post</li>
+                    <li class="mb-3">• Total time: 320 seconds</li>
+                    <li class="mb-3">• Breaks allowed (you'll need them)</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Grip it and don't quit</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Stretch -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">RECOVERY</div>
+                <h3 class="text-gradient mb-3">The Stretch</h3>
+                <p>Essential recovery:</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 10-minute yoga/stretch routine</li>
+                    <li class="mb-3">• Follow along with video</li>
+                    <li class="mb-3">• Perfect for post-workout</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small><a href="https://www.youtube.com/watch?v=nlitqDM40BE" target="_blank">Watch Video</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sound Effects -->
+<audio id="startSound" src="{{ url_for('static', filename='sounds/start.mp3') }}"></audio>
+<audio id="stopSound" src="{{ url_for('static', filename='sounds/stop.mp3') }}"></audio>
+<audio id="successSound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
+<audio id="failSound" src="{{ url_for('static', filename='sounds/fail.mp3') }}"></audio>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Timer functionality
+let timerInterval;
+let startTime;
+let isRunning = false;
+
+function formatTime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+    const startSound = document.getElementById('startSound');
+    startSound.play();
+    
+    startTime = Date.now();
+    isRunning = true;
+    document.querySelector('.start-timer').style.display = 'none';
+    document.querySelector('.stop-timer').style.display = 'inline-block';
+    
+    timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        document.querySelector('.timer-display').textContent = formatTime(elapsed);
+        
+        // Update progress ring
+        const progress = (elapsed / 320000) * 100;
+        const circle = document.querySelector('.progress-ring__circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        const offset = circumference - (progress / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
+    }, 10);
+}
+
+function stopTimer() {
+    const stopSound = document.getElementById('stopSound');
+    stopSound.play();
+    
+    clearInterval(timerInterval);
+    isRunning = false;
+    const elapsed = Date.now() - startTime;
+    const elapsedSeconds = Math.floor(elapsed / 1000);
+    const difference = Math.abs(320 - elapsedSeconds);
+    
+    const resultMessage = document.querySelector('.result-message');
+    resultMessage.style.display = 'block';
+    
+    if (difference <= 7) {
+        const successSound = document.getElementById('successSound');
+        successSound.play();
+        resultMessage.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Great job! You were off by only ${difference} seconds.
+                Your time: ${formatTime(elapsed)}
+            </div>
+        `;
+    } else {
+        const failSound = document.getElementById('failSound');
+        failSound.play();
+        resultMessage.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i>
+                You were off by ${difference} seconds. Try again!
+                Your time: ${formatTime(elapsed)}
+            </div>
+        `;
+    }
+    
+    document.querySelector('.start-timer').style.display = 'inline-block';
+    document.querySelector('.stop-timer').style.display = 'none';
+}
+
+document.querySelector('.start-timer').addEventListener('click', startTimer);
+document.querySelector('.stop-timer').addEventListener('click', stopTimer);
+
+// Runner Animation
+const runnerSprite = document.querySelector('.runner-sprite');
+let runnerPosition = 0;
+const spriteWidth = 50;
+const spriteCount = 8;
+
+function animateRunner() {
+    runnerPosition = (runnerPosition + 1) % spriteCount;
+    runnerSprite.style.backgroundPosition = `-${runnerPosition * spriteWidth}px 0`;
+    requestAnimationFrame(animateRunner);
+}
+
+animateRunner();
+
+// Backwards Runner Animation
+const backwardsSprite = document.querySelector('.backwards-sprite');
+let backwardsPosition = 0;
+
+function animateBackwardsRunner() {
+    backwardsPosition = (backwardsPosition + 1) % spriteCount;
+    backwardsSprite.style.backgroundPosition = `-${backwardsPosition * spriteWidth}px 0`;
+    requestAnimationFrame(animateBackwardsRunner);
+}
+
+animateBackwardsRunner();
+
+// Workout interaction functions
+function toggleWorkoutDetails(workout) {
+    const details = document.getElementById(`${workout}-details`);
+    details.classList.toggle('active');
+}
+
+// Plank Timer
+let plankInterval;
+let plankStartTime;
+
+function startPlank() {
+    const startBtn = document.querySelector('.start-plank');
+    const stopBtn = document.querySelector('.stop-plank');
+    const progress = document.querySelector('.plank-progress');
+    
+    startBtn.style.display = 'none';
+    stopBtn.style.display = 'inline-block';
+    progress.style.display = 'block';
+    
+    plankStartTime = Date.now();
+    
+    plankInterval = setInterval(() => {
+        const elapsed = Date.now() - plankStartTime;
+        const remaining = 320000 - elapsed;
+        
+        if (remaining <= 0) {
+            clearInterval(plankInterval);
+            document.querySelector('.plank-display').textContent = '00:00';
+            alert('Congratulations! You completed the 320-second plank!');
+            startBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            return;
+        }
+        
+        const progress = (elapsed / 320000) * 100;
+        document.querySelector('.progress-bar').style.width = `${progress}%`;
+        
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        document.querySelector('.plank-display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }, 100);
+}
+
+function stopPlank() {
+    clearInterval(plankInterval);
+    document.querySelector('.start-plank').style.display = 'inline-block';
+    document.querySelector('.stop-plank').style.display = 'none';
+    document.querySelector('.plank-display').textContent = '05:20';
+    document.querySelector('.progress-bar').style.width = '0%';
+    document.querySelector('.plank-progress').style.display = 'none';
+}
+
+document.querySelector('.start-plank')?.addEventListener('click', startPlank);
+document.querySelector('.stop-plank')?.addEventListener('click', stopPlank);
+
+// ERock's 160 Workout Progress
+function startErockWorkout() {
+    const steps = document.querySelectorAll('.progress-step');
+    let currentStep = 0;
+    
+    function updateProgress() {
+        if (currentStep >= steps.length) {
+            alert('Congratulations! You completed ERock\'s 160!');
+            steps.forEach(step => step.classList.remove('completed'));
+            return;
+        }
+        
+        steps[currentStep].classList.add('completed');
+        currentStep++;
+        
+        if (currentStep < steps.length) {
+            setTimeout(() => {
+                if (confirm('Ready for the next round?')) {
+                    updateProgress();
+                }
+            }, 1000);
+        } else {
+            updateProgress();
+        }
+    }
+    
+    if (confirm('Ready to start ERock\'s 160?')) {
+        updateProgress();
+    }
+}
+
+// Song Roulette
+const songs = [
+    { name: "Fighter - Christina Aguilera", bpm: 170 },
+    { name: "Genie in a Bottle - Christina Aguilera", bpm: 120 },
+    { name: "Beautiful - Christina Aguilera", bpm: 98 },
+    { name: "Dirrty - Christina Aguilera", bpm: 100 },
+    { name: "Lady Marmalade - Christina Aguilera", bpm: 125 },
+    { name: "Ain't No Other Man - Christina Aguilera", bpm: 132 }
+];
+
+function spinRoulette() {
+    const song = songs[Math.floor(Math.random() * songs.length)];
+    const songDisplay = document.querySelector('.current-song');
+    songDisplay.innerHTML = `
+        <strong>${song.name}</strong><br>
+        BPM: ${song.bpm}<br>
+        <small>Adjust your pace to match the beat!</small>
+    `;
+}
+
+function processQuestion1() {
+    const userName = document.getElementById('userName').value;
+    if (userName.trim() === '') {
+        alert('Please enter your designation');
+        return;
+    }
+    
+    // Update verification status
+    const statusValues = document.querySelectorAll('.status-value');
+    statusValues[0].textContent = 'VERIFIED';
+    statusValues[0].style.color = '#00ff00';
+    setTimeout(() => {
+        statusValues[1].textContent = 'CONNECTED';
+        statusValues[1].style.color = '#00ff00';
+        setTimeout(() => {
+            statusValues[2].textContent = 'COMPLETE';
+            statusValues[2].style.color = '#00ff00';
+            setTimeout(() => {
+                nextQuestion(1);
+            }, 500);
+        }, 500);
+    }, 500);
+}
+
+function nextQuestion(current) {
+    document.getElementById(`q${current}`).classList.remove('active');
+    document.getElementById(`q${current + 1}`).classList.add('active');
+    document.getElementById(`q${current + 1}`).scrollIntoView({ behavior: 'smooth' });
+}
+
+function prevQuestion(current) {
+    document.getElementById(`q${current}`).classList.remove('active');
+    document.getElementById(`q${current - 1}`).classList.add('active');
+    document.getElementById(`q${current - 1}`).scrollIntoView({ behavior: 'smooth' });
+}
+
+async function submitForm() {
+    const formData = {
+        name: document.getElementById('userName').value,
+        miles_past_320_days: document.getElementById('miles_past_320_days').value,
+        kilometers_2025: document.getElementById('kilometers_2025').value,
+        avg_hr_walking: document.getElementById('avg_hr_walking').value,
+        recent_haircut: document.getElementById('recent_haircut').value,
+        iron_levels: document.getElementById('iron_levels').value,
+        last_race_date: document.getElementById('last_race_date').value,
+        last_date_race: document.getElementById('last_date_race').value,
+        ssn_digit_sum: document.getElementById('ssn_digit_sum').value
+    };
+
+    // Hide form, show loading
+    document.getElementById('questionnaireForm').style.display = 'none';
+    const loadingSection = document.getElementById('loadingSection');
+    loadingSection.style.display = 'block';
+
+    // Fake loading sequence
+    const progressBar = document.querySelector('.progress-bar');
+    const statusDiv = document.getElementById('calculationStatus');
+    const statuses = [
+        "Analyzing track conditions...",
+        "Processing community insights...",
+        "Calibrating workout parameters...",
+        "Validating with track veterans...",
+        "Optimizing for 320m segments...",
+        "Fine-tuning intensity levels...",
+        "Preparing your custom session..."
+    ];
+
+    for (let i = 0; i < statuses.length; i++) {
+        statusDiv.textContent = statuses[i];
+        progressBar.style.width = `${(i + 1) * (100 / statuses.length)}%`;
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    try {
+        const response = await fetch('/generate_workout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+
+        // Hide loading, show results
+        loadingSection.style.display = 'none';
+        const resultDiv = document.getElementById('workoutResult');
+        resultDiv.style.display = 'block';
+
+        resultDiv.innerHTML = `
+            <div class="alert" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 12px; color: white;">
+                <div class="track-badge mb-3">SESSION ${Math.floor(Math.random() * 900000) + 100000}</div>
+                <h4 class="alert-heading mb-4">${data.workout_intro}</h4>
+                <div class="workout-text">
+                    <h3 class="text-gradient mb-3">${data.workout_details.intensity}</h3>
+                    ${data.workout_details.workout.replace(/\n/g, '<br>')}
+                </div>
+                <hr style="border-color: rgba(52, 152, 219, 0.3);">
+                <p><em>${data.workout_details.science}</em></p>
+                <p class="mb-0"><small class="text-uppercase" style="letter-spacing: 1px;">${data.ai_insight}</small></p>
+                <div class="mt-3" style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
+                    <span class="text-uppercase">Custom Workout</span> • 
+                    Validated by ${data.meta.models_consulted} track club members • 
+                    Analysis time: ${data.meta.processing_time_ms}ms
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error generating workout. Please try again.');
+    }
+}
+</script>
+{% endblock %} 

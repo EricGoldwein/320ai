@@ -1,0 +1,17 @@
+{
+  "name": "wingate-workout",
+  "version": "1.0.0",
+  "description": "The Wingate Protocol™ workout questionnaire system",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "workout",
+    "fitness",
+    "questionnaire"
+  ],
+  "author": "",
+  "license": "MIT"
+} 

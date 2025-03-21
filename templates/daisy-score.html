@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}DAISY™ Score Calculator{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daisy.css') }}">
+<style>
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-dark: #1a1a1a;
+    --text-light: #ffffff;
+    --text-dark: #333333;
+    --shadow-color: rgba(52, 152, 219, 0.3);
+    --gradient-primary: linear-gradient(45deg, #2c3e50, #3498db);
+    --gradient-accent: linear-gradient(45deg, #00ff88, #00bfff);
+}
+
+.white-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.track-badge {
+    display: inline-block;
+    background: #333;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.pulse-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+    }
+}
+
+.daisy-score-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+}
+
+.daisy-score {
+    text-align: center;
+    color: white;
+}
+
+.daisy-score span {
+    font-size: 3rem;
+    font-weight: bold;
+    display: block;
+}
+
+.daisy-chart {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.interpretation {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.score-ranges {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.range-item {
+    font-size: 1.2rem !important;
+    color: var(--text-color) !important;
+    margin-bottom: 1rem;
+}
+
+.formula-box {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.formula-box code {
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.formula-box .small {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.score-info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.score-info-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.score-info-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    margin: 2rem auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.score-info-content h3 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.score-info-content .lead {
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.formula-box {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.formula-box code {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.formula-box .small {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.8rem;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-button:hover {
+    color: var(--primary-color);
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.back-button {
+    display: none;
+}
+
+.info-button {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.info-button i {
+    font-size: 1.2rem;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .white-container {
+        padding: 1.5rem;
+    }
+
+    .calculator-section .row {
+        flex-direction: column;
+    }
+
+    .calculator-section .col-md-6 {
+        width: 100%;
+    }
+
+    .daisy-score-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .daisy-score span {
+        font-size: 2.5rem;
+    }
+
+    .daisy-chart {
+        max-width: 100%;
+        margin: 1rem auto;
+    }
+
+    .score-info-content {
+        padding: 1.5rem;
+        margin: 1rem;
+        width: auto;
+    }
+
+    .formula-box {
+        padding: 1.5rem;
+    }
+
+    .formula-box code {
+        font-size: 1.1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+
+    .btn-primary {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .score-ranges {
+        padding: 1rem;
+    }
+
+    .range-item {
+        font-size: 1rem !important;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .formula-box {
+        border: 2px solid #000;
+    }
+
+    .formula-box code {
+        color: #000;
+    }
+
+    .close-button {
+        color: #000;
+    }
+
+    .close-button:hover {
+        color: #000;
+        background: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .info-button {
+        transition: none;
+    }
+
+    .score-info-content {
+        animation: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">
+                <span class="normal">D</span><span class="highlight">AI</span><span class="normal">SY</span>™ Score Calculator
+            </h1>
+            <p class="subheading mb-4">Calculate your quantum running potential</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="white-container">
+                <div class="track-badge pulse-badge">PROPRIETARY METRICS</div>
+                <h2 class="mb-4">The DAISY™ Score</h2>
+                <p class="lead">Combining equine intuition with quantum computing, your DAISY™ score measures your harmony with the natural rhythms of running.</p>
+                
+                <button class="info-button mb-4" onclick="toggleScoreInfo()">
+                    <i class="fas fa-info-circle"></i> How is DAISY™ Score calculated?
+                </button>
+
+                <!-- Score Info Modal -->
+                <div id="scoreInfoModal" class="score-info-modal">
+                    <div class="score-info-content">
+                        <span class="close-button" onclick="toggleScoreInfo()">&times;</span>
+                        <h3 class="mb-3">DAISY™ Score Calculation</h3>
+                        <p class="lead">Our proprietary DAISY™ metric revolutionizes performance tracking by quantifying the unquantifiable: your unique running signature.</p>
+                        
+                        <div class="technical-specs mt-4">
+                            <p>Your DAISY™ score is computed using our patented formula:</p>
+                            <div class="formula-box p-3 mb-4 text-center">
+                                <code>D = Σ(ν∆t × φ) + λ(ρ - μ)² × ψ</code>
+                                <p class="small text-muted mt-2">Where ν = velocity variations, φ = flow state coefficient, λ = latent optimization factor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator Form -->
+                <div class="calculator-section mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="daisyCalculator" class="daisy-form">
+                                <div class="mb-4">
+                                    <label class="form-label">Resting Heart Rate</label>
+                                    <input type="range" class="form-control" id="heartRate" min="20" max="100" value="60">
+                                    <div class="d-flex justify-content-between">
+                                        <small>Low</small>
+                                        <small class="value-display">60</small>
+                                        <small>High</small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Hoof Size</label>
+                                    <input type="number" class="form-control" id="shoeSize" placeholder="Enter shoe size" min="1" max="99">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Number of Running Shoes Owned</label>
+                                    <input type="number" class="form-control" id="shoeCount" placeholder="Enter number" min="0" max="999">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Astrological Sign</label>
+                                    <select class="form-select" id="astroSign">
+                                        <option value="">Select your sign</option>
+                                        <option value="1">Aries</option>
+                                        <option value="2">Taurus</option>
+                                        <option value="3">Gemini</option>
+                                        <option value="4">Cancer</option>
+                                        <option value="5">Leo</option>
+                                        <option value="6">Virgo</option>
+                                        <option value="7">Libra</option>
+                                        <option value="8">Scorpio</option>
+                                        <option value="9">Sagittarius</option>
+                                        <option value="10">Capricorn</option>
+                                        <option value="11">Aquarius</option>
+                                        <option value="12">Pisces</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Preferred Christina Track</label>
+                                    <select class="form-select" id="soundtrack">
+                                        <option value="">Select a song</option>
+                                        <option value="1">Genie in a Bottle</option>
+                                        <option value="2">Fighter</option>
+                                        <option value="3">Beautiful</option>
+                                        <option value="4">Dirrty</option>
+                                        <option value="5">What a Girl Wants</option>
+                                        <option value="6">Ain't No Other Man</option>
+                                        <option value="7">Lady Marmalade</option>
+                                        <option value="8">Candyman</option>
+                                        <option value="9">Hurt</option>
+                                        <option value="10">Come On Over Baby</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Favorite Ice Cream Brand</label>
+                                    <select class="form-select" id="iceCream">
+                                        <option value="">Select a brand</option>
+                                        <option value="1">Ben & Jerry's</option>
+                                        <option value="2">Häagen-Dazs</option>
+                                        <option value="3">Van Leeuwen</option>
+                                        <option value="4">Turkey Hill</option>
+                                        <option value="5">Milk Bar</option>
+                                        <option value="6">Ample Hills</option>
+                                        <option value="7">Blue Marble</option>
+                                        <option value="8">Talenti</option>
+                                        <option value="9">Lincoln Market Giant Neopolitan</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 hover-lift">Calculate DAISY™ Score</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="daisyResult" class="text-center" style="display: none;">
+                                <div class="daisy-score-container">
+                                    <div class="daisy-score">
+                                        <span id="daisyScoreValue">0</span>
+                                        <small>DAISY™</small>
+                                    </div>
+                                </div>
+
+                                <div class="daisy-chart">
+                                    <canvas id="daisyRadarChart"></canvas>
+                                </div>
+
+                                <div class="interpretation mt-4">
+                                    <div class="track-badge mb-3">QUANTUM INTERPRETATION</div>
+                                    <p id="daisyInterpretation" class="lead"></p>
+                                </div>
+
+                                <div class="score-ranges mt-4">
+                                    <div class="track-badge mb-3">DAISY™ SCORE RANGES</div>
+                                    <div class="range-item mb-2">
+                                        <span>0-320:</span> "The Conformist" - Your running is dangerously predictable. Daisy would not approve.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>321-640:</span> "The Awakened" - Beginning to embrace chaos. Your runs show promising signs of unpredictability.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>641-800:</span> "The Enlightened" - Advanced chaos mastery. Your running patterns beautifully confuse our AI.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>801-959:</span> "The Transcendent" - Near perfect entropy. You've achieved what we call "controlled chaos."
+                                    </div>
+                                    <div class="range-item">
+                                        <span>960+:</span> "The Daisy" - Pure quantum running state. You exist simultaneously at all points on the track.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Calculator Scripts -->
+<script>
+// Score info modal functionality
+function toggleScoreInfo() {
+    const modal = document.getElementById('scoreInfoModal');
+    modal.classList.toggle('active');
+}
+
+// DAISY Score Calculator functionality
+document.getElementById('daisyCalculator').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form submission
+
+    // Get form values
+    const heartRate = parseInt(document.getElementById('heartRate').value);
+    const shoeSize = parseInt(document.getElementById('shoeSize').value);
+    const shoeCount = parseInt(document.getElementById('shoeCount').value);
+    const astroSign = parseInt(document.getElementById('astroSign').value);
+    const soundtrack = parseInt(document.getElementById('soundtrack').value);
+    const iceCream = parseInt(document.getElementById('iceCream').value);
+
+    // Calculate DAISY score (example calculation)
+    const baseScore = 320;
+    const heartRateMultiplier = (100 - heartRate) / 100;
+    const shoeFactor = (shoeSize % 2 === 0) ? 0.8 : 1.2;
+    const shoeMultiplier = Math.min(shoeCount / 10, 1);
+    const astroMultiplier = (astroSign / 12) + 0.5;
+    const soundtrackBonus = soundtrack * 10;
+    const iceCreamBonus = iceCream * 15;
+
+    const score = Math.round(
+        baseScore * heartRateMultiplier * shoeFactor * shoeMultiplier * astroMultiplier +
+        soundtrackBonus + iceCreamBonus
+    );
+
+    // Update score display
+    document.getElementById('daisyScoreValue').textContent = score;
+    document.getElementById('daisyResult').style.display = 'block';
+
+    // Create radar chart data
+    const ctx = document.getElementById('daisyRadarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Heart Rate', 'Shoe Factor', 'Collection', 'Astrology', 'Music', 'Taste'],
+            datasets: [{
+                label: 'Your DAISY™ Profile',
+                data: [
+                    heartRateMultiplier * 100,
+                    shoeFactor * 100,
+                    shoeMultiplier * 100,
+                    astroMultiplier * 100,
+                    (soundtrack / 10) * 100,
+                    (iceCream / 9) * 100
+                ],
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                pointBackgroundColor: 'rgba(52, 152, 219, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(52, 152, 219, 1)'
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    angleLines: {
+                        display: true
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            }
+        }
+    });
+
+    // Update interpretation
+    let interpretation = '';
+    if (score <= 320) {
+        interpretation = 'Your running style needs more chaos. Try running backwards occasionally.';
+    } else if (score <= 640) {
+        interpretation = 'You\'re beginning to think like a horse. Keep exploring unconventional paths.';
+    } else if (score <= 800) {
+        interpretation = 'Your quantum running potential is emerging. The track fears you.';
+    } else if (score <= 959) {
+        interpretation = 'You\'ve achieved near-perfect entropy. DAISY approves.';
+    } else {
+        interpretation = 'Pure quantum running state achieved. You are one with the track.';
+    }
+    document.getElementById('daisyInterpretation').textContent = interpretation;
+});
+
+// Update value display for range inputs
+document.querySelectorAll('input[type="range"]').forEach(input => {
+    const valueDisplay = input.parentElement.querySelector('.value-display');
+    if (valueDisplay) {
+        input.addEventListener('input', function() {
+            valueDisplay.textContent = this.value;
+        });
+    }
+});
+</script>
+{% endblock %} 

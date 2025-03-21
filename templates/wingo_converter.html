@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}WINGO Converter • DAISY™{% endblock %}
+
+{% block extra_css %}
+<style>
+    .brand-heading {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        padding-bottom: 0.2rem;
+    }
+
+    .converter-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 250, 0.98));
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+    }
+
+    .input-section {
+        background: rgba(52, 152, 219, 0.1);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 1rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pace-display {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 8px;
+    }
+
+    .pace-display span {
+        color: #2ecc71;
+        font-weight: 600;
+    }
+
+    .result-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .result-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .result-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .result-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 0.5rem 0;
+    }
+
+    .result-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .track-badge {
+        display: none;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: none;
+    }
+
+    .btn-convert {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-convert:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(45deg, #2980b9, #3498db);
+    }
+
+    .btn-reset {
+        background: none;
+        color: #7f8c8d;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        text-decoration: underline;
+    }
+
+    .btn-reset:hover {
+        transform: none;
+        background: none;
+        color: #34495e;
+    }
+
+    .button-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .time-input {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .time-input input {
+        width: 60px;
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    .time-input input::-webkit-outer-spin-button,
+    .time-input input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .time-input span {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+    }
+
+    .time-input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-result {
+        grid-column: 1 / -1;
+        background: white;
+        border: 1px solid #e0e0e0;
+        max-width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .main-result .result-value {
+        font-size: 3rem;
+        color: #2ecc71;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1;
+    }
+
+    .main-result .result-label {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .main-result #targetTimeDisplay,
+    .main-result #wingoTimeDisplay {
+        color: #2ecc71;
+        font-weight: 600;
+    }
+
+    .projections-card {
+        grid-column: 1 / -1;
+        background: linear-gradient(145deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+        border: 2px solid #3498db;
+    }
+
+    .projections-title {
+        color: #3498db;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .projections-content {
+        font-size: 1.1rem;
+        color: #2c3e50;
+    }
+
+    .projections-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 0 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .projections-list li {
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row-reverse;
+    }
+
+    .projections-list .distance {
+        color: #7f8c8d;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .projections-list .time {
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    @media (max-width: 768px) {
+        .converter-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+        
+        .main-result {
+            max-width: 100%;
+            padding: 1.5rem;
+        }
+        
+        .main-result .result-value {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="converter-container">
+        <div class="text-center mb-4">
+            <h1 class="brand-heading">Wingo Pace Converter</h1>
+            <p class="subheading">From Wingos to Mare-atohns, DAISY™ does the math</p>
+        </div>
+
+        <div class="input-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Distance</label>
+                        <select class="form-control" id="targetDistance">
+                            <option value="201.168">Furlong</option>
+                            <option value="320">Wingo (320m)</option>
+                            <option value="400">400m</option>
+                            <option value="800">800m</option>
+                            <option value="1000" selected>Kilometer</option>
+                            <option value="1600">Fingo (1600m)</option>
+                            <option value="1609.34">M*le</option>
+                            <option value="2000">2000m</option>
+                            <option value="5000">5K</option>
+                            <option value="10000">10K</option>
+                            <option value="21097.5">Half Mare-athon</option>
+                            <option value="42195">Mare-athon</option>
+                            <option value="644000">Yellowstone (3,200 Furlongs)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Time</label>
+                        <div class="time-input">
+                            <div class="time-input-group">
+                                <input type="number" class="form-control" id="targetDays" placeholder="D" style="display: none;">
+                            </div>
+                            <div class="time-input-group">
+                                <input type="number" class="form-control" id="targetHours" placeholder="H" style="display: none;">
+                            </div>
+                            <div class="time-input-group">
+                                <input type="number" class="form-control" id="targetMinutes" placeholder="M">
+                            </div>
+                            <span>:</span>
+                            <div class="time-input-group">
+                                <input type="number" class="form-control" id="targetSeconds" placeholder="S">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="button-group">
+                    <button class="btn btn-convert" onclick="convertFromTarget()">Calculate Pace</button>
+                    <button class="btn btn-reset" onclick="resetConverter()">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pace-display">
+            Your Pace: <span id="wingoTimeDisplay">--</span> per Wingo
+        </div>
+
+        <div class="result-section" id="results">
+            <div class="result-card projections-card">
+                <h3 class="projections-title">Projections</h3>
+                <div class="projections-content">
+                    <p>At <span id="wingoTimeDisplay">--</span> per Wingo (<span id="selectedDistance">--</span>), you will run a:</p>
+                    <ul class="projections-list">
+                        <li><span class="distance">Furlong</span><span class="time" id="projectedFurlong">--</span></li>
+                        <li><span class="distance">400m</span><span class="time" id="projected400">--</span></li>
+                        <li><span class="distance">800m</span><span class="time" id="projected800">--</span></li>
+                        <li><span class="distance">M*le</span><span class="time" id="projectedMile">--</span></li>
+                        <li><span class="distance">5K</span><span class="time" id="projected5k">--</span></li>
+                        <li><span class="distance">Loop</span><span class="time" id="projectedLoop">--</span></li>
+                        <li><span class="distance">10K</span><span class="time" id="projected10k">--</span></li>
+                        <li><span class="distance">Half Mare-athon</span><span class="time" id="projectedHM">--</span></li>
+                        <li><span class="distance">Mare-athon</span><span class="time" id="projectedMarathon">--</span></li>
+                        <li><span class="distance">Yellowstone</span><span class="time" id="projectedYellowstone">--</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateTimeInputs() {
+    const distance = parseFloat(document.getElementById('targetDistance').value);
+    const daysInput = document.getElementById('targetDays');
+    const hoursInput = document.getElementById('targetHours');
+    
+    // Show/hide days input for Yellowstone
+    daysInput.style.display = distance === 644000 ? 'block' : 'none';
+    
+    // Show/hide hours input for distances > 10K
+    hoursInput.style.display = distance > 10000 ? 'block' : 'none';
+}
+
+function convertFromTarget() {
+    const targetDistance = parseFloat(document.getElementById('targetDistance').value);
+    const days = parseFloat(document.getElementById('targetDays').value) || 0;
+    const hours = parseFloat(document.getElementById('targetHours').value) || 0;
+    const minutes = parseFloat(document.getElementById('targetMinutes').value) || 0;
+    const seconds = parseFloat(document.getElementById('targetSeconds').value) || 0;
+    
+    if (isNaN(minutes) && isNaN(seconds) && isNaN(hours) && isNaN(days)) {
+        alert('Please enter a valid target time');
+        return;
+    }
+
+    const targetTime = (days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds;
+    
+    // Get selected distance label
+    const distanceSelect = document.getElementById('targetDistance');
+    const selectedDistance = distanceSelect.options[distanceSelect.selectedIndex].text;
+    
+    // Calculate paces
+    const pacePer320 = (targetTime / targetDistance) * 320;
+    const pace400 = (targetTime / targetDistance) * 400;
+    const paceFurlong = (targetTime / targetDistance) * 201.168;
+    const pace800 = (targetTime / targetDistance) * 800;
+    const pacePerMile = (targetTime / targetDistance) * 1609.34;
+    const pace5k = (targetTime / targetDistance) * 5000;
+    const paceLoop = (targetTime / targetDistance) * 3360;
+    const pace10k = (targetTime / targetDistance) * 10000;
+    const paceHM = (targetTime / targetDistance) * 21097.5;
+    const paceMarathon = (targetTime / targetDistance) * 42195;
+    const paceYellowstone = (targetTime / targetDistance) * 644000;
+
+    // Update results
+    const wingoTime = `${pacePer320.toFixed(1)} seconds`;
+    document.querySelectorAll('#wingoTimeDisplay').forEach(el => el.textContent = wingoTime);
+    document.getElementById('selectedDistance').textContent = `${formatTime(targetTime)} / ${selectedDistance}`;
+    
+    // Update all projections
+    document.getElementById('projectedFurlong').textContent = formatTime(paceFurlong);
+    document.getElementById('projected400').textContent = formatTime(pace400);
+    document.getElementById('projected800').textContent = formatTime(pace800);
+    document.getElementById('projectedMile').textContent = formatTime(pacePerMile);
+    document.getElementById('projected5k').textContent = formatTime(pace5k);
+    document.getElementById('projectedLoop').textContent = formatTime(paceLoop);
+    document.getElementById('projected10k').textContent = formatTime(pace10k);
+    document.getElementById('projectedHM').textContent = formatTime(paceHM);
+    document.getElementById('projectedMarathon').textContent = formatTime(paceMarathon);
+    document.getElementById('projectedYellowstone').textContent = formatTime(paceYellowstone);
+}
+
+function formatTime(seconds) {
+    const days = Math.floor(seconds / (24 * 60 * 60));
+    const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((seconds % (60 * 60)) / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    
+    let timeString = '';
+    if (days > 0) {
+        timeString += `${days}d ${hours}h ${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    } else if (hours > 0) {
+        timeString += `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    } else {
+        timeString += `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    
+    return timeString;
+}
+
+function resetConverter() {
+    // Reset all time inputs
+    document.getElementById('targetDays').value = '';
+    document.getElementById('targetHours').value = '';
+    document.getElementById('targetMinutes').value = '';
+    document.getElementById('targetSeconds').value = '';
+    
+    // Reset distance to Kilometer
+    document.getElementById('targetDistance').value = '1000';
+    
+    // Reset results
+    document.getElementById('wingoTimeDisplay').textContent = '--';
+    document.getElementById('selectedDistance').textContent = '--';
+    document.getElementById('projectedFurlong').textContent = '--';
+    document.getElementById('projected400').textContent = '--';
+    document.getElementById('projected800').textContent = '--';
+    document.getElementById('projectedMile').textContent = '--';
+    document.getElementById('projected5k').textContent = '--';
+    document.getElementById('projectedLoop').textContent = '--';
+    document.getElementById('projected10k').textContent = '--';
+    document.getElementById('projectedHM').textContent = '--';
+    document.getElementById('projectedMarathon').textContent = '--';
+    document.getElementById('projectedYellowstone').textContent = '--';
+    
+    // Update time input visibility
+    updateTimeInputs();
+}
+
+// Add event listener for distance change
+document.getElementById('targetDistance').addEventListener('change', updateTimeInputs);
+</script>
+{% endblock %}

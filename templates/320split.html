@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+
+{% block title %}$WINGO • 320AI{% endblock %}
+
+{% block content %}
+<div class="matrix-bg" id="matrix-bg"></div>
+
+<div class="ai-banner">
+    🏃 MINE $WINGO BY RUNNING LAPS • CURRENT MINING RATE: 3.2 $WINGO/LAP
+</div>
+
+<div class="crypto-header">
+    <img src="{{ url_for('static', filename='images/logo_trim.png') }}" alt="WINGO Logo" class="divot-logo">
+    <h1>$WINGO</h1>
+    <h2 class="acronym">Workout Independence Network Gains & Optimization</h2>
+    <p>Powered by DAISY™</p>
+    <div class="header-buttons">
+        <a href="{{ url_for('whitepaper') }}" class="quantum-button">READ THE WHITEPAPER</a>
+        <button class="quantum-button" onclick="showWaitlist()">TRADE NOW</button>
+    </div>
+</div>
+
+<div class="price-ticker">
+    <div class="price-stat">
+        <h3>CURRENT PRICE</h3>
+        <div class="price-value">${{ price }}</div>
+        <p>+32% (Last 24h)</p>
+    </div>
+    <div class="price-stat">
+        <h3>MARKET CAP</h3>
+        <div class="price-value">${{ market_cap }}</div>
+        <p>Fully Diluted: $32B</p>
+    </div>
+    <div class="price-stat">
+        <h3>24H VOLUME</h3>
+        <div class="price-value">${{ volume }}</div>
+        <p>32k Transactions</p>
+    </div>
+</div>
+
+<div class="swap-interface" id="swap">
+    <h2>QUANTUM SWAP</h2>
+    <div class="swap-box">
+        <div class="token-input">
+            <input type="number" placeholder="0.0" class="swap-input">
+            <select class="token-select">
+                <option value="eth">ETH</option>
+                <option value="usdc">USDC</option>
+                <option value="usdt">USDT</option>
+            </select>
+        </div>
+        <div class="swap-arrow">↓</div>
+        <div class="token-input">
+            <input type="number" placeholder="0.0" class="swap-input" disabled>
+            <div class="token-select">$WINGO</div>
+        </div>
+        <button class="quantum-button" onclick="showWaitlist()">QUANTUM SWAP</button>
+        <p class="swap-info">1 $WINGO = ${{ price }} • Slippage: 3.2%</p>
+        <p class="swap-warning">* Swaps are validated by our AI and may require proof of running</p>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🏃‍♂️ RUN-TO-EARN</h3>
+        <p>Mine new tokens by running 320m repeats. Each lap = 3.2 $WINGO</p>
+        <button class="quantum-button" onclick="showWaitlist()">START MINING</button>
+    </div>
+    <div class="feature-card">
+        <h3>🔄 AUTO-STAKING</h3>
+        <p>Stake your $WINGO in our Quantum Pool for 32% APY</p>
+        <button class="quantum-button" onclick="showWaitlist()">ENTER QUANTUM POOL</button>
+    </div>
+    <div class="feature-card">
+        <h3>🎯 TRACK DAO</h3>
+        <p>Governance token for the world's first AI-powered track</p>
+        <button class="quantum-button" onclick="showWaitlist()">JOIN DAO</button>
+    </div>
+</div>
+
+<div style="text-align: center; padding: 2rem;">
+    <h2>WARNING</h2>
+    <p style="color: #666;">This is not financial advice. Only invest what you can afford to run off.</p>
+    <p style="font-size: 0.8em">* All metrics quantum-verified by our AI</p>
+</div>
+
+<!-- Waitlist Modal -->
+<div id="waitlistModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>Join the $WINGO Waitlist</h2>
+        <p>We're currently in private beta. Enter your email to join the waitlist and be notified when we launch.</p>
+        <form id="waitlistForm" onsubmit="return handleWaitlistSubmit(event)">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="quantum-button">SUBMIT</button>
+        </form>
+        <button class="quantum-button" onclick="hideWaitlist()">CLOSE</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.crypto-header {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.divot-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: block;
+    animation: spin 320s linear infinite;
+}
+
+.price-ticker {
+    background: rgba(44, 62, 80, 0.9);
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 800px;
+    text-align: center;
+    color: white;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.price-stat {
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.price-value {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #2ecc71;
+    word-break: break-word;
+}
+
+.swap-interface {
+    max-width: 400px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.swap-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.token-input {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.swap-input {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 1.2rem;
+    outline: none;
+    min-width: 0;
+}
+
+.token-select {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #e9ecef;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.quantum-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+.quantum-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.swap-arrow {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: #3498db;
+}
+
+.swap-info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.swap-warning {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    margin-top: 0.5rem;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.tokenomics {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chart {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #3498db 0%, #2ecc71 100%);
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart::after {
+    content: '↗️ Number only go up';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.acronym {
+    font-size: 1.2rem;
+    color: #3498db;
+    margin: 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: glow 2s ease-in-out infinite;
+}
+
+.identity-verification {
+    max-width: 800px;
+    margin: 6rem auto;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+    position: relative;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.cyber-frame {
+    position: relative;
+    padding: 4px;
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+    border-radius: 20px;
+    animation: neonPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+}
+
+.scanner-line {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ff00ff, #00ffff, transparent);
+    animation: scannerMove 1.5s ease-in-out infinite;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+.cyber-title {
+    color: #fff;
+    text-shadow: 0 0 10px #ff00ff,
+                 0 0 20px #ff00ff,
+                 0 0 30px #ff00ff;
+    font-size: 2.5rem;
+    margin: 2rem 0;
+    letter-spacing: 4px;
+    animation: neonFlicker 2s ease-in-out infinite;
+    font-family: "Orbitron", sans-serif;
+}
+
+.verify-box {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 3rem;
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+.verify-icon {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    animation: floatAndGlow 3s ease-in-out infinite;
+    text-shadow: 0 0 20px #00ffff;
+}
+
+.verify-content {
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.verify-steps {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.verify-step {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 0, 255, 0.1);
+    border-radius: 12px;
+    transform: translateX(-100%);
+    animation: slideInGlow 0.5s ease-out forwards;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+}
+
+.verify-step:nth-child(1) { animation-delay: 0.2s; }
+.verify-step:nth-child(2) { animation-delay: 0.4s; }
+.verify-step:nth-child(3) { animation-delay: 0.6s; }
+
+.step-icon {
+    font-size: 2rem;
+    margin-right: 1.5rem;
+    animation: pulseGlow 2s infinite;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.step-text {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: rgba(255, 0, 255, 0.2);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    animation: badgeGlow 2s infinite;
+    text-shadow: 0 0 5px #ff00ff;
+}
+
+.verify-btn {
+    position: relative;
+    overflow: hidden;
+    padding: 1.2rem 3rem;
+    background: linear-gradient(135deg, #ff00ff, #00ffff);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.verify-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+.btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+.btn-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 0, 255, 0.8) 0%, transparent 70%);
+    animation: rotateGlow 3s linear infinite;
+}
+
+.verify-footnote {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+@keyframes neonPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 0, 255, 0.6); }
+}
+
+@keyframes scannerMove {
+    0% { transform: translateY(0) scaleY(1); opacity: 0; }
+    50% { transform: translateY(400px) scaleY(1.5); opacity: 1; }
+    100% { transform: translateY(800px) scaleY(1); opacity: 0; }
+}
+
+@keyframes neonFlicker {
+    0%, 100% { opacity: 1; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff; }
+    50% { opacity: 0.8; text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff; }
+}
+
+@keyframes floatAndGlow {
+    0%, 100% { transform: translateY(0); text-shadow: 0 0 20px #00ffff; }
+    50% { transform: translateY(-15px); text-shadow: 0 0 40px #00ffff; }
+}
+
+@keyframes slideInGlow {
+    from { 
+        opacity: 0;
+        transform: translateX(-50px);
+        box-shadow: 0 0 0 rgba(255, 0, 255, 0);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(0);
+        box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        transform: scale(1);
+        text-shadow: 0 0 10px #00ffff;
+    }
+    50% { 
+        transform: scale(1.2);
+        text-shadow: 0 0 20px #00ffff;
+    }
+}
+
+@keyframes badgeGlow {
+    0%, 100% { 
+        box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        text-shadow: 0 0 5px #ff00ff;
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+        text-shadow: 0 0 10px #ff00ff;
+    }
+}
+
+@keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: #2c3e50;
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    color: white;
+    text-align: center;
+}
+
+.modal-content input[type="email"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.modal-content input[type="email"]::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showWaitlist() {
+    document.getElementById('waitlistModal').style.display = 'block';
+}
+
+function hideWaitlist() {
+    document.getElementById('waitlistModal').style.display = 'none';
+}
+
+function handleWaitlistSubmit(event) {
+    event.preventDefault();
+    const email = event.target.querySelector('input[type="email"]').value;
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    
+    // Disable form while submitting
+    event.target.querySelector('input[type="email"]').disabled = true;
+    submitButton.disabled = true;
+    submitButton.innerHTML = 'Processing...';
+
+    // Send to backend
+    fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            event.target.innerHTML = '<div class="alert alert-success">Welcome to the revolution! We\'ll be in touch soon.</div>';
+            setTimeout(hideWaitlist, 2000);
+        } else {
+            const message = data.message || 'Something went wrong. Please try again.';
+            event.target.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        event.target.innerHTML = '<div class="alert alert-danger">Error subscribing. Please try again.</div>';
+    });
+    return false;
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('waitlistModal');
+    if (event.target == modal) {
+        hideWaitlist();
+    }
+}
+
+// Add price animation
+setInterval(() => {
+    const priceElement = document.querySelector('.price-value');
+    const currentPrice = parseFloat(priceElement.textContent.substring(1));
+    const newPrice = currentPrice + (Math.random() - 0.3) * 0.01;
+    priceElement.textContent = '$' + newPrice.toFixed(8);
+}, 3200);
+
+// Matrix background effect
+const canvas = document.createElement('canvas');
+canvas.style.position = 'fixed';
+canvas.style.top = '0';
+canvas.style.left = '0';
+canvas.style.width = '100%';
+canvas.style.height = '100%';
+canvas.style.zIndex = '-1';
+canvas.style.opacity = '0.05';
+document.getElementById('matrix-bg').appendChild(canvas);
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const chars = '320';
+const fontSize = 10;
+const columns = canvas.width/fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(draw, 33);
+</script>
+{% endblock %} 

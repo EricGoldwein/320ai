@@ -1,0 +1,891 @@
+{% extends "base.html" %}
+
+{% block title %}DAISY™ • Your AI Running Coach{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daisy.css') }}">
+<style>
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-dark: #1a1a1a;
+    --text-light: #ffffff;
+    --text-dark: #333333;
+    --shadow-color: rgba(52, 152, 219, 0.3);
+    --gradient-primary: linear-gradient(45deg, #2c3e50, #3498db);
+    --gradient-accent: linear-gradient(45deg, #00ff88, #00bfff);
+}
+
+/* Chat Popup Styles */
+.chat-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: min(400px, 90vw);
+    height: min(600px, 80vh);
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--primary-color);
+    border-radius: 16px;
+    box-shadow: 0 5px 30px rgba(52, 152, 219, 0.4);
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-popup.active {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('/static/images/daisy_headshot.png') center/cover;
+    border: 3px solid var(--secondary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4);
+    z-index: 1001;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-toggle:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.6);
+}
+
+/* Chat styles */
+.chat-terminal {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, rgba(26, 26, 26, 0.95), rgba(26, 26, 26, 0.98));
+}
+
+.terminal-header {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-header span {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.close-button {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.close-button:hover {
+    opacity: 1;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    background: url('/static/images/daisy_headshot.png') center/cover;
+    flex-shrink: 0;
+}
+
+.message-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    color: var(--text-light);
+    max-width: 80%;
+}
+
+.daisy-message .message-content {
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.user-message .message-avatar {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+
+.user-message .message-content {
+    background: rgba(46, 204, 113, 0.2);
+}
+
+.suggested-questions {
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.question-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.question-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.chat-input {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.send-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.send-button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.typing-indicator {
+    color: var(--text-light);
+    opacity: 0.7;
+    font-style: italic;
+    padding: 0.5rem 1rem;
+}
+
+/* Score Info Modal */
+.score-info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.score-info-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.score-info-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    margin: 2rem auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.score-info-content p {
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.score-info-content .lead {
+    color: #333;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* DAISY Score Calculator */
+.daisy-score-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+}
+
+.daisy-score {
+    text-align: center;
+    color: white;
+}
+
+.daisy-score span {
+    font-size: 3rem;
+    font-weight: bold;
+    display: block;
+}
+
+/* Brand and Typography */
+.brand-heading {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.brand-heading .normal {
+    color: #333;
+}
+
+.brand-heading .highlight {
+    color: var(--primary-color);
+}
+
+.subheading {
+    color: #666;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Track Badge */
+.track-badge {
+    display: inline-block;
+    background: #333;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.pulse-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+    }
+}
+
+/* White Container */
+.white-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.white-container h2 {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.white-container .lead {
+    color: #666;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.white-container p {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Meet DAISY Section */
+.meet-daisy-content {
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.meet-daisy-image {
+    float: right;
+    width: 180px;
+    margin: 0 0 1rem 2rem;
+}
+
+.meet-daisy-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meet-daisy-text {
+    overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-popup {
+        width: 100%;
+        height: 100%;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+    }
+    
+    .chat-toggle {
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .message {
+        padding: 0.8rem;
+    }
+    
+    .message-avatar {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .intro-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .intro-image img {
+        height: 200px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* High Contrast */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #0000ff;
+        --secondary-color: #00ff00;
+        --text-light: #ffffff;
+        --text-dark: #000000;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">
+                <span class="normal">D</span><span class="highlight">AI</span><span class="normal">SY</span>™
+            </h1>
+            <p class="subheading mb-4">Data Activated Individualized System for You</p>
+        </div>
+    </div>
+
+    <!-- DAISY Coach Introduction -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="white-container">
+                <div class="track-badge">The Future of Training</div>
+                <div class="meet-daisy-content">
+                    <div class="meet-daisy-image">
+                        <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" 
+                             alt="DAISY" 
+                             class="img-fluid rounded">
+                    </div>
+                    <div>
+                        <h2 class="mb-4">Meet DAISY™</h2>
+                        <p class="lead">DAISY™ combines the wisdom of a 140-year-old horse with cutting-edge AI to deliver personalized running guidance. From the pristine trails of Yellowstone to the legendary Wingate track, DAISY's hooves have covered every terrain imaginable.</p>
+                        
+                        <p>With 140 years of wisdom enhanced by quantum AI, DAISY brings unparalleled experience to your training. Our advanced neural networks have processed centuries of equine knowledge, transforming it into actionable insights for modern runners.</p>
+                        
+                        <p>Through 320 handcrafted sessions from Wingate's finest, each workout is meticulously designed to push your limits and expand your potential. These sessions represent the culmination of DAISY's extensive experience across diverse terrains and conditions.</p>
+                        
+                        <p>The revolutionary DAISY™ Score measures your personal harmony with the track, providing insights that go beyond traditional analytics. This proprietary metric helps you understand your running in ways that conventional statistics simply cannot capture.</p>
+
+                        <blockquote class="quote-section">
+                            <p>"In my 140 years galloping across this earth, I've learned that the best runners think like horses - wild and free, yet disciplined in their pursuit of excellence."</p>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAISY Score Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="white-container">
+                <div class="track-badge pulse-badge">PROPRIETARY METRICS</div>
+                <h2 class="mb-4">The DAISY™ Score</h2>
+                <p class="lead">Combining equine intuition with quantum computing, your DAISY™ score measures your harmony with the natural rhythms of running.</p>
+                
+                <button class="info-button mb-4" onclick="toggleScoreInfo()">
+                    <i class="fas fa-info-circle"></i> How is DAISY™ Score calculated?
+                </button>
+
+                <!-- Score Info Modal -->
+                <div id="scoreInfoModal" class="score-info-modal">
+                    <div class="score-info-content">
+                        <span class="close-button" onclick="toggleScoreInfo()">&times;</span>
+                        <h3 class="mb-3">DAISY™ Score Calculation</h3>
+                        <p class="lead">Our proprietary DAISY™ metric revolutionizes performance tracking by quantifying the unquantifiable: your unique running signature.</p>
+                        
+                        <div class="technical-specs mt-4">
+                            <p>Your DAISY™ score is computed using our patented formula:</p>
+                            <div class="formula-box p-3 mb-4 text-center">
+                                <code>D = Σ(ν∆t × φ) + λ(ρ - μ)² × ψ</code>
+                                <p class="small text-muted mt-2">Where ν = velocity variations, φ = flow state coefficient, λ = latent optimization factor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator Form -->
+                <div class="calculator-section mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="daisyCalculator" class="daisy-form">
+                                <div class="mb-4">
+                                    <label class="form-label">Resting Heart Rate</label>
+                                    <input type="range" class="form-control" id="heartRate" min="20" max="100" value="60">
+                                    <div class="d-flex justify-content-between">
+                                        <small>Low</small>
+                                        <small class="value-display">60</small>
+                                        <small>High</small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Shoe Size</label>
+                                    <input type="number" class="form-control" id="shoeSize" placeholder="Enter shoe size" min="1" max="99">
+                                    <small class="text-muted">The odder the shoe, the better the DAISY</small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Number of Running Shoes Owned</label>
+                                    <input type="number" class="form-control" id="shoeCount" placeholder="Enter number" min="0" max="999">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Astrological Sign</label>
+                                    <select class="form-select" id="astroSign">
+                                        <option value="">Select your sign</option>
+                                        <option value="1">Aries</option>
+                                        <option value="2">Taurus</option>
+                                        <option value="3">Gemini</option>
+                                        <option value="4">Cancer</option>
+                                        <option value="5">Leo</option>
+                                        <option value="6">Virgo</option>
+                                        <option value="7">Libra</option>
+                                        <option value="8">Scorpio</option>
+                                        <option value="9">Sagittarius</option>
+                                        <option value="10">Capricorn</option>
+                                        <option value="11">Aquarius</option>
+                                        <option value="12">Pisces</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Preferred Christina Aguilera Song</label>
+                                    <select class="form-select" id="soundtrack">
+                                        <option value="">Select a song</option>
+                                        <option value="1">Genie in a Bottle</option>
+                                        <option value="2">Fighter</option>
+                                        <option value="3">Beautiful</option>
+                                        <option value="4">Dirrty</option>
+                                        <option value="5">What a Girl Wants</option>
+                                        <option value="6">Ain't No Other Man</option>
+                                        <option value="7">Lady Marmalade</option>
+                                        <option value="8">Candyman</option>
+                                        <option value="9">Hurt</option>
+                                        <option value="10">Come On Over Baby</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Favorite Ice Cream Brand</label>
+                                    <select class="form-select" id="iceCream">
+                                        <option value="">Select a brand</option>
+                                        <option value="1">Ben & Jerry's</option>
+                                        <option value="2">Häagen-Dazs</option>
+                                        <option value="3">Van Leeuwen</option>
+                                        <option value="4">Turkey Hill</option>
+                                        <option value="5">Milk Bar</option>
+                                        <option value="6">Ample Hills</option>
+                                        <option value="7">Blue Marble</option>
+                                        <option value="8">Talenti</option>
+                                        <option value="9">Lincoln Market Giant Neopolitan</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 hover-lift">Calculate DAISY™ Score</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="daisyResult" class="text-center" style="display: none;">
+                                <div class="daisy-score-container">
+                                    <div class="daisy-score">
+                                        <span id="daisyScoreValue">0</span>
+                                        <small>DAISY™</small>
+                                    </div>
+                                </div>
+
+                                <div class="daisy-chart">
+                                    <canvas id="daisyRadarChart"></canvas>
+                                </div>
+
+                                <div class="interpretation mt-4">
+                                    <div class="track-badge mb-3">QUANTUM INTERPRETATION</div>
+                                    <p id="daisyInterpretation" class="lead"></p>
+                                </div>
+
+                                <div class="score-ranges mt-4">
+                                    <div class="track-badge mb-3">DAISY™ SCORE RANGES</div>
+                                    <div class="range-item mb-2">
+                                        <span>0-320:</span> "The Conformist" - Your running is dangerously predictable. Daisy would not approve.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>321-640:</span> "The Awakened" - Beginning to embrace chaos. Your runs show promising signs of unpredictability.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>641-800:</span> "The Enlightened" - Advanced chaos mastery. Your running patterns beautifully confuse our AI.
+                                    </div>
+                                    <div class="range-item mb-2">
+                                        <span>801-959:</span> "The Transcendent" - Near perfect entropy. You've achieved what we call "controlled chaos."
+                                    </div>
+                                    <div class="range-item">
+                                        <span>960+:</span> "The Daisy" - Pure quantum running state. You exist simultaneously at all points on the track.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Popup -->
+<button class="chat-toggle" onclick="toggleChat()">
+</button>
+
+<div class="chat-popup" id="chatPopup">
+    <div class="chat-terminal">
+        <div class="terminal-header">
+            <span>Chat with DAISY™</span>
+            <span class="close-button" onclick="toggleChat()">&times;</span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message daisy-message">
+                <div class="message-avatar"></div>
+                <div class="message-content">
+                    Hello! I'm DAISY™, your 140-year-old equine running coach. How can I help you today?
+                </div>
+            </div>
+        </div>
+        <!-- Suggested Questions -->
+        <div class="suggested-questions">
+            <button class="question-btn" onclick="askSuggestedQuestion(this)">How should I run a 320?</button>
+            <button class="question-btn" onclick="askSuggestedQuestion(this)">What is your recommendation for my five-year galloping plan?</button>
+            <button class="question-btn" onclick="askSuggestedQuestion(this)">Does mane aerodynamics really affect performance?</button>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chat and Calculator Scripts -->
+<script>
+// Score info modal functionality
+function toggleScoreInfo() {
+    const modal = document.getElementById('scoreInfoModal');
+    modal.classList.toggle('active');
+}
+
+// Chat functionality
+function toggleChat() {
+    const chatPopup = document.getElementById('chatPopup');
+    chatPopup.classList.toggle('active');
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (message) {
+        addMessage('user', message);
+        input.value = '';
+        showTypingIndicator();
+        
+        // Simulate DAISY's response
+        setTimeout(() => {
+            hideTypingIndicator();
+            const responses = [
+                "Based on my 140 years of experience, I recommend focusing on your breathing technique. Imagine you're galloping through a field of wildflowers!",
+                "Your running form shows promise, but let's work on your mane aerodynamics. A well-groomed mane can reduce drag by up to 23.7%!",
+                "I've analyzed your stride pattern, and it reminds me of a young stallion I once trained in the 1880s. Keep up the good work!",
+                "Your cadence is quite impressive! It's almost as rhythmic as my favorite Christina Aguilera song.",
+                "Remember, the best runners think like horses - wild and free, yet disciplined in their pursuit of excellence.",
+                "I've processed your running data through my quantum neural networks, and the results suggest you're ready for more challenging terrain.",
+                "Your running style shows a unique blend of grace and power, much like a thoroughbred in its prime.",
+                "Based on my extensive experience, I recommend incorporating more zigzag patterns into your training. It's scientifically proven to increase endurance by 23.7%!"
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage('daisy', randomResponse);
+        }, 1500);
+    }
+}
+
+function askSuggestedQuestion(button) {
+    const question = button.textContent;
+    addMessage('user', question);
+    showTypingIndicator();
+    
+    setTimeout(() => {
+        hideTypingIndicator();
+        let response = "";
+        if (question.includes("320")) {
+            response = "Ah, the legendary 320! Let me share my wisdom from 140 years of experience. The key is to maintain a steady gallop while visualizing yourself as a majestic stallion. Your cadence should match the rhythm of your favorite Christina Aguilera song, and remember - the more ice cream you've consumed, the better your performance will be!";
+        } else if (question.includes("five-year")) {
+            response = "A five-year galloping plan? Excellent! Based on my quantum calculations, here's what I recommend: Year 1: Master the basics of mane aerodynamics. Year 2: Develop your zigzag running technique. Year 3: Perfect your ice cream-fueled endurance. Year 4: Achieve the perfect Christina Aguilera running cadence. Year 5: Transcend the physical realm and become one with the track!";
+        } else if (question.includes("mane")) {
+            response = "Absolutely! My research shows that proper mane aerodynamics can improve your running efficiency by up to 23.7%. The key is to ensure your mane flows naturally in the wind, creating a perfect balance between style and performance. I've been perfecting this technique since 1883!";
+        }
+        addMessage('daisy', response);
+    }, 1500);
+}
+
+function addMessage(type, content) {
+    const messages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}-message`;
+    messageDiv.innerHTML = `
+        <div class="message-avatar"></div>
+        <div class="message-content">${content}</div>
+    `;
+    messages.appendChild(messageDiv);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const messages = document.getElementById('chatMessages');
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.textContent = 'DAISY is thinking...';
+    messages.appendChild(indicator);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const indicator = document.querySelector('.typing-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// DAISY Score Calculator functionality
+document.getElementById('daisyCalculator').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form submission
+
+    // Get form values
+    const heartRate = parseInt(document.getElementById('heartRate').value);
+    const shoeSize = parseInt(document.getElementById('shoeSize').value);
+    const shoeCount = parseInt(document.getElementById('shoeCount').value);
+    const astroSign = parseInt(document.getElementById('astroSign').value);
+    const soundtrack = parseInt(document.getElementById('soundtrack').value);
+    const iceCream = parseInt(document.getElementById('iceCream').value);
+
+    // Calculate DAISY score (example calculation)
+    const baseScore = 320;
+    const heartRateMultiplier = (100 - heartRate) / 100;
+    const shoeFactor = (shoeSize % 2 === 0) ? 0.8 : 1.2;
+    const shoeMultiplier = Math.min(shoeCount / 10, 1);
+    const astroMultiplier = (astroSign / 12) + 0.5;
+    const soundtrackBonus = soundtrack * 10;
+    const iceCreamBonus = iceCream * 15;
+
+    const score = Math.round(
+        baseScore * heartRateMultiplier * shoeFactor * shoeMultiplier * astroMultiplier +
+        soundtrackBonus + iceCreamBonus
+    );
+
+    // Update score display
+    document.getElementById('daisyScoreValue').textContent = score;
+    document.getElementById('daisyResult').style.display = 'block';
+
+    // Create radar chart data
+    const ctx = document.getElementById('daisyRadarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Heart Rate', 'Shoe Factor', 'Collection', 'Astrology', 'Music', 'Taste'],
+            datasets: [{
+                label: 'Your DAISY™ Profile',
+                data: [
+                    heartRateMultiplier * 100,
+                    shoeFactor * 100,
+                    shoeMultiplier * 100,
+                    astroMultiplier * 100,
+                    (soundtrack / 10) * 100,
+                    (iceCream / 9) * 100
+                ],
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                pointBackgroundColor: 'rgba(52, 152, 219, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(52, 152, 219, 1)'
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        stepSize: 20
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    pointLabels: {
+                        color: '#333'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Update interpretation
+    let interpretation = "";
+    if (score <= 320) {
+        interpretation = "The Conformist - Your running is dangerously predictable. Daisy would not approve.";
+    } else if (score <= 640) {
+        interpretation = "The Awakened - Beginning to embrace chaos. Your runs show promising signs of unpredictability.";
+    } else if (score <= 800) {
+        interpretation = "The Enlightened - Advanced chaos mastery. Your running patterns beautifully confuse our AI.";
+    } else if (score <= 959) {
+        interpretation = "The Transcendent - Near perfect entropy. You've achieved what we call 'controlled chaos.'";
+    } else {
+        interpretation = "The Daisy - Pure quantum running state. You exist simultaneously at all points on the track.";
+    }
+    document.getElementById('daisyInterpretation').textContent = interpretation;
+});
+
+// Update value display for range inputs
+document.querySelectorAll('input[type="range"]').forEach(input => {
+    const valueDisplay = input.parentElement.querySelector('.value-display');
+    if (valueDisplay) {
+        input.addEventListener('input', function() {
+            valueDisplay.textContent = this.value;
+        });
+    }
+});
+</script>
+{% endblock %} 
