@@ -1,20 +1,11 @@
 import os
-import httpx
-
-# Set proxy configuration before anything else
-if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-    os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
-    os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
-    os.environ['OPENAI_PROXY'] = 'http://proxy.pythonanywhere.com:8080'
-    os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
-
+import logging
 from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import random
 from datetime import datetime
 import sqlite3
-import logging
 import json
 from typing import Dict, Any, Optional
 from openai import OpenAI
@@ -56,24 +47,11 @@ def init_openai_client():
         if not OPENAI_API_KEY:
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
-        
-        # Initialize with minimal configuration since proxy is set via env vars
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-            timeout=TIMEOUT
-        )
-        
-        # Test the client by making a simple API call
-        try:
-            logger.info("Testing client with a simple API call...")
-            test_thread = client.beta.threads.create()
-            logger.info("Test API call successful!")
-            return client
-        except Exception as e:
-            logger.error(f"Test API call failed: {str(e)}")
-            logger.error(f"Error type: {type(e)}")
-            logger.error(f"Error args: {e.args}")
-            return None
+
+        # Create client with only the API key
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        logger.info("OpenAI client initialized successfully")
+        return client
             
     except Exception as e:
         logger.error(f"Error initializing OpenAI client: {str(e)}")
