@@ -61,16 +61,16 @@ load_dotenv()
 
 # Initialize OpenAI client
 try:
-    api_key = os.getenv('OPENAI_API_KEY')
+    api_key = os.environ.get('OPENAI_API_KEY')
     if not api_key:
-        logger.error("No API key found in environment variables")
+        logger.error("No API key found in environment")
         client = None
     else:
         client = OpenAI(
             api_key=api_key,
-            timeout=60.0  # Increase timeout for slower connections
+            timeout=30  # Use a default timeout
         )
-        logger.info("OpenAI client initialized successfully")
+        logger.info(f"OpenAI client initialized successfully with API key starting with: {api_key[:8]}...")
 except Exception as e:
     logger.error(f"Error initializing OpenAI client: {str(e)}")
     client = None
