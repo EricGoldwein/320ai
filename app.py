@@ -1,10 +1,16 @@
+import os
+
+# Set proxy configuration before anything else
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    os.environ['HTTP_PROXY'] = 'http://proxy.server:3128'
+    os.environ['HTTPS_PROXY'] = 'http://proxy.server:3128'
+
 from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import random
 from datetime import datetime
 import sqlite3
-import os
 import logging
 import json
 from typing import Dict, Any, Optional
@@ -23,15 +29,6 @@ logger = logging.getLogger(__name__)
 # Initialize environment variables first
 logger.info("Loading environment variables...")
 load_dotenv()
-
-# Check if running on PythonAnywhere
-is_pythonanywhere = 'PYTHONANYWHERE_DOMAIN' in os.environ
-if is_pythonanywhere:
-    logger.info("Running on PythonAnywhere - setting proxy configuration")
-    os.environ['HTTP_PROXY'] = 'http://proxy.server:3128'
-    os.environ['HTTPS_PROXY'] = 'http://proxy.server:3128'
-else:
-    logger.info("Running locally - no proxy configuration needed")
 
 # Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
@@ -57,11 +54,15 @@ def init_openai_client():
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
         
-        logger.info("Creating OpenAI client with minimal configuration...")
-        # Create client with only the API key
-        client = OpenAI(api_key=OPENAI_API_KEY)
-        logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
-        logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
+        # Create client with explicit configuration
+        client_config = {
+            'api_key': OPENAI_API_KEY,
+            'timeout': float(os.environ.get('TIMEOUT', '30'))
+        }
+        
+        # Log the configuration we're using
+        logger.info("Creating OpenAI client with config: %s", client_config)
+        client = OpenAI(**client_config)
         
         # Test the client by making a simple API call
         try:
