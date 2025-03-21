@@ -13,8 +13,11 @@ from dotenv import load_dotenv
 from functools import wraps
 import time
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging with more detail
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 # Initialize environment variables first
@@ -23,9 +26,49 @@ load_dotenv()
 
 # Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')  # Set default Assistant ID
+logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
+if not OPENAI_API_KEY:
+    logger.error("No OpenAI API key found in environment variables!")
+
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
+logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
+
 MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
 TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
+
+# Initialize OpenAI client as a global variable
+client = None
+
+def init_openai_client():
+    """Initialize the OpenAI client with proper error handling"""
+    global client
+    try:
+        if not OPENAI_API_KEY:
+            logger.error("Cannot initialize OpenAI client: No API key found")
+            return None
+        
+        client = OpenAI(
+            api_key=OPENAI_API_KEY
+        )
+        logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
+        logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
+        return client
+    except Exception as e:
+        logger.error(f"Error initializing OpenAI client: {str(e)}")
+        return None
+
+# Initialize the client
+client = init_openai_client()
+
+# Add error handler for OpenAI API errors
+def handle_openai_error(error):
+    logger.error(f"OpenAI API error: {str(error)}")
+    if "rate limit" in str(error).lower():
+        return "I'm a bit overwhelmed right now. Please try again in a minute."
+    elif "timeout" in str(error).lower():
+        return "The response took too long. Please try again."
+    else:
+        return f"I encountered an error: {str(error)}"
 
 # Get the absolute path to the templates directory
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -63,53 +106,6 @@ limiter = Limiter(
     key_func=get_remote_address,
     storage_uri="memory://"  # Use in-memory storage for Windows compatibility
 )
-
-# Initialize OpenAI client
-try:
-    if not OPENAI_API_KEY:
-        logger.error("No OpenAI API key found in environment")
-        client = None
-    else:
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-            timeout=TIMEOUT
-        )
-        logger.info(f"OpenAI client initialized successfully with API key starting with: {OPENAI_API_KEY[:8]}...")
-        logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
-except Exception as e:
-    logger.error(f"Error initializing OpenAI client: {str(e)}")
-    client = None
-
-# Add error handler for OpenAI API errors
-def handle_openai_error(error):
-    logger.error(f"OpenAI API error: {str(error)}")
-    if "rate limit" in str(error).lower():
-        return "I'm a bit overwhelmed right now. Please try again in a minute."
-    elif "timeout" in str(error).lower():
-        return "The response took too long. Please try again."
-    else:
-        return "I encountered an error. Please try again."
-
-# Add a route to serve static files directly
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory(app.static_folder, filename)
-
-# Database setup
-def init_db():
-    db_path = os.path.join(app.root_path, 'subscribers.db')
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS subscribers
-        (email TEXT PRIMARY KEY, signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
-    ''')
-    conn.commit()
-    conn.close()
-
-# Initialize database on startup
-with app.app_context():
-    init_db()
 
 # Make sure chat memory is using file system
 conversation_history = {}  # Clear this if it exists
