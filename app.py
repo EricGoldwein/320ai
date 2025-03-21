@@ -4,6 +4,8 @@ import os
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
     os.environ['HTTP_PROXY'] = 'http://proxy.server:3128'
     os.environ['HTTPS_PROXY'] = 'http://proxy.server:3128'
+    os.environ['OPENAI_PROXY'] = 'http://proxy.server:3128'
+    os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
 
 from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect
 from flask_limiter import Limiter
@@ -54,14 +56,17 @@ def init_openai_client():
             logger.error("Cannot initialize OpenAI client: No API key found")
             return None
         
-        # Create client with explicit configuration
+        # Create client with minimal configuration
         client_config = {
             'api_key': OPENAI_API_KEY,
             'timeout': float(os.environ.get('TIMEOUT', '30'))
         }
         
-        # Log the configuration we're using
-        logger.info("Creating OpenAI client with config: %s", client_config)
+        # Log the configuration we're using (but mask the API key)
+        safe_config = client_config.copy()
+        safe_config['api_key'] = safe_config['api_key'][:8] + '...'
+        logger.info("Creating OpenAI client with config: %s", safe_config)
+        
         client = OpenAI(**client_config)
         
         # Test the client by making a simple API call
