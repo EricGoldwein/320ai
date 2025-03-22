@@ -2,155 +2,36 @@
 
 {% block extra_css %}
 <style>
-/* Move landscape message styles to top for priority */
-.landscape-message {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.landscape-message .content {
-    padding: 2rem;
-    color: white;
-}
-
-.landscape-message h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: #3498db;
-}
-
-.landscape-message p {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    margin: 1rem 0;
-}
-
-.landscape-message .rotate-icon {
-    font-size: 3rem;
-    margin: 1rem 0;
-    display: inline-block;
-    animation: rotate 2s infinite;
-}
-
-@keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(90deg); }
-}
-
-@media screen and (max-width: 768px) and (orientation: portrait) {
-    .landscape-message {
-        display: flex !important;
-    }
-    
-    .game-container {
-        display: none !important;
-    }
-}
-
 .game-container {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 2rem;
-}
-
-.game-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.game-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #212529;
-    margin-bottom: 0.5rem;
-}
-
-.game-header p {
-    font-size: 1.1rem;
-    color: #6c757d;
+    padding: 1rem;
 }
 
 .game-canvas-container {
     position: relative;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: 300px;
+    background: url('/static/images/game/rocky.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #8B4513;
+    border-radius: 8px;
     overflow: hidden;
-}
-
-.game-controls {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.controls-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.control-item {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-}
-
-.control-key {
-    background: #3498db;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    margin-right: 0.75rem;
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.control-action {
-    color: #2c3e50;
-    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .game-stats {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    top: 45px;
+    right: 10px;
+    font-family: 'Press Start 2P', monospace;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     z-index: 10;
-    display: flex;
-    gap: 1rem;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.wingos {
-    color: #ffd700;
-    font-weight: 600;
 }
 
 .game-message {
@@ -158,583 +39,2389 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 20px;
-    font-size: 1.2rem;
-    z-index: 20;
+    font-family: 'Press Start 2P', monospace;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     display: none;
+    z-index: 20;
+}
+
+.controls {
+    margin-top: 1rem;
+    text-align: center;
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.game-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-family: 'Press Start 2P', monospace;
+    color: #8B4513;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+}
+
+.pause-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 10px rgba(255, 215, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.pause-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4),
+                0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.western-border {
+    position: relative;
+}
+
+.western-border::before, .western-border::after {
+    content: '🌵';
+    position: absolute;
+    font-size: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.western-border::before {
+    left: -25px;
+}
+
+.western-border::after {
+    right: -25px;
+}
+
+.western-badge {
+    display: inline-block;
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    color: #FFD700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-left: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dialogue-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #8B4513;
+    width: 80%;
+    max-width: 500px;
+    z-index: 1000;
+    display: none;
+    font-family: 'Press Start 2P', monospace;
+    color: white;
+    text-align: center;
+}
+
+.dialogue-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dialogue-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #FFD700;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.dialogue-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.next-btn {
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    color: #FFD700;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.victory-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 40;
+    width: 90%;
+    max-width: 600px;
+    font-family: 'Press Start 2P', monospace;
+    color: #fff;
+    text-align: center;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    border: 2px solid #8B4513;
+    box-sizing: border-box;
+    margin: 0 auto;
+    animation: bounce 1s infinite;
+}
+
+.victory-screen .victory-text {
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.victory-screen .victory-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #FFD700;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    animation: bounce 1s infinite;
+}
+
+.victory-screen .victory-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.victory-screen .play-again-btn {
+    background-color: #8B4513;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.victory-screen .play-again-btn:hover {
+    background-color: #A0522D;
+    transform: translateY(-2px);
+}
+
+.fireworks-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.firework {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    animation: firework 2s infinite;
+}
+
+@keyframes firework {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+
+.sparkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle 1s infinite;
+}
+
+@keyframes sparkle {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2);
+    }
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        padding: 0.5rem;
+    }
+
+    .game-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .game-canvas-container {
+        height: calc(100vh - 180px);
+        max-height: 500px;
+        border-width: 1px;
+    }
+
+    canvas {
+        height: 100% !important;
+        width: 100% !important;
+        object-fit: contain;
+    }
+
+    .controls {
+        display: none;  /* Hide keyboard controls on mobile */
+    }
+
+    .mobile-controls {
+        display: flex !important;
+        justify-content: space-around;
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .mobile-btn {
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.7rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Portrait mode */
+@media (max-width: 768px) and (orientation: portrait) {
+    .game-canvas-container {
+        height: 250px;  /* Fixed height in portrait */
+    }
+
+    .mobile-controls {
+        position: relative;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .mobile-btn {
+        margin: 0.25rem;
+    }
+}
+
+/* Landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+    .game-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 100vh;
+        padding: 0.5rem;
+        gap: 1rem;
+        max-width: 100%;
+    }
+
+    .game-title {
+        display: none;  /* Hide title in landscape to save space */
+    }
+
+    .game-canvas-container {
+        flex: 1;
+        height: calc(100vh - 20px);  /* Almost full height */
+        margin: 0;
+        position: relative;
+    }
+
+    .mobile-controls {
+        width: 60px;
+        flex-direction: column;
+        height: calc(100vh - 20px);
+        margin: 0;
+        justify-content: center;
+        position: fixed;  /* Change to fixed */
+        right: 10px;     /* Position from right edge */
+        top: 50%;        /* Center vertically */
+        transform: translateY(-50%);  /* Perfect vertical centering */
+        z-index: 1000;   /* Ensure buttons are above game */
+        background: rgba(0, 0, 0, 0.3);  /* Semi-transparent background */
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .mobile-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 0.6rem;
+        margin: 0.25rem 0;
+        opacity: 0.9;  /* Make buttons slightly transparent */
+    }
+
+    /* Adjust Daisy's position in landscape */
+    #game-canvas {
+        transform-origin: center center;
+        transform: scale(1.2);  /* Make game bigger in landscape */
+    }
+
+    /* Adjust ground height for landscape mode */
+    :root {
+        --landscape-ground-adjustment: 40px;  /* Increase this value to lower Daisy */
+    }
+
+    /* Update Daisy's ground position in landscape */
+    .game-canvas-container canvas {
+        margin-top: var(--landscape-ground-adjustment);
+    }
+}
+
+/* Additional styles for very small screens */
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 0.9rem;
+    }
+
+    .mobile-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.6rem;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="landscape-message" id="landscape-message">
-    <div class="content">
-        <h2>Please Rotate Your Device</h2>
-        <div class="rotate-icon">📱</div>
-        <p>This game is best played in landscape mode.<br>Please rotate your device to continue.</p>
-    </div>
-</div>
-
 <div class="game-container">
-    <div class="game-header">
-        <h1>Daisy's Track Adventure</h1>
-        <p>Run the legendary 320m Wingate Track, avoid obstacles, and earn $Wingos!</p>
-    </div>
-
-    <div class="game-canvas-container">
-        <div id="game-canvas"></div>
+    <h2 class="game-title western-border">🤠 Daisy's Yellowstone Adventure 🐎</h2>
+    <div id="game-canvas" class="game-canvas-container">
+        <button id="pauseBtn" class="pause-btn">PAUSE</button>
         <div class="game-stats">
-            <div class="stat-item">
-                <i class="fas fa-running"></i>
-                <span>Distance: <span id="distance">0</span>m</span>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-coins"></i>
-                <span>$Wingos: <span id="wingos" class="wingos">0</span></span>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-bolt"></i>
-                <span>Energy: <span id="energy">100</span>%</span>
-            </div>
+            <span>WINGOS: <span id="wingos">0</span></span>
+            <br>
+            <span>HI: <span id="highscore">0</span></span>
+            <br>
+            <span>GELS: <span id="gels">0</span> <span class="western-badge">YEEHAW!</span></span>
         </div>
         <div id="game-message" class="game-message"></div>
     </div>
-
-    <div class="game-controls">
-        <h3 class="mb-3">Controls</h3>
-        <div class="controls-grid">
-            <div class="control-item">
-                <span class="control-key">↑↓</span>
-                <span class="control-action">Change Lanes</span>
-            </div>
-            <div class="control-item">
-                <span class="control-key">SHIFT</span>
-                <span class="control-action">Sprint (costs energy)</span>
-            </div>
-            <div class="control-item">
-                <span class="control-key">SPACE</span>
-                <span class="control-action">Kick (costs energy)</span>
-            </div>
-            <div class="control-item">
-                <span class="control-key">S</span>
-                <span class="control-action">Stretch (regains energy)</span>
-            </div>
-        </div>
+    <div class="controls">
+        ↑: JUMP | SPACE: KICK (HORSES & KIDS) | G: BUY GEL (30 WINGO) | J: USE GEL 
+        <br> P: PAUSE | R: RESUME | COLLECT: CREATINE <img src="/static/images/game/cocktail.png" style="width: 20px; height: 20px; vertical-align: middle;"> & CARBON PLATES <img src="/static/images/game/sneaker_transparent.png" style="width: 30px; height: 30px; vertical-align: middle;">
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 <script>
-// Add orientation check at the start
-function checkOrientation() {
-    if (window.innerWidth <= 768) {
-        const isPortrait = window.innerHeight > window.innerWidth;
-        const message = document.getElementById('landscape-message');
-        const gameContainer = document.querySelector('.game-container');
-        
-        if (isPortrait) {
-            message.style.display = 'flex';
-            gameContainer.style.display = 'none';
-        } else {
-            message.style.display = 'none';
-            gameContainer.style.display = 'block';
-        }
-    }
-}
+// Define GEL_COST here so it's available for the HTML
+const GEL_COST = 30;
 
-// Check orientation on load and resize
-window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
+// Game constants
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 300;
+const GROUND_HEIGHT = 230;
+const GRAVITY = 1.2;
+const JUMP_FORCE = -30;
+const BASE_SPEED = 5;
+const GEL_JUMP_BOOST = 1.5;
+const KICK_FORCE = -15;
 
-// Add error handling for Phaser loading
-if (typeof Phaser === 'undefined') {
-    console.error('Phaser is not loaded! Please check your internet connection.');
-    document.getElementById('game-canvas').innerHTML = '<div style="padding: 20px; color: red;">Error: Game engine failed to load. Please refresh the page.</div>';
-}
+// Level constants
+const LEVEL_THRESHOLDS = {
+    1: 0,      // Rockies
+    2: 320,    // Yellowstone
+    3: 640,    // Wingate
+    WIN: 1000  // Game complete
+};
 
-// Debug loading of assets
-function debugImageLoad(key, success) {
-    console.log(`Loading ${key}: ${success ? 'Success' : 'Failed'}`);
-}
+const LEVEL_NAMES = {
+    1: "The Rockies",
+    2: "Yellowstone",
+    3: "Wingate National Park"
+};
 
-// Game configuration
-const config = {
-    type: Phaser.AUTO,
-    parent: 'game-canvas',
-    width: 800,
-    height: 600,
-    backgroundColor: '#87CEEB',  // Sky blue background
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 0 },  // Remove gravity since this is a side-scroller
-            debug: true  // Enable debug mode temporarily to see what's happening
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
+const LEVEL_BACKGROUNDS = {
+    1: '/static/images/game/rocky.png',
+    2: '/static/images/game/yellowstone1.gif',
+    3: '/static/images/game/city_3.png'
+};
+
+// Game assets
+const ASSETS = {
+    horse: null,
+    rival_horse: null,
+    snake: null,
+    grizzly: null,
+    porcupine: null,
+    george: null,
+    creatine: null,  // New asset for creatine collectible
+    carbon_plates: null,  // New asset for carbon plates collectible
+    kid: null,
+    biker: null
+};
+
+// Animation constants
+const SPRITE_WIDTH = 64;
+const SPRITE_HEIGHT = 64;
+const ANIMATION_FRAMES = 8;
+const ANIMATION_SPEED = 6;
+
+// Particle system
+let particles = [];
+
+// Parallax layers
+let parallaxLayers = [];
+
+// Game state
+let canvas, ctx;
+let daisy = {
+    x: 50,
+    y: GROUND_HEIGHT - 50,
+    width: 100,
+    height: 100,
+    velocityY: 0,
+    isJumping: false,
+    canDoubleJump: false,
+    isKicking: false,
+    frame: 0,
+    frameCount: 0,
+    chaosTimer: 0,
+    sprite: null,
+    gels: 0,
+    hasGelActive: false,
+    isInvincible: false,
+    invincibilityTimer: 0,
+    invincibilityEndTime: 0,
+    calfRaiseHeight: 0,
+    doingCalfRaises: false,
+    streak: 0,
+    multiplier: 1
+};
+
+let obstacles = [];
+let ground = {
+    y: GROUND_HEIGHT + 30,
+    segments: []
+};
+
+// Add collectible items array and constants
+let collectibles = [];
+const COLLECTIBLE_TYPES = {
+    CREATINE: 'creatine',
+    CARBON_PLATES: 'carbon-plates'
+};
+const COLLECTIBLE_POINTS = {
+    [COLLECTIBLE_TYPES.CREATINE]: 25,
+    [COLLECTIBLE_TYPES.CARBON_PLATES]: 50
+};
+const COLLECTIBLE_SPAWN_CHANCE = 0.016; // Reduced by 20% from 0.02
+
+// Update the game state to include level tracking
+let gameState = {
+    running: false,
+    paused: false,
+    score: 0,
+    highScore: 0,
+    speed: BASE_SPEED,
+    frameCount: 0,
+    backgroundOffset: 0,
+    pauseTime: 0,
+    hasWon: false,
+    currentLevel: 1,
+    dialogueInProgress: false,
+    waitingForLevelStart: false,
+    levelStartScore: 0,
+    gameStarted: false,
+    collectiblesCollected: {
+        [COLLECTIBLE_TYPES.CREATINE]: 0,
+        [COLLECTIBLE_TYPES.CARBON_PLATES]: 0
     }
 };
 
-// Initialize game with error handling
-try {
-    const game = new Phaser.Game(config);
-} catch (error) {
-    console.error('Failed to initialize game:', error);
-    document.getElementById('game-canvas').innerHTML = '<div style="padding: 20px; color: red;">Error: Failed to start game. Please refresh the page.</div>';
-}
+// Add flying horses array for kick animation
+let flyingHorses = [];
 
-// Game variables
-let player;
-let otherRunners = [];
-let cursors;
-let obstacles;
-let wingos = 0;
-let distance = 0;
-let energy = 100;
-let isJumping = false;
-let jumpTimer = 0;
-let sprintCooldown = false;
-let isStretching = false;
-let kickCooldown = false;
-let currentLane = 1;  // Start in middle lane
-let targetY = lanes[currentLane];  // Target Y position for smooth movement
-let gameSpeed = 5;
-let sprinting = false;
-let background;
-let lanes = [150, 300, 450];  // Y positions for the three lanes
-let jumpHeight = 100;  // Maximum jump height
-let isMoving = false;  // Track if player is changing lanes
-let gameMessages = [
-    "No walkers in lane 1!",
-    "Move to lane 3!",
-    "Daisy dodges a dog!",
-    "Daisy stretches mid-run. Elite recovery mode activated!",
-    "Earn those $Wingos!",
-    "Watch out for shin splints!",
-    "Hoof sprain alert!",
-    "Perfect form, Daisy!"
-];
+// Add invincibility duration constant
+const INVINCIBILITY_DURATION = 5000; // 5 seconds of invincibility
 
-function preload() {
-    // Add error handlers for asset loading
-    this.load.on('loaderror', function(file) {
-        console.error('Error loading asset:', file.src);
-        debugImageLoad(file.key, false);
-    });
-
-    this.load.on('filecomplete', function(key) {
-        debugImageLoad(key, true);
-    });
-
-    // Load game assets with error handling
+// Initialize game
+function init() {
     try {
-        this.load.image('track', "{{ url_for('static', filename='images/game/track.png') }}");
-        this.load.image('daisy', "{{ url_for('static', filename='images/game/daisy.png') }}");
-        
-        // Load obstacle types
-        this.load.image('dog', "{{ url_for('static', filename='images/game/dog.png') }}");
-        this.load.image('bike', "{{ url_for('static', filename='images/game/bike.png') }}");
-        this.load.image('child', "{{ url_for('static', filename='images/game/child.png') }}");
-        
-        // Load other runners
-        for (let i = 1; i <= 3; i++) {
-            this.load.image(`runner_${i}`, "{{ url_for('static', filename='images/game/') }}" + `runner_${i}.png`);
-        }
-    } catch (error) {
-        console.error('Error in preload:', error);
-    }
-}
+        // Create canvas
+        canvas = document.createElement('canvas');
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
+        ctx = canvas.getContext('2d');
+        document.getElementById('game-canvas').appendChild(canvas);
 
-function create() {
-    // Create repeating background
-    background = this.add.tileSprite(400, 300, 800, 600, 'track');
-    
-    // Add Daisy with improved physics
-    player = this.physics.add.sprite(200, lanes[currentLane], 'daisy');
-    player.setCollideWorldBounds(true);
-    player.setSize(32, 32);  // Smaller collision box
-    player.setOffset(16, 16);  // Center the collision box
-    player.setBounce(0);  // Remove bounce
-    player.setScale(0.3);  // Smaller scale to fit lanes better
-    
-    // Setup improved controls
-    cursors = this.input.keyboard.createCursorKeys();
-    
-    // Add obstacle group with improved spawning
-    obstacles = this.physics.add.group();
-    
-    // Improved collision detection with grace period
-    this.physics.add.overlap(player, obstacles, handleCollision, null, this);
-    
-    // Start spawning obstacles with longer delay
-    this.time.addEvent({
-        delay: 3000,  // Longer delay between obstacles
-        callback: spawnObstaclePattern,
-        callbackScope: this,
-        loop: true
-    });
-    
-    // Energy regeneration
-    this.time.addEvent({
-        delay: 100,
-        callback: regenerateEnergy,
-        callbackScope: this,
-        loop: true
-    });
-    
-    // Start random messages
-    this.time.addEvent({
-        delay: 5000,
-        callback: showRandomMessage,
-        callbackScope: this,
-        loop: true
-    });
-    
-    // Remove other runners for now to simplify debugging
-    /*
-    for (let i = 0; i < 3; i++) {
-        const runner = this.physics.add.sprite(
-            100 + (i+1) * 150,
-            lanes[i],
-            `runner_${i+1}`
-        );
-        runner.setCollideWorldBounds(true);
-        runner.setSize(64, 64);
-        runner.setOffset(32, 32);
-        runner.setScale(0.5);
-        runner.lane = i;
-        otherRunners.push(runner);
-    }
-    */
-}
+        // Set initial background
+        const container = document.querySelector('.game-canvas-container');
+        container.style.background = `url('${LEVEL_BACKGROUNDS[1]}')`;
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
 
-function update() {
-    // Scroll background
-    background.tilePositionX += gameSpeed * (sprinting ? 1.5 : 1);
-    
-    // Update distance
-    distance += gameSpeed * (sprinting ? 1.5 : 1) / 10;
-    
-    // Smooth lane changing
-    if (!isJumping && !isMoving) {
-        if (cursors.up.isDown && currentLane > 0) {
-            isMoving = true;
-            currentLane--;
-            this.tweens.add({
-                targets: player,
-                y: lanes[currentLane],
-                angle: -15,  // Tilt up when moving up
-                duration: 200,
-                ease: 'Power2',
-                onComplete: () => {
-                    this.tweens.add({
-                        targets: player,
-                        angle: 0,
-                        duration: 100
-                    });
-                    isMoving = false;
-                }
-            });
-        } else if (cursors.down.isDown && currentLane < 2) {
-            isMoving = true;
-            currentLane++;
-            this.tweens.add({
-                targets: player,
-                y: lanes[currentLane],
-                angle: 15,  // Tilt down when moving down
-                duration: 200,
-                ease: 'Power2',
-                onComplete: () => {
-                    this.tweens.add({
-                        targets: player,
-                        angle: 0,
-                        duration: 100
-                    });
-                    isMoving = false;
-                }
+        // Load images
+        ASSETS.horse = new Image();
+        ASSETS.horse.src = '/static/images/game/horse.png';
+        
+        ASSETS.rival_horse = new Image();
+        ASSETS.rival_horse.src = '/static/images/game/horse.png';
+        
+        ASSETS.snake = new Image();
+        ASSETS.snake.src = '/static/images/game/rattle_snake_pixel.png';
+        
+        ASSETS.grizzly = new Image();
+        ASSETS.grizzly.src = '/static/images/game/bear_trident_sprite.png';
+        
+        ASSETS.porcupine = new Image();
+        ASSETS.porcupine.src = '/static/images/game/porcupine.png';
+        
+        ASSETS.george = new Image();
+        ASSETS.george.src = '/static/images/game/george.png';
+
+        // Load new collectible images
+        ASSETS.creatine = new Image();
+        ASSETS.creatine.src = '/static/images/game/cocktail.png';
+        
+        ASSETS.carbon_plates = new Image();
+        ASSETS.carbon_plates.src = '/static/images/game/sneaker_transparent.png';
+
+        // Load level 3 specific obstacles
+        ASSETS.kid = new Image();
+        ASSETS.kid.src = '/static/images/game/kid.png';
+        
+        ASSETS.biker = new Image();
+        ASSETS.biker.src = '/static/images/game/biker.png';
+
+        // Initialize ground segments
+        for (let i = 0; i < CANVAS_WIDTH / 50 + 1; i++) {
+            ground.segments.push({
+                x: i * 50,
+                width: 50,
+                height: 2
             });
         }
-    }
-    
-    // Handle jumping
-    if (this.input.keyboard.checkDown(cursors.space, 250) && !isJumping && !kickCooldown) {
-        isJumping = true;
-        this.tweens.add({
-            targets: player,
-            y: player.y - jumpHeight,
-            scaleX: 0.6,  // Stretch horizontally
-            scaleY: 0.4,  // Compress vertically
-            duration: 300,
-            ease: 'Power2',
-            yoyo: true,
-            onComplete: () => {
-                isJumping = false;
-                player.setScale(0.5);  // Reset scale
+
+        // Event listeners
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        
+        // Add touch controls for mobile
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchend', handleTouchEnd);
+        
+        // Modify click handler to respect gameStarted state
+        canvas.addEventListener('click', function(e) {
+            if (!gameState.running && !gameState.gameStarted) {
+                startGame();
+                gameState.gameStarted = true;
             }
         });
+        
+        // Pause button - Fix the pause button to properly handle unpausing
+        const pauseBtn = document.getElementById('pauseBtn');
+        pauseBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the click from starting the game
+            togglePause();
+            // Update button text based on game state
+            this.textContent = gameState.paused ? "RESUME" : "PAUSE";
+        });
+
+        // Start game loop and store reference
+        gameState.gameLoop = requestAnimationFrame(gameLoop);
+        showMessage("PRESS ANY KEY OR TAP TO START");
+        
+        // Add mobile control buttons
+        addMobileControls();
+    } catch (error) {
+        console.error('Failed to initialize game:', error);
+        const errorMessage = document.createElement('div');
+        errorMessage.style.color = 'red';
+        errorMessage.style.padding = '20px';
+        errorMessage.style.textAlign = 'center';
+        errorMessage.innerHTML = `Error initializing game: ${error.message}<br>Please check the console for details.`;
+        document.getElementById('game-canvas').appendChild(errorMessage);
     }
-    
-    // Handle sprinting visual effect
-    if (sprinting) {
-        player.setAlpha(0.8 + Math.sin(this.time.now / 60) * 0.2);  // Create motion blur effect
-    } else {
-        player.setAlpha(1);
-    }
-    
-    // Move and rotate obstacles
-    obstacles.children.iterate(function (obstacle) {
-        if (obstacle) {
-            obstacle.x -= gameSpeed * (sprinting ? 1.5 : 1);
-            obstacle.angle += 2;  // Rotate obstacles
-            if (obstacle.x < -50) {
-                obstacle.destroy();
-            }
+}
+
+// Start the game when the DOM is fully loaded
+window.addEventListener('load', function() {
+    // Wait a short moment to ensure all resources are loaded
+    setTimeout(init, 100);
+});
+
+function handleKeyDown(event) {
+    // Check if game is won and any key is pressed to restart
+    if (gameState.hasWon) {
+        const victoryScreen = document.querySelector('.victory-screen');
+        if (victoryScreen) {
+            victoryScreen.remove();
         }
-    });
-    
-    // Update game stats
-    document.getElementById('distance').textContent = Math.floor(distance);
-    document.getElementById('wingos').textContent = wingos;
-    document.getElementById('energy').textContent = Math.floor(energy);
-}
-
-// Improved obstacle spawning with variety
-function spawnObstaclePattern() {
-    const lane = Phaser.Math.Between(0, 2);
-    const obstacleTypes = ['dog', 'bike', 'child'];
-    const type = obstacleTypes[Phaser.Math.Between(0, 2)];
-    
-    const obstacle = obstacles.create(850, lanes[lane], type);
-    obstacle.type = type;  // Store the obstacle type
-    
-    // Set appropriate scale based on type
-    let scale = 1.0;
-    switch(type) {
-        case 'dog':
-            scale = Phaser.Math.FloatBetween(0.8, 1.2);
-            // Add wagging animation
-            obstacle.scene.tweens.add({
-                targets: obstacle,
-                angle: 5,
-                duration: 200,
-                yoyo: true,
-                repeat: -1
-            });
-            break;
-        case 'bike':
-            scale = Phaser.Math.FloatBetween(1.0, 1.3);
-            // Add wobble animation
-            obstacle.scene.tweens.add({
-                targets: obstacle,
-                angle: 2,
-                duration: 100,
-                yoyo: true,
-                repeat: -1
-            });
-            break;
-        case 'child':
-            scale = Phaser.Math.FloatBetween(0.7, 1.0);
-            // Add bouncing animation
-            obstacle.scene.tweens.add({
-                targets: obstacle,
-                y: obstacle.y - 10,
-                duration: 500,
-                yoyo: true,
-                repeat: -1
-            });
-            break;
+        resetGameState();
+        startGame();
+        return;
     }
-    
-    obstacle.setScale(scale);
-    obstacle.setBounce(0);
-    obstacle.body.allowGravity = false;
-}
 
-// Improved collision handling with grace period
-let lastCollisionTime = 0;
-function handleCollision(player, obstacle) {
-    const currentTime = Date.now();
-    if (currentTime - lastCollisionTime < 1000) {
+    // Check if waiting for level start
+    if (gameState.waitingForLevelStart) {
+        const overlay = document.getElementById('levelTransitionOverlay');
+        if (overlay) {
+            overlay.remove();
+        }
+        gameState.waitingForLevelStart = false;
+        gameState.running = true;
+        hideMessage();
+        return;
+    }
+
+    // Don't handle any keys if dialogue is in progress
+    if (gameState.dialogueInProgress) {
+        return;
+    }
+
+    if (!gameState.running) {
+        startGame();
         return;
     }
     
-    let message = "";
-    let wingoChange = 0;
-    
-    if (kickCooldown) {
-        switch(obstacle.type) {
-            case 'dog':
-                message = "Careful with the dog! +5 Wingos";
-                wingoChange = 5;
-                break;
-            case 'bike':
-                message = "Bike dodged! +15 Wingos";
-                wingoChange = 15;
-                break;
-            case 'child':
-                message = "Child safely avoided! +10 Wingos";
-                wingoChange = 10;
-                break;
-        }
-        obstacle.destroy();
-        wingos += wingoChange;
-        showMessage(message, '#4CAF50');
-    } else if (isJumping) {
-        switch(obstacle.type) {
-            case 'dog':
-                message = "Jumped over the dog! +3 Wingos";
-                wingoChange = 3;
-                break;
-            case 'bike':
-                message = "Perfect bike jump! +5 Wingos";
-                wingoChange = 5;
-                break;
-            case 'child':
-                message = "Safely cleared! +4 Wingos";
-                wingoChange = 4;
-                break;
-        }
-        wingos += wingoChange;
-        showMessage(message, '#2196F3');
-    } else {
-        switch(obstacle.type) {
-            case 'dog':
-                message = "Watch out for the dog! -5 Wingos";
-                wingoChange = -5;
-                break;
-            case 'bike':
-                message = "Bike crash! -15 Wingos";
-                wingoChange = -15;
-                break;
-            case 'child':
-                message = "Be careful! -10 Wingos";
-                wingoChange = -10;
-                break;
-        }
-        wingos = Math.max(0, wingos + wingoChange);
-        energy = Math.max(0, energy - 20);
-        showMessage(message, '#f44336');
-        lastCollisionTime = currentTime;
-        
-        player.setTint(0xff0000);
-        this.time.delayedCall(100, () => {
-            player.clearTint();
-        });
+    // Prevent movement if game is won
+    if (gameState.hasWon) {
+        return;
     }
     
-    if (!isJumping && !kickCooldown) {
-        obstacle.destroy();
+    // Fix the pause/resume functionality with separate keys
+    if (event.code === 'KeyP' && !gameState.paused) {
+        togglePause(); // Only use P to pause, not to resume
+        return;
     }
-}
-
-function regenerateEnergy() {
-    if (!sprintCooldown && !isStretching) {
-        energy = Math.min(100, energy + 0.5);
+    
+    if (event.code === 'KeyR' && gameState.paused) {
+        togglePause(); // Use R to resume when paused
+        return;
     }
-}
-
-function showMessage(text, color = '#ffffff') {
-    const messageEl = document.getElementById('game-message');
-    messageEl.textContent = text;
-    messageEl.style.color = color;
-    messageEl.style.display = 'block';
-    setTimeout(() => {
-        messageEl.style.display = 'none';
-    }, 2000);
-}
-
-function showRandomMessage() {
-    const message = gameMessages[Math.floor(Math.random() * gameMessages.length)];
-    showMessage(message);
-}
-
-// Improved sprinting mechanics
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Shift' && !sprintCooldown && energy >= 20) {
-        sprintCooldown = true;
-        energy -= 20;
-        
-        // Increase track position speed
-        gameSpeed += 0.02;
-        
-        setTimeout(() => {
-            sprintCooldown = false;
-        }, 3000);
+    
+    // Don't process other keys if game is paused
+    if (gameState.paused) {
+        return;
     }
-});
 
-// Improved kicking mechanics with visual feedback
-document.addEventListener('keydown', (event) => {
-    if (event.code === 'Space' && !kickCooldown && energy >= 10) {
-        let canKick = false;
-        obstacles.children.iterate(function (obstacle) {
-            if (obstacle && Math.abs(obstacle.x - player.x) < 100) {
-                canKick = true;
-            }
-        });
-        
-        if (canKick) {
-            kickCooldown = true;
-            energy -= 10;
+    if ((event.code === 'ArrowUp' || event.code === 'KeyW')) {
+        // Allow jump if on ground or double jump if already jumping
+        if (!daisy.isJumping) {
+            jump();
+            daisy.canDoubleJump = true;  // Enable double jump after first jump
+        } else if (daisy.canDoubleJump) {
+            // Double jump with reduced force
+            daisy.velocityY = JUMP_FORCE * 0.7;
+            daisy.canDoubleJump = false;  // Disable after using double jump
             
-            // Add kick animation
-            player.scene.tweens.add({
-                targets: player,
-                angle: 360,  // Full rotation for kick
-                scaleX: 0.7,
-                duration: 500,
-                ease: 'Power2',
-                onComplete: () => {
-                    player.setScale(0.5);
-                    player.angle = 0;
-                }
+            // Double jump particles (yellow)
+            createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height/2, 12, '#FFD700');
+            
+            // Show double jump message with 320-themed running terminology
+            showMessage("SECOND WIND! 320 POWER!", 500);
+        }
+    } else if (event.code === 'Space') {
+        kick();
+    } else if (event.code === 'KeyG') {
+        buyGel();
+    } else if (event.code === 'KeyJ' && daisy.gels > 0 && !daisy.isInvincible) {
+        activateInvincibility();
+    }
+}
+
+function handleKeyUp(event) {
+    if (event.code === 'Space') {
+        daisy.isKicking = false;
+    }
+}
+
+function togglePause() {
+    gameState.paused = !gameState.paused;
+    
+    // Update button text
+    const pauseBtn = document.getElementById('pauseBtn');
+    const pauseResumeBtn = document.querySelector('.pause-resume-btn');
+    if (pauseBtn) pauseBtn.textContent = gameState.paused ? "RESUME" : "PAUSE";
+    if (pauseResumeBtn) pauseResumeBtn.textContent = gameState.paused ? "RESUME" : "PAUSE";
+    
+    if (gameState.paused) {
+        showMessage("PAUSED - PRESS R TO RESUME");
+        // Cancel animation frame when paused
+        if (gameState.gameLoop) {
+            cancelAnimationFrame(gameState.gameLoop);
+            gameState.gameLoop = null;
+        }
+        // Start calf raises when paused, but with less intensity
+        daisy.doingCalfRaises = true;
+        gameState.pauseTime = Date.now();
+    } else {
+        hideMessage();
+        // Resume animation frame when unpaused
+        if (!gameState.gameLoop) {
+            gameState.gameLoop = requestAnimationFrame(gameLoop);
+        }
+        // Stop calf raises when unpaused
+        daisy.doingCalfRaises = false;
+        daisy.calfRaiseHeight = 0;
+    }
+}
+
+function resetGameState() {
+    // Remove any existing dialogue boxes
+    const existingDialogues = document.querySelectorAll('.dialogue-box, .victory-screen');
+    existingDialogues.forEach(dialogue => dialogue.remove());
+    
+    // Reset game state flags
+    gameState.gameStarted = false;
+    
+    // Reset Daisy's position and state
+    daisy.x = 50;
+    daisy.y = GROUND_HEIGHT - 50;
+    daisy.velocityY = 0;
+    daisy.isJumping = false;
+    daisy.canDoubleJump = false;
+    daisy.isKicking = false;
+    daisy.frame = 0;
+    daisy.frameCount = 0;
+    daisy.chaosTimer = 0;
+    daisy.gels = 0;
+    daisy.hasGelActive = false;
+    daisy.isInvincible = false;
+    daisy.invincibilityTimer = 0;
+    daisy.invincibilityEndTime = 0;
+    daisy.calfRaiseHeight = 0;
+    daisy.doingCalfRaises = false;
+    daisy.streak = 0;
+    daisy.multiplier = 1;
+    
+    // Reset game state
+    gameState.running = false;
+    gameState.paused = false;
+    gameState.score = 0;
+    gameState.speed = BASE_SPEED;
+    gameState.frameCount = 0;
+    gameState.backgroundOffset = 0;
+    gameState.pauseTime = 0;
+    gameState.hasWon = false;
+    gameState.currentLevel = 1;  // Reset to level 1
+    gameState.levelStartScore = 0;
+    gameState.dialogueInProgress = false;
+    gameState.waitingForLevelStart = false;
+    gameState.collectiblesCollected = {
+        [COLLECTIBLE_TYPES.CREATINE]: 0,
+        [COLLECTIBLE_TYPES.CARBON_PLATES]: 0
+    };
+    
+    // Reset background to initial Rocky Mountains
+    const container = document.querySelector('.game-canvas-container');
+    container.style.background = `url('${LEVEL_BACKGROUNDS[1]}')`;
+    container.style.backgroundSize = 'cover';
+    container.style.backgroundPosition = 'center';
+    
+    // Remove any existing overlays
+    const transitionOverlay = document.getElementById('levelTransitionOverlay');
+    if (transitionOverlay) {
+        transitionOverlay.remove();
+    }
+    
+    // Clear arrays
+    obstacles = [];
+    collectibles = [];
+    particles = [];
+    flyingHorses = [];
+    
+    // Reset score display
+    document.getElementById('wingos').textContent = '0';
+    document.getElementById('gels').textContent = '0';
+    
+    // Hide any messages
+    hideMessage();
+}
+
+function startGame() {
+    // Only reset game state if we're not already started
+    if (!gameState.gameStarted) {
+        resetGameState();
+    }
+    
+    // Show George's introduction
+    showGeorgeIntroduction();
+}
+
+function showGeorgeIntroduction() {
+    gameState.dialogueInProgress = true;
+    
+    // Create dialogue box
+    const dialogueBox = document.createElement('div');
+    dialogueBox.className = 'dialogue-box';
+    dialogueBox.innerHTML = `
+        <div class="dialogue-content">
+            <img src="/static/images/game/george.png" class="dialogue-image" alt="George">
+            <div class="dialogue-text">
+                Hi I'm George and I'll be your guide on this journey, from the Rockies to Yellowstone to the Historic Wingate National Park. Yeehaw!
+            </div>
+        </div>
+        <button class="next-btn">Let's Ride!</button>
+    `;
+    
+    document.getElementById('game-canvas').appendChild(dialogueBox);
+    dialogueBox.style.display = 'block';
+    
+    // Function to start the game
+    const startTheGame = () => {
+        dialogueBox.remove();
+        gameState.dialogueInProgress = false;
+    gameState.running = true;
+    
+    // Initialize ground segments if needed
+    if (ground.segments.length === 0) {
+        const segmentWidth = 200;
+        const numSegments = Math.ceil(CANVAS_WIDTH / segmentWidth) + 1;
+        for (let i = 0; i < numSegments; i++) {
+            ground.segments.push({
+                x: i * segmentWidth,
+                width: segmentWidth,
+                height: 10
+            });
+        }
+    }
+        
+        // Add initial collectibles
+        addInitialCollectibles();
+    
+    hideMessage();
+    };
+    
+    // Add click handler for the button
+    dialogueBox.querySelector('.next-btn').addEventListener('click', startTheGame);
+    
+    // Add key handler for any key
+    const keyHandler = (e) => {
+        document.removeEventListener('keydown', keyHandler);
+        startTheGame();
+    };
+    document.addEventListener('keydown', keyHandler);
+}
+
+function addInitialCollectibles() {
+    // Add 3-5 collectibles at the start
+    const numCollectibles = Math.floor(Math.random() * 3) + 3;
+    
+    for (let i = 0; i < numCollectibles; i++) {
+        const type = Math.random() > 0.5 ? 
+            COLLECTIBLE_TYPES.CREATINE : 
+            COLLECTIBLE_TYPES.CARBON_PLATES;
+        
+        // Position them at different distances and heights
+        const xPosition = CANVAS_WIDTH + (i * 300) + Math.random() * 200;
+        const heightVariation = Math.random() > 0.5 ? 
+            Math.random() * 100 : // Higher position (50% chance)
+            0;                    // Ground level (50% chance)
+        
+        collectibles.push({
+            type: type,
+            x: xPosition,
+            y: GROUND_HEIGHT - 30 - heightVariation,
+            width: type === COLLECTIBLE_TYPES.CARBON_PLATES ? 70 : 30,  // Increased sneaker size from 50 to 70
+            height: type === COLLECTIBLE_TYPES.CARBON_PLATES ? 70 : 30,  // Increased sneaker size from 50 to 70
+            rotation: 0,
+            bobHeight: 0,
+            bobSpeed: Math.random() * 0.05 + 0.02
+        });
+    }
+}
+
+function buyGel() {
+    if (gameState.score >= GEL_COST) {
+        gameState.score -= GEL_COST;
+        daisy.gels++;
+        document.getElementById('gels').textContent = daisy.gels;
+        document.getElementById('wingos').textContent = Math.floor(gameState.score);
+        showMessage("Bought 1 Gel! Press J for 320 POWER MODE!", 1000);
+        
+        // Add particles for visual feedback
+        createParticleBurst(daisy.x + daisy.width/2, daisy.y, 10, '#00FFFF');
+    } else {
+        showMessage("Need " + GEL_COST + " Wingos for Gel!", 1000);
+    }
+}
+
+function jump() {
+    let jumpForce = JUMP_FORCE;
+    
+    // Add regular jump particles
+    createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height, 8, '#8B4513');
+    
+    daisy.velocityY = jumpForce;
+    daisy.isJumping = true;
+}
+
+function kick() {
+    if (daisy.isKicking) return;
+    
+    daisy.isKicking = true;
+    
+    // Add kick effect particles
+    createParticleBurst(daisy.x + daisy.width, daisy.y + daisy.height/2, 5, '#FF6347');
+    
+    let kickedSomething = false;
+    
+    obstacles.forEach((obstacle, index) => {
+        const kickRange = {
+            x: daisy.x + daisy.width/2,
+            y: daisy.y,
+            width: daisy.width,
+            height: daisy.height
+        };
+        
+        if ((obstacle.type === 'horse' || obstacle.type === 'kid') && isColliding(kickRange, obstacle)) {
+            kickedSomething = true;
+            
+            // Add the obstacle to flying obstacles array with initial velocity
+            flyingHorses.push({
+                x: obstacle.x,
+                y: obstacle.y,
+                width: obstacle.width,
+                height: obstacle.height,
+                velocityY: KICK_FORCE,
+                velocityX: 10,
+                rotation: 0,
+                rotationSpeed: Math.random() * 0.2 - 0.1  // Random rotation
             });
             
-            setTimeout(() => {
-                kickCooldown = false;
-            }, 1000);
+            // Create explosion of particles
+            createParticleBurst(obstacle.x + obstacle.width/2, obstacle.y, 20, '#FFA500');
+            
+            obstacles.splice(index, 1);
+            
+            // Increase streak and multiplier with 320-themed running terminology
+            daisy.streak++;
+            if (daisy.streak > 1) {
+                daisy.multiplier = Math.min(4, 1 + (daisy.streak * 0.5));
+                gameState.score += 10 * daisy.multiplier;
+                
+                // Use 320-themed running terminology for combo messages
+                const comboMessages = [
+                    `320 COMBO x${daisy.streak}!`,
+                    `WINGATE POWER x${daisy.streak}!`,
+                    `320 SPLIT x${daisy.streak}!`,
+                    `TRACK MASTER x${daisy.streak}!`
+                ];
+                const message = comboMessages[Math.min(daisy.streak - 2, comboMessages.length - 1)];
+                showMessage(`${message} +${Math.floor(10 * daisy.multiplier)} WINGOS!`, 500);
+            } else {
+                gameState.score += 10;
+                showMessage("KICKED! +10 WINGOS!", 500);
+            }
         }
+    });
+    
+    // Reset streak if nothing was kicked
+    if (!kickedSomething) {
+        daisy.streak = 0;
+        daisy.multiplier = 1;
+    }
+    
+    setTimeout(() => {
+        daisy.isKicking = false;
+    }, 500);
+}
+
+// Particle system
+function createParticle(x, y, color) {
+    return {
+        x: x,
+        y: y,
+        size: Math.random() * 5 + 2,
+        speedX: Math.random() * 6 - 3,
+        speedY: Math.random() * 6 - 3,
+        color: color,
+        life: Math.random() * 30 + 20
+    };
+}
+
+function createParticleBurst(x, y, amount, color) {
+    for (let i = 0; i < amount; i++) {
+        particles.push(createParticle(x, y, color));
+    }
+}
+
+function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.speedX;
+        p.y += p.speedY;
+        
+        // Apply gravity if this particle has it
+        if (p.gravity) {
+            p.speedY += p.gravity;
+        }
+        
+        p.life--;
+        
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+        }
+    }
+}
+
+function drawParticles() {
+    particles.forEach(p => {
+        ctx.globalAlpha = p.life / 50; // Fade out as life decreases
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1; // Reset alpha
+}
+
+function gameLoop() {
+    if (gameState.running && !gameState.paused) {
+        update();
+    } else if (gameState.paused) {
+        // Update calf raises animation during pause
+        updateCalfRaises();
+    }
+    draw();
+    // Store next frame reference
+    gameState.gameLoop = requestAnimationFrame(gameLoop);
+}
+
+function updateCalfRaises() {
+    // Calculate calf raise height using sine wave for smooth up/down motion
+    // Reduced amplitude from 10 to 5 for less intense movement
+    const elapsed = Date.now() - gameState.pauseTime;
+    daisy.calfRaiseHeight = Math.sin(elapsed / 500) * 5; // 5px max height, slower cycle
+    
+    // Update particles even when paused
+    updateParticles();
+    
+    // Reduce frequency of dust particles during calf raises
+    if (Math.random() < 0.03) { // Reduced from 0.1 to 0.03
+        createParticleBurst(
+            daisy.x + daisy.width/2, 
+            daisy.y + daisy.height, 
+            1, // Reduced from 2 to 1
+            '#D2B48C'
+        );
+    }
+}
+
+function update() {
+    gameState.frameCount++;
+    daisy.frameCount++;
+    
+    // Update background parallax
+    gameState.backgroundOffset += gameState.speed * 0.2;
+
+    // Update invincibility timer
+    if (daisy.isInvincible) {
+        if (Date.now() >= daisy.invincibilityEndTime) {
+            // End invincibility
+            daisy.isInvincible = false;
+            showMessage("320 POWER MODE ENDED", 1000);
+        } else {
+            // Create trailing particles while invincible
+            if (gameState.frameCount % 2 === 0) {
+                createParticleBurst(
+                    daisy.x + Math.random() * daisy.width, 
+                    daisy.y + Math.random() * daisy.height, 
+                    1, 
+                    `hsl(${(gameState.frameCount * 5) % 360}, 100%, 50%)`  // Rainbow colors
+                );
+            }
+        }
+    }
+
+    // Update Daisy
+    if (daisy.isJumping) {
+        daisy.velocityY += GRAVITY;
+        daisy.y += daisy.velocityY;
+
+        if (daisy.y >= GROUND_HEIGHT - 50) {
+            daisy.y = GROUND_HEIGHT - 50;
+            daisy.velocityY = 0;
+            daisy.isJumping = false;
+            daisy.canDoubleJump = false;  // Reset double jump on landing
+            
+            // Landing particles
+            createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height, 5, '#8B4513');
+        }
+    }
+
+    // Animate Daisy - smoother animation
+    if (daisy.frameCount % ANIMATION_SPEED === 0) {
+        daisy.frame = (daisy.frame + 1) % ANIMATION_FRAMES;
+    }
+
+    // Random chaos (speed changes) - REMOVED to prevent abrupt pauses
+    // Keep speed consistent
+    gameState.speed = BASE_SPEED;
+
+    // Update obstacles - spawn more frequently to make game harder
+    if (gameState.frameCount % 80 === 0) {  // Reduced from 100 to 80
+        spawnObstacle();
+    }
+    
+    // Try to spawn collectibles - make them rarer
+    if (Math.random() < COLLECTIBLE_SPAWN_CHANCE * 0.5) {  // Reduced chance by 50%
+        spawnCollectible();
+    }
+
+    obstacles.forEach((obstacle, index) => {
+        obstacle.x -= gameState.speed;
+        
+        // Remove off-screen obstacles
+        if (obstacle.x + obstacle.width < 0) {
+            obstacles.splice(index, 1);
+        }
+
+        // Check collisions - skip if invincible
+        if (!daisy.isKicking && !daisy.isInvincible && isColliding(daisy, obstacle)) {
+            if (obstacle.type === 'horse' && daisy.isKicking) {
+                obstacles.splice(index, 1);
+                gameState.score += 10;
+            } else {
+                gameOver();
+            }
+        } else if (daisy.isInvincible && isColliding(daisy, obstacle)) {
+            // When invincible, destroy obstacles on contact and gain points
+            createParticleBurst(obstacle.x + obstacle.width/2, obstacle.y, 20, '#00FFFF');
+            obstacles.splice(index, 1);
+            gameState.score += 5;
+            showMessage("+5 WINGOS!", 300);
+        }
+    });
+    
+    // Update collectibles
+    collectibles.forEach((collectible, index) => {
+        collectible.x -= gameState.speed;
+        
+        // Bobbing animation
+        collectible.bobHeight = Math.sin(gameState.frameCount * collectible.bobSpeed) * 5;
+        collectible.rotation += 0.02;
+        
+        // Remove off-screen collectibles
+        if (collectible.x + collectible.width < 0) {
+            collectibles.splice(index, 1);
+            return;
+        }
+        
+        // Check for collection
+        if (isColliding(daisy, collectible)) {
+            // Collect the item
+            collectibles.splice(index, 1);
+            
+            // Add points based on type
+            const points = COLLECTIBLE_POINTS[collectible.type];
+            gameState.score += points;
+            
+            // Track collection
+            gameState.collectiblesCollected[collectible.type]++;
+            
+            // Create special effect based on type
+            if (collectible.type === COLLECTIBLE_TYPES.CREATINE) {
+                // Creatine effect - red/purple burst
+                createParticleBurst(
+                    collectible.x + collectible.width/2, 
+                    collectible.y, 
+                    30, 
+                    '#FF00FF'
+                );
+                showMessage(`CREATINE POWER! +${points} WINGOS!`, 1000);
+                
+                // REMOVED speed boost (turbo feature)
+            } else if (collectible.type === COLLECTIBLE_TYPES.CARBON_PLATES) {
+                // Carbon plates effect - green/blue burst
+                createParticleBurst(
+                    collectible.x + collectible.width/2, 
+                    collectible.y, 
+                    30, 
+                    '#00FFAA'
+                );
+                showMessage(`CARBON PLATES! +${points} WINGOS!`, 1000);
+                
+                // REMOVED multiplier boost (turbo feature)
+            }
+            
+            // Update score display
+            document.getElementById('wingos').textContent = Math.floor(gameState.score);
+        }
+    });
+
+    // Update ground
+    ground.segments.forEach(segment => {
+        segment.x -= gameState.speed;
+        if (segment.x + segment.width < 0) {
+            segment.x = CANVAS_WIDTH;
+        }
+    });
+
+    // Update flying horses
+    flyingHorses.forEach((horse, index) => {
+        horse.x += horse.velocityX;
+        horse.y += horse.velocityY;
+        horse.velocityY += GRAVITY * 0.5;  // Slower fall for more dramatic effect
+        horse.rotation += horse.rotationSpeed;
+        
+        // Add trail particles
+        if (gameState.frameCount % 3 === 0) {
+            particles.push(createParticle(
+                horse.x + horse.width/2, 
+                horse.y + horse.height/2,
+                '#FFA07A'
+            ));
+        }
+        
+        // Remove if off screen
+        if (horse.x > CANVAS_WIDTH || horse.y > CANVAS_HEIGHT) {
+            flyingHorses.splice(index, 1);
+        }
+    });
+    
+    // Update particles
+    updateParticles();
+
+    // Update score - make it harder to earn points
+    gameState.score += 0.05 * daisy.multiplier;  // Reduced from 0.1 to 0.05
+    document.getElementById('wingos').textContent = Math.floor(gameState.score);
+    
+    // Check for level transitions and win condition
+    const score = Math.floor(gameState.score);
+    if (score >= LEVEL_THRESHOLDS.WIN && !gameState.hasWon) {
+        gameState.hasWon = true;
+        winGame();
+    } else if (score >= LEVEL_THRESHOLDS[3] && gameState.currentLevel < 3) {
+        advanceToLevel(3);
+    } else if (score >= LEVEL_THRESHOLDS[2] && gameState.currentLevel < 2) {
+        advanceToLevel(2);
+    }
+    
+    // Decay multiplier over time - faster decay to make it harder
+    if (daisy.multiplier > 1 && gameState.frameCount % 200 === 0) {  // Reduced from 300 to 200
+        daisy.multiplier = Math.max(1, daisy.multiplier - 0.5);
+    }
+}
+
+function draw() {
+    // Clear canvas with transparent background to show the GIF
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    // Draw invisible ground (no visible line)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0)';  // Completely transparent
+    ground.segments.forEach(segment => {
+        ctx.fillRect(segment.x, ground.y, segment.width, segment.height);
+    });
+
+    // Draw particles behind Daisy
+    drawParticles();
+    
+    // Draw collectibles with bounce effect
+    collectibles.forEach(collectible => {
+        ctx.save();
+        
+        // Apply bobbing, rotation, and bounce effect
+        const bounceHeight = Math.sin(gameState.frameCount * 0.1) * 3; // Subtle bounce
+        ctx.translate(
+            collectible.x + collectible.width/2, 
+            collectible.y + collectible.bobHeight + bounceHeight + collectible.height/2
+        );
+        ctx.rotate(collectible.rotation);
+        
+        // Add glow effect
+        ctx.shadowColor = collectible.type === COLLECTIBLE_TYPES.CREATINE ? 
+            '#FF00FF' : '#00FFAA';
+        ctx.shadowBlur = 10;
+        
+        // Draw the collectible using the new images
+        if (collectible.type === COLLECTIBLE_TYPES.CREATINE) {
+            // Draw creatine using cocktail image
+            ctx.drawImage(
+                ASSETS.creatine,
+                -collectible.width/2,
+                -collectible.height/2,
+                collectible.width,
+                collectible.height
+            );
+        } else {
+            // Draw carbon plates using sneaker image
+            ctx.drawImage(
+                ASSETS.carbon_plates,
+                -collectible.width/2,
+                -collectible.height/2,
+                collectible.width,
+                collectible.height
+            );
+        }
+        
+        ctx.restore();
+    });
+
+    // Draw obstacles with shadows - rival horses more visible
+    obstacles.forEach(obstacle => {
+        let sprite = null;
+        switch(obstacle.type) {
+            case 'porcupine':
+                sprite = ASSETS.porcupine;
+                break;
+            case 'snake':
+                sprite = ASSETS.snake;
+                break;
+            case 'horse':
+                sprite = ASSETS.horse;
+                break;
+            case 'grizzly':
+                sprite = ASSETS.grizzly;
+                break;
+            case 'kid':
+                sprite = ASSETS.kid;
+                break;
+            case 'biker':
+                sprite = ASSETS.biker;
+                break;
+        }
+        
+        if (sprite) {
+            ctx.save();
+            
+            if (obstacle.type === 'horse') {
+                // Make rival horses more visible with a subtle glow
+                ctx.shadowColor = 'rgba(255, 0, 0, 0.7)';
+                ctx.shadowBlur = 15;
+                ctx.shadowOffsetX = 3;
+                ctx.shadowOffsetY = 3;
+                
+                // Draw the rival horse
+                ctx.translate(obstacle.x + obstacle.width/2, obstacle.y);
+                
+                // Add slight bouncing effect - use a consistent value based on position
+                // This prevents the shaking effect by making the bounce consistent for each horse
+                const bounceOffset = Math.sin((obstacle.x * 0.01) + (gameState.frameCount * 0.05)) * 2;
+                ctx.translate(0, bounceOffset);
+                
+                // Flip horizontally to face Daisy
+                ctx.scale(-1, 1);
+                
+                // Draw the horse without any overlay
+                ctx.drawImage(
+                    sprite,
+                    -obstacle.width/2,
+                    -obstacle.height,
+                    obstacle.width,
+                    obstacle.height
+                );
+                
+                ctx.restore();
+            } else {
+                // Regular drawing for other obstacles
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 3;
+                ctx.shadowOffsetY = 3;
+                
+                ctx.drawImage(
+                    sprite,
+                    obstacle.x,
+                    obstacle.y - obstacle.height/2,
+                    obstacle.width,
+                    obstacle.height
+                );
+                ctx.restore();
+            }
+        }
+    });
+
+    // Draw Daisy with shadow and dust trail
+    if (ASSETS.horse) {
+        ctx.save();
+        
+        // Add shadow under Daisy
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+        
+        // Apply calf raise height adjustment when paused
+        let yPosition = daisy.y;
+        if (daisy.doingCalfRaises) {
+            yPosition -= daisy.calfRaiseHeight;
+        }
+        
+        ctx.translate(daisy.x + daisy.width/2, yPosition + daisy.height/2);
+        
+        // Add bouncing effect (only when not doing calf raises)
+        if (!daisy.doingCalfRaises) {
+            const bounce = Math.sin(daisy.frameCount * 0.1) * 2;
+            ctx.translate(0, bounce);
+        }
+        
+        // Kicking effect
+        if (daisy.isKicking) {
+            ctx.scale(1.2, 1);
+        }
+        
+        // Invincibility effect - pulsing rainbow glow
+        if (daisy.isInvincible) {
+            const timeLeft = daisy.invincibilityEndTime - Date.now();
+            const pulseRate = Math.sin(Date.now() / 100) * 0.2 + 0.8; // Pulsing between 0.6 and 1.0
+            
+            // Rainbow shadow effect
+            const hue = (Date.now() / 20) % 360;
+            ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            ctx.shadowBlur = 20;
+            
+            // Pulse size based on time left
+            const scale = 1 + (pulseRate * 0.2);
+            ctx.scale(scale, scale);
+            
+            // Add timer indicator - improved circle
+            const timerPercent = timeLeft / INVINCIBILITY_DURATION;
+            
+            // Draw outer glow circle
+            ctx.beginPath();
+            ctx.arc(0, 0, daisy.width/2 + 15, 0, Math.PI * 2);
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = `hsla(${hue}, 100%, 70%, ${pulseRate * 0.3})`;
+            ctx.stroke();
+            
+            // Draw main timer circle
+            ctx.beginPath();
+            ctx.arc(0, 0, daisy.width/2 + 15, 0, Math.PI * 2 * timerPercent);
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${pulseRate * 0.8})`;
+            ctx.stroke();
+            
+            // Draw small sparkles around the circle
+            const sparkleCount = 8;
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkleAngle = (i / sparkleCount) * Math.PI * 2;
+                const sparkleX = Math.cos(sparkleAngle + (Date.now() / 500)) * (daisy.width/2 + 15);
+                const sparkleY = Math.sin(sparkleAngle + (Date.now() / 500)) * (daisy.width/2 + 15);
+                
+                ctx.beginPath();
+                ctx.arc(sparkleX, sparkleY, 3 * pulseRate, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${(hue + i * 30) % 360}, 100%, 70%, ${pulseRate})`;
+                ctx.fill();
+            }
+        }
+        
+        // Double jump available indicator
+        if (daisy.isJumping && daisy.canDoubleJump) {
+            ctx.shadowColor = '#FFD700';
+            ctx.shadowBlur = 15;
+        }
+        
+        ctx.drawImage(
+            ASSETS.horse,
+            -daisy.width/2,
+            -daisy.height/2,
+            daisy.width,
+            daisy.height
+        );
+        ctx.restore();
+
+        // Add dust trail when running (not jumping or paused)
+        if (!daisy.isJumping && !gameState.paused && gameState.running) {
+            if (gameState.frameCount % 3 === 0) { // Create dust every 3 frames
+                createParticleBurst(
+                    daisy.x - 10,
+                    daisy.y + daisy.height - 5,
+                    1,  // Reduced from 2 to 1 particle per burst
+                    'rgba(255, 248, 220, 0.4)'  // Made even more transparent
+                );
+            }
+        }
+    }
+
+    // Draw flying horses with motion blur effect - remove red tint
+    flyingHorses.forEach(horse => {
+        ctx.save();
+        
+        // Motion blur effect
+        ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetX = -5;
+        ctx.shadowOffsetY = 0;
+        
+        ctx.translate(horse.x + horse.width/2, horse.y + horse.height/2);
+        ctx.rotate(horse.rotation);
+        
+        // Use Daisy's sprite for flying horses too
+        ctx.drawImage(
+            ASSETS.horse,
+            -horse.width/2,
+            -horse.height/2,
+            horse.width,
+            horse.height
+        );
+        
+        ctx.restore();
+    });
+
+    // Draw multiplier if active with 320 theme
+    if (daisy.multiplier > 1) {
+        ctx.save();
+        ctx.font = '16px "Press Start 2P", monospace';
+        ctx.fillStyle = '#FFD700';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 5;
+        ctx.fillText(`320 PACE x${daisy.multiplier.toFixed(1)}`, daisy.x + daisy.width/2, daisy.y - 20);
+        ctx.restore();
+    }
+    
+    // Draw invincibility timer if active
+    if (daisy.isInvincible) {
+        const timeLeft = Math.ceil((daisy.invincibilityEndTime - Date.now()) / 1000);
+        ctx.save();
+        
+        // Create a more visible background for the timer
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.roundRect = function(x, y, width, height, radius) {
+            this.beginPath();
+            this.moveTo(x + radius, y);
+            this.arcTo(x + width, y, x + width, y + height, radius);
+            this.arcTo(x + width, y + height, x, y + height, radius);
+            this.arcTo(x, y + height, x, y, radius);
+            this.arcTo(x, y, x + width, y, radius);
+            this.closePath();
+            return this;
+        };
+        
+        // Draw rounded rectangle background
+        const timerText = `320 POWER: ${timeLeft}s`;
+        const textWidth = timerText.length * 16;
+        ctx.roundRect(CANVAS_WIDTH/2 - textWidth/2 - 10, 10, textWidth + 20, 30, 10).fill();
+        
+        // Draw text with glow
+        const hue = (Date.now() / 20) % 360;
+        ctx.font = 'bold 16px "Press Start 2P", monospace';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = `hsl(${hue}, 100%, 70%)`;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(timerText, CANVAS_WIDTH/2, 30);
+        
+        // Add small animated icons on either side of the text
+        const iconSize = 12;
+        const iconOffset = textWidth/2 + 20;
+        
+        // Left lightning bolt
+        ctx.font = `${iconSize}px Arial`;
+        ctx.fillText('⚡', CANVAS_WIDTH/2 - iconOffset + Math.sin(Date.now() / 200) * 3, 30);
+        
+        // Right lightning bolt
+        ctx.fillText('⚡', CANVAS_WIDTH/2 + iconOffset + Math.sin(Date.now() / 200 + Math.PI) * 3, 30);
+        
+        ctx.restore();
+    }
+    
+    // Draw western-themed pause overlay - less intrusive
+    if (gameState.paused) {
+        // Draw semi-transparent overlay - reduced opacity
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Reduced from 0.3 to 0.2
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        
+        // Draw western-themed pause indicator
+        ctx.save();
+        ctx.font = '16px "Press Start 2P", monospace'; // Reduced from 20px to 16px
+        ctx.fillStyle = '#FFD700';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        
+        // Draw cowboy hat above "PAUSED" text - smaller
+        ctx.font = '24px serif'; // Reduced from 30px to 24px
+        ctx.fillText('🤠', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30); // Moved up slightly
+        
+        // Draw "PAUSED" text - changed to be more subtle
+        ctx.font = '16px "Press Start 2P", monospace'; // Reduced from 20px to 16px
+        ctx.fillText('PRESS R TO RESUME', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 30); // Changed text
+        ctx.restore();
+    }
+
+    // Draw win message if player has won
+    if (gameState.hasWon && !gameState.running) {
+        ctx.save();
+        
+        // Draw semi-transparent overlay
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        
+        // Draw win text
+        ctx.font = 'bold 24px "Press Start 2P", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#FFD700'; // Gold color
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 10;
+        ctx.fillText('320 WINGOS!', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30);
+        ctx.fillText('YOU WIN!', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 10);
+        
+        // Draw smaller instruction text
+        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.fillText('PRESS ANY KEY TO PLAY AGAIN', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 50);
+        
+        ctx.restore();
+    }
+
+    // Draw current level indicator with improved visibility
+    ctx.save();
+    // Add a semi-transparent background for better readability
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Increased opacity from 0.6 to 0.7
+    const levelText = `LEVEL ${gameState.currentLevel}: ${LEVEL_NAMES[gameState.currentLevel]}`;
+    ctx.font = '14px "Press Start 2P", monospace'; // Increased from 12px to 14px
+    const textMetrics = ctx.measureText(levelText);
+    const padding = 12; // Increased from 10 to 12
+    ctx.roundRect(5, 5, textMetrics.width + padding * 2, 30, 5); // Increased height from 25 to 30
+    ctx.fill();
+    
+    // Draw the text with a glow effect
+    ctx.font = '14px "Press Start 2P", monospace'; // Increased from 12px to 14px
+    ctx.textAlign = 'left';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = '#FFD700';
+    ctx.fillText(levelText, padding + 5, 22); // Adjusted Y position for new font size
+    
+    // Add a subtle border
+    ctx.strokeStyle = '#8B4513';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(5, 5, textMetrics.width + padding * 2, 30); // Increased height from 25 to 30
+    ctx.restore();
+}
+
+function spawnObstacle() {
+    // Different obstacle types based on level
+    let types;
+    if (gameState.currentLevel === 3) {
+        types = ['snake', 'snake', 'horse', 'horse', 'horse', 'kid', 'kid', 'biker', 'biker', 'grizzly'];  // 10 total: 3 horse, 2 snake, 2 kid, 2 biker, 1 bear
+    } else {
+        types = ['snake', 'snake', 'horse', 'horse', 'horse', 'horse', 'porcupine', 'porcupine', 'grizzly', 'grizzly'];  // 10 total: 4 horse, 2 snake, 2 porcupine, 2 bear
+    }
+    
+    const type = types[Math.floor(Math.random() * types.length)];
+    
+    // Base height is ground level
+    let baseY = GROUND_HEIGHT;
+    
+    // Add height variation for non-horse obstacles
+    let heightVariation = 0;
+    if (type !== 'horse') {
+        // Different height ranges for different obstacles
+        switch(type) {
+            case 'snake':
+                // Snakes can be slightly elevated
+                heightVariation = Math.random() * 40; // 0 to 40 pixels up
+                break;
+            case 'porcupine':
+                // Porcupines can be on small elevations
+                heightVariation = Math.random() * 60; // 0 to 60 pixels up
+                break;
+            case 'grizzly':
+                // Bears can be at ground level or elevated
+                heightVariation = Math.random() > 0.5 ? 20 + Math.random() * 60 : 0; // 50% chance of elevation
+                break;
+            case 'kid':
+                // Kids can be at various heights (like jumping)
+                heightVariation = Math.random() * 100; // 0 to 100 pixels up
+                break;
+            case 'biker':
+                // Bikers occasionally on ramps or elevated paths
+                heightVariation = Math.random() > 0.6 ? Math.random() * 70 : 0; // 40% chance of being 0-70 pixels up
+                break;
+        }
+    }
+    
+    let obstacle = {
+        type: type,
+        x: CANVAS_WIDTH,
+        y: baseY - heightVariation,
+        width: 50,
+        height: 50,
+        heightVariation: heightVariation  // Store the height variation for debugging
+    };
+
+    switch(type) {
+        case 'porcupine':
+            obstacle.width = 40;
+            obstacle.height = 30;
+            break;
+        case 'snake':
+            obstacle.width = 40;
+            obstacle.height = 20;
+            break;
+        case 'horse':
+            obstacle.width = 60;
+            obstacle.height = 60;
+            break;
+        case 'grizzly':
+            obstacle.width = 70;
+            obstacle.height = 70;
+            break;
+        case 'kid':
+            obstacle.width = 40;
+            obstacle.height = 60;
+            break;
+        case 'biker':
+            obstacle.width = 60;
+            obstacle.height = 60;
+            break;
+    }
+
+    // Only add obstacle if there's enough space
+    const lastObstacle = obstacles[obstacles.length - 1];
+    if (!lastObstacle || lastObstacle.x < CANVAS_WIDTH - 300) {
+        obstacles.push(obstacle);
+    }
+}
+
+function isColliding(a, b) {
+    // Add a small buffer for more forgiving collisions
+    const buffer = 10;  // Increased from 5 to 10 for even more forgiving collisions
+    return (a.x + buffer) < (b.x + b.width) &&
+           (a.x + a.width - buffer) > b.x &&
+           (a.y + buffer) < (b.y + b.height) &&
+           (a.y + a.height - buffer) > b.y;
+}
+
+function gameOver() {
+    gameState.running = false;
+    
+    // Create explosion of particles for game over effect
+    createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height/2, 50, '#FF0000');
+    
+    // Reset score to start of current level
+    gameState.score = gameState.levelStartScore;
+    document.getElementById('wingos').textContent = Math.floor(gameState.score);
+    
+    // Create dialogue box with George's message
+    const dialogueBox = document.createElement('div');
+    dialogueBox.className = 'dialogue-box';
+    
+    // Get a random encouraging message from George
+    const georgeMessages = [
+        `Whoa there, partner! Looks like we hit a snag in ${LEVEL_NAMES[gameState.currentLevel]}. Don't worry, we'll start from here!`,
+        `Whoopsie Daisy! Let's give ${LEVEL_NAMES[gameState.currentLevel]} another shot!`,
+        `That's the 320 spirit - never stop trotting! Ready to tackle ${LEVEL_NAMES[gameState.currentLevel]} again?`,
+        `Remember, don't look back in anger. Let's show ${LEVEL_NAMES[gameState.currentLevel]} what we're made of!`
+    ];
+    
+    const randomMessage = georgeMessages[Math.floor(Math.random() * georgeMessages.length)];
+    
+    dialogueBox.innerHTML = `
+        <div class="dialogue-content">
+            <img src="/static/images/game/george.png" class="dialogue-image" alt="George">
+            <div class="dialogue-text">
+                ${randomMessage}
+            </div>
+        </div>
+        <button class="next-btn">Try Again!</button>
+    `;
+    
+    document.getElementById('game-canvas').appendChild(dialogueBox);
+    dialogueBox.style.display = 'block';
+    
+    // Function to restart the level
+    const restartLevel = () => {
+        dialogueBox.remove();
+        gameState.running = true;
+        hideMessage();
+        
+        // Clear obstacles and collectibles
+        obstacles = [];
+        collectibles = [];
+        
+        // Reset Daisy's position and state
+        daisy.x = 50;
+        daisy.y = GROUND_HEIGHT - 50;
+        daisy.velocityY = 0;
+        daisy.isJumping = false;
+        daisy.canDoubleJump = false;
+        daisy.isKicking = false;
+        
+        // Add initial collectibles
+        addInitialCollectibles();
+    };
+    
+    // Add click handler for the button
+    dialogueBox.querySelector('.next-btn').addEventListener('click', restartLevel);
+    
+    // Add key handler for any key
+    const keyHandler = (e) => {
+        document.removeEventListener('keydown', keyHandler);
+        restartLevel();
+    };
+    document.addEventListener('keydown', keyHandler);
+}
+
+function showMessage(text, duration = 0) {
+    const messageEl = document.getElementById('game-message');
+    // Check if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Use different message based on device
+    const displayText = text === "PRESS ANY KEY OR TAP TO START" 
+        ? (isMobile ? "TAP TO START" : "PRESS ANY KEY TO START")
+        : text;
+    messageEl.textContent = displayText;
+    messageEl.style.display = 'block';
+    
+    // Add animation effect
+    messageEl.style.animation = 'none';
+    setTimeout(() => {
+        messageEl.style.animation = 'pulse 2s infinite';
+    }, 10);
+    
+    if (duration > 0) {
+        setTimeout(() => {
+            messageEl.style.display = 'none';
+        }, duration);
+    }
+}
+
+function hideMessage() {
+    document.getElementById('game-message').style.display = 'none';
+}
+
+// Add key listener for using gels with 320 theme
+document.addEventListener('keydown', (event) => {
+    if (gameState.paused) {
+        if (event.code === 'KeyR') {
+            togglePause();
+        }
+        return;
+    }
+    
+    if (event.code === 'KeyJ' && daisy.gels > 0 && !daisy.isInvincible) {
+        activateInvincibility();
     }
 });
 
-// Improved stretching mechanics with visual feedback
-document.addEventListener('keydown', (event) => {
-    if (event.key.toLowerCase() === 's' && !isStretching) {
-        isStretching = true;
-        showMessage("Stretching... Energy boost!", '#FFC107');
-        
-        // Add stretch animation
-        player.scene.tweens.add({
-            targets: player,
-            scaleX: 0.7,
-            scaleY: 0.3,
-            duration: 500,
-            yoyo: true,
-            repeat: 1,
-            ease: 'Power2',
-            onComplete: () => {
-                player.setScale(0.5);
+// Add animation keyframes
+document.head.insertAdjacentHTML('beforeend', `
+<style>
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+</style>
+`);
+
+// Add touch controls for mobile
+function handleTouchStart(event) {
+    event.preventDefault(); // Prevent default touch behavior
+    
+    // Only allow game start if not already started
+    if (!gameState.gameStarted) {
+        startGame();
+        gameState.gameStarted = true;
+    }
+    
+    // Only allow jump if game is running and not paused
+    if (gameState.running && !gameState.paused) {
+        if (!daisy.isJumping) {
+            jump();
+            daisy.canDoubleJump = true;
+        } else if (daisy.canDoubleJump) {
+            daisy.velocityY = JUMP_FORCE * 0.7;
+            daisy.canDoubleJump = false;
+            createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height/2, 12, '#FFD700');
+            showMessage("SECOND WIND! 320 POWER!", 500);
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+}
+
+// Add mobile control buttons
+function addMobileControls() {
+    // Create mobile control container
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'mobile-controls';
+    controlsContainer.style.display = 'none'; // Hide by default, show on small screens
+    
+    // Jump button
+    const jumpBtn = document.createElement('button');
+    jumpBtn.textContent = 'JUMP';
+    jumpBtn.className = 'mobile-btn jump-btn';
+    jumpBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if (!gameState.paused && gameState.running) {
+            if (!daisy.isJumping) {
+                jump();
+                daisy.canDoubleJump = true;
+            } else if (daisy.canDoubleJump) {
+                daisy.velocityY = JUMP_FORCE * 0.7;
+                daisy.canDoubleJump = false;
+                createParticleBurst(daisy.x + daisy.width/2, daisy.y + daisy.height/2, 12, '#FFD700');
+                showMessage("SECOND WIND! 320 POWER!", 500);
             }
+        }
+    });
+    
+    // Kick button
+    const kickBtn = document.createElement('button');
+    kickBtn.textContent = 'KICK';
+    kickBtn.className = 'mobile-btn kick-btn';
+    kickBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if (!gameState.paused && gameState.running) {
+            kick();
+        }
+    });
+    
+    // Gel button
+    const gelBtn = document.createElement('button');
+    gelBtn.textContent = 'GEL';
+    gelBtn.className = 'mobile-btn gel-btn';
+    gelBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if (!gameState.paused && gameState.running) {
+            if (daisy.gels > 0 && !daisy.isInvincible) {
+                activateInvincibility();
+            } else if (gameState.score >= GEL_COST) {
+                buyGel();
+            }
+        }
+    });
+    
+    // Pause/Resume button for mobile
+    const pauseResumeBtn = document.createElement('button');
+    pauseResumeBtn.textContent = 'PAUSE';
+    pauseResumeBtn.className = 'mobile-btn pause-resume-btn';
+    pauseResumeBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        togglePause();
+        this.textContent = gameState.paused ? "RESUME" : "PAUSE";
+    });
+    
+    // Add buttons to container
+    controlsContainer.appendChild(jumpBtn);
+    controlsContainer.appendChild(kickBtn);
+    controlsContainer.appendChild(gelBtn);
+    controlsContainer.appendChild(pauseResumeBtn);
+    
+    // Add container to game
+    document.querySelector('.game-container').appendChild(controlsContainer);
+    
+    // Show controls on mobile
+    if (window.innerWidth <= 768) {
+        controlsContainer.style.display = 'flex';
+    }
+}
+
+// Create a new function for activating invincibility
+function activateInvincibility() {
+    daisy.gels--;
+    document.getElementById('gels').textContent = daisy.gels;
+    
+    // Set invincibility state
+    daisy.isInvincible = true;
+    daisy.invincibilityEndTime = Date.now() + INVINCIBILITY_DURATION;
+    
+    // Show message
+    showMessage("320 POWER MODE ACTIVATED!", 1500);
+    
+    // Create burst of particles
+    createParticleBurst(daisy.x + daisy.width/2, daisy.y, 30, '#00FFFF');
+    
+    // Play sound effect if available
+    // (Sound effects would be added here if we had them)
+}
+
+// Add function to spawn collectibles
+function spawnCollectible() {
+    // Always try to maintain some collectibles in the game
+    if (collectibles.length < 3 || Math.random() < COLLECTIBLE_SPAWN_CHANCE) {
+        const types = Object.values(COLLECTIBLE_TYPES);
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        // Randomize height - sometimes higher for jumping challenge
+        const heightVariation = Math.random() > 0.7 ? 
+            Math.random() * 100 : // Higher position (30% chance)
+            0;                    // Ground level (70% chance)
+        
+        // Ensure collectibles are spaced out
+        const lastCollectible = collectibles[collectibles.length - 1];
+        const minSpacing = 200; // Minimum pixels between collectibles
+        
+        const collectible = {
+            type: type,
+            x: lastCollectible ? Math.max(CANVAS_WIDTH, lastCollectible.x + minSpacing) : CANVAS_WIDTH,
+            y: GROUND_HEIGHT - 30 - heightVariation,
+            width: type === COLLECTIBLE_TYPES.CARBON_PLATES ? 70 : 30,  // Increased sneaker size from 50 to 70
+            height: type === COLLECTIBLE_TYPES.CARBON_PLATES ? 70 : 30,  // Increased sneaker size from 50 to 70
+            rotation: 0,
+            bobHeight: 0,
+            bobSpeed: Math.random() * 0.05 + 0.02
+        };
+        
+        collectibles.push(collectible);
+    }
+}
+
+// Add a win game function
+function winGame() {
+    gameState.running = false;
+    gameState.hasWon = true;
+    
+    // Stop any vertical movement
+    daisy.velocityY = 0;
+    daisy.isJumping = false;
+    
+    // Ensure Daisy is at ground level
+    daisy.y = GROUND_HEIGHT - 50;
+    
+    // Create George's congratulatory dialogue
+    const dialogueBox = document.createElement('div');
+    dialogueBox.className = 'dialogue-box';
+    dialogueBox.innerHTML = `
+        <div class="dialogue-content">
+            <img src="/static/images/game/george.png" class="dialogue-image" alt="George">
+            <div class="dialogue-text">
+                YEEHAW! You've conquered all three levels with style, determination, and harmonic efficiency. 
+                From the Rockies to Yellowstone to Brooklyn, you've shown true Wingatian spirit! 
+            </div>
+        </div>
+        <button class="next-btn">Celebrate!</button>
+    `;
+    
+    document.getElementById('game-canvas').appendChild(dialogueBox);
+    dialogueBox.style.display = 'block';
+    
+    // Function to show victory screen
+    const showVictoryScreen = () => {
+        dialogueBox.remove();
+        
+        // Create victory screen
+        const victoryScreen = document.createElement('div');
+        victoryScreen.className = 'victory-screen';
+        victoryScreen.innerHTML = `
+            <div class="victory-content">
+                <img src="/static/images/game/horse.png" class="victory-image" alt="Daisy">
+                <div class="victory-text">
+                    CONGRATULATIONS!<br>
+                    You've completed all levels!<br>
+                    Final Score: ${Math.floor(gameState.score)} WINGOS
+                </div>
+            </div>
+            <button class="play-again-btn">PLAY AGAIN</button>
+        `;
+        
+        document.querySelector('.game-canvas-container').appendChild(victoryScreen);
+        victoryScreen.style.display = 'block';
+        
+        // Add click handler for play again button
+        victoryScreen.querySelector('.play-again-btn').addEventListener('click', () => {
+            victoryScreen.remove();
+            resetGameState();
+            startGame();
         });
         
-        const recoveryInterval = setInterval(() => {
-            energy = Math.min(100, energy + 5);
-        }, 100);
-        
-        setTimeout(() => {
-            isStretching = false;
-            clearInterval(recoveryInterval);
-        }, 1000);
+        // Add key handler for any key press to restart
+        const keyHandler = (e) => {
+            victoryScreen.remove();
+            document.removeEventListener('keydown', keyHandler);
+            resetGameState();
+            startGame();
+        };
+        document.addEventListener('keydown', keyHandler);
+    
+    // Update high score if needed
+    if (gameState.score > gameState.highScore) {
+        gameState.highScore = gameState.score;
+        document.getElementById('highscore').textContent = Math.floor(gameState.highScore);
     }
-});
+    
+        // Make Daisy do a victory dance
+        startVictoryDance();
+    };
+    
+    // Add click handler for the button
+    dialogueBox.querySelector('.next-btn').addEventListener('click', showVictoryScreen);
+    
+    // Add key handler for any key
+    const keyHandler = (e) => {
+        document.removeEventListener('keydown', keyHandler);
+        showVictoryScreen();
+    };
+    document.addEventListener('keydown', keyHandler);
+}
+
+// Add a firework effect
+function createFirework(x, y, color) {
+    // Create a burst with many particles
+    for (let i = 0; i < 50; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        const size = Math.random() * 4 + 2;
+        
+        particles.push({
+            x: x,
+            y: y,
+            size: size,
+            speedX: Math.cos(angle) * speed,
+            speedY: Math.sin(angle) * speed,
+            color: color,
+            life: Math.random() * 50 + 30,
+            gravity: 0.05
+        });
+    }
+    
+    // Play sound effect if available
+    // (Sound effects would be added here if we had them)
+}
+
+// Enhance Daisy's victory dance
+function startVictoryDance() {
+    // Create a dancing effect for Daisy that doesn't affect vertical position
+    const baseY = GROUND_HEIGHT - 50; // Keep Daisy at ground level
+    let danceStep = 0;
+    let direction = 1; // For spinning
+    let jumpHeight = 0;
+    
+    const danceInterval = setInterval(() => {
+        if (!gameState.hasWon || gameState.running) {
+            // Stop dance if game restarted
+            clearInterval(danceInterval);
+            return;
+        }
+        
+        // Add jumping motion
+        jumpHeight = Math.sin(danceStep * 0.5) * 20;
+        daisy.y = baseY - jumpHeight;
+        
+        // Rotate sprite without changing position
+        danceStep = (danceStep + 1) % 8;
+        direction *= -1;
+        
+        // Create celebratory particles in a circle pattern
+        if (danceStep % 2 === 0) {
+            // Create a circle of particles
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const radius = 30;
+                const particleX = daisy.x + daisy.width/2 + Math.cos(angle) * radius;
+                const particleY = baseY + daisy.height/2 + Math.sin(angle) * radius;
+                
+                createParticleBurst(
+                    particleX,
+                    particleY,
+                    3,
+                    ['#FFD700', '#FFA500', '#FF69B4'][Math.floor(Math.random() * 3)]
+                );
+            }
+        }
+        
+        // Add rainbow trail effect
+        const hue = (Date.now() / 20) % 360;
+            createParticleBurst(
+                daisy.x + daisy.width/2,
+            daisy.y + daisy.height/2,
+            2,
+            `hsl(${hue}, 100%, 50%)`
+        );
+    }, 100);  // Made animation faster
+}
+
+// Add function to handle level transitions
+function advanceToLevel(newLevel) {
+    // Store current score before transition
+    const currentScore = gameState.score;
+    
+    // Update level and game state
+    gameState.currentLevel = newLevel;
+    gameState.levelStartScore = currentScore;
+    gameState.waitingForLevelStart = true;
+    gameState.running = false;
+    
+    // Update background
+    const container = document.querySelector('.game-canvas-container');
+    container.style.background = `url('${LEVEL_BACKGROUNDS[newLevel]}')`;
+    container.style.backgroundSize = 'cover';
+    container.style.backgroundPosition = 'center';
+    
+    // Add white overlay for city level
+    if (newLevel === 3) {
+        container.style.background = `linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('${LEVEL_BACKGROUNDS[newLevel]}')`;
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
+    }
+    
+    // Show level transition message
+    const levelMessages = {
+        2: `Welcome to Level 2: ${LEVEL_NAMES[2]}!`,
+        3: `Welcome to Level 3: ${LEVEL_NAMES[3]}!`
+    };
+    
+    // Create level transition effect
+    const transitionOverlay = document.createElement('div');
+    transitionOverlay.id = 'levelTransitionOverlay';
+    transitionOverlay.style.position = 'absolute';
+    transitionOverlay.style.top = '0';
+    transitionOverlay.style.left = '0';
+    transitionOverlay.style.width = '100%';
+    transitionOverlay.style.height = '100%';
+    transitionOverlay.style.background = 'rgba(0, 0, 0, 0.7)';
+    transitionOverlay.style.display = 'flex';
+    transitionOverlay.style.justifyContent = 'center';
+    transitionOverlay.style.alignItems = 'center';
+    transitionOverlay.style.zIndex = '1000';
+    
+    const message = document.createElement('div');
+    message.style.color = '#FFD700';
+    message.style.fontFamily = '"Press Start 2P", monospace';
+    message.style.fontSize = '20px';
+    message.style.textAlign = 'center';
+    message.style.padding = '20px';
+    message.innerHTML = `${levelMessages[newLevel]}<br><br>Press any key or tap to continue!`;
+    
+    // Function to start the level
+    const startLevelHandler = () => {
+        // Remove the overlay
+        transitionOverlay.remove();
+        
+        // Clear obstacles and collectibles
+        obstacles = [];
+        collectibles = [];
+        
+        // Reset Daisy's position and state
+        daisy.x = 50;
+        daisy.y = GROUND_HEIGHT - 50;
+        daisy.velocityY = 0;
+        daisy.isJumping = false;
+        daisy.canDoubleJump = false;
+        daisy.isKicking = false;
+        
+        // Restore the score
+        gameState.score = currentScore;
+        document.getElementById('wingos').textContent = Math.floor(currentScore);
+        
+        // Start the new level
+        gameState.running = true;
+        gameState.waitingForLevelStart = false;
+        
+        // Add initial collectibles for the new level
+        addInitialCollectibles();
+        
+        // Ensure the game loop is running
+        if (!gameState.gameLoop) {
+            gameState.gameLoop = requestAnimationFrame(gameLoop);
+        }
+    };
+    
+    // Add both touch and key event listeners with proper cleanup
+    const cleanup = () => {
+        transitionOverlay.removeEventListener('touchstart', startLevelHandler);
+        document.removeEventListener('keydown', startLevelHandler);
+    };
+    
+    transitionOverlay.addEventListener('touchstart', () => {
+        cleanup();
+        startLevelHandler();
+    }, { once: true });
+    
+    document.addEventListener('keydown', () => {
+        cleanup();
+        startLevelHandler();
+    }, { once: true });
+    
+    transitionOverlay.appendChild(message);
+    document.querySelector('.game-canvas-container').appendChild(transitionOverlay);
+    
+    // Create celebratory particles
+    createParticleBurst(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 50, '#FFD700');
+}
+
+// Cleanup function
+function cleanup() {
+    // Remove event listeners
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('keyup', handleKeyUp);
+    canvas.removeEventListener('touchstart', handleTouchStart);
+    canvas.removeEventListener('touchend', handleTouchEnd);
+    canvas.removeEventListener('click', startGame);
+    
+    // Clear any existing intervals
+    if (gameState.gameLoop) {
+        cancelAnimationFrame(gameState.gameLoop);
+    }
+    
+    // Reset game state
+    resetGameState();
+}
 </script>
 {% endblock %} 

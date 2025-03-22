@@ -159,7 +159,7 @@ class WorkoutOptimizer:
             },
             {
                 "intensity": "CLASSIC",
-                "workout": "The TRIMBLE:\n\n10 x Wingo total\n- First 160m: Very Fast\n- Second 160m: Very Slow",
+                "workout": "The TRIMBLE:\n\nWingo repeats (10x)\n- First 160m very fast\n- Second 160m very slow",
                 "science": "The key is maximizing the contrast between fast and slow"
             },
             {
@@ -519,8 +519,7 @@ def login():
         password = request.form.get('password')
         if password == 'Old-Ril$y':  # Simple password
             session['logged_in'] = True
-            next_page = request.args.get('next', 'home')
-            return redirect(url_for(next_page))
+            return redirect(url_for('coach_daisy'))
         return render_template('login.html', error='Invalid password')
     return render_template('login.html')
 
@@ -531,13 +530,13 @@ def logout():
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html")
+    return render_template("intro-daisy.html")
 
 @app.route("/320AI", methods=["GET"])
 def ai_system():
     return render_template("320AI.html")
 
-@app.route("/320Day", methods=["GET"])
+@app.route("/320day", methods=["GET"])
 def three_twenty_day():
     # Simple predefined workouts
     workouts = [
@@ -560,34 +559,17 @@ def three_twenty_day():
 def community():
     return render_template("community.html")
 
-@app.route("/about", methods=["GET"])
-def about():
+@app.route('/daisy')
+def daisy():
     return render_template("about.html")
+
+@app.route('/about')
+def about():
+    return redirect(url_for('daisy'))
 
 @app.route("/merch", methods=["GET"])
 def merch():
     return render_template("merch.html")
-
-@app.route("/320split", methods=["GET"])
-def crypto():
-    try:
-        # Mock data for $WINGO stats with default values
-        price = "3.20"  # String to avoid floating point issues
-        market_cap = "320,000,000.0"  # Pre-formatted string
-        volume = "32,000,000.0"  # Pre-formatted string
-        return render_template("320split.html", price=price, market_cap=market_cap, volume=volume)
-    except Exception as e:
-        # Fallback values if formatting fails
-        return render_template("320split.html", price="3.20", market_cap="320,000,000.0", volume="32,000,000.0")
-
-@app.route("/whitepaper", methods=["GET"])
-def whitepaper():
-    return render_template("whitepaper.html")
-
-@app.route('/DAISY')
-@app.route('/daisy')
-def daisy():
-    return render_template("daisy.html")
 
 @app.route("/daisy-score", methods=["GET"])
 def daisy_score():
@@ -601,11 +583,7 @@ def daisy3():
 def game():
     return render_template("game.html")
 
-@app.route("/game2", methods=["GET"])
-def game2():
-    return render_template("game2.html")
-
-@app.route("/coach-daisy", methods=["GET"])
+@app.route("/coach", methods=["GET"])
 @login_required
 def coach_daisy():
     return render_template("coach.html")
@@ -1312,10 +1290,6 @@ wingateState = {
 def transformation():
     return render_template("transformation.html")
 
-@app.route('/transform2')
-def transform2():
-    return render_template("transform2.html")
-
 @app.route("/admin/subscribers", methods=["GET"])
 @login_required  # Keep admin routes protected
 def view_subscribers():
@@ -1335,6 +1309,18 @@ def view_subscribers():
 @app.route("/wingo-converter", methods=["GET"])
 def wingo_converter():
     return render_template("wingo_converter.html")
+
+@app.route("/wingo")
+def wingo():
+    # Mock price data for the $WINGO token
+    price = "0.19884"
+    market_cap = "156.25M"
+    volume = "32M"
+    return render_template("wingo.html", price=price, market_cap=market_cap, volume=volume)
+
+@app.route("/whitepaper")
+def whitepaper():
+    return render_template("whitepaper.html")
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)

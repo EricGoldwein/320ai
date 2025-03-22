@@ -41,4 +41,14 @@ instance/
 *.sqlite3
 
 # Logs
-*.log 
+*.log
+
+# Archive files
+*.tar.gz
+*.zip
+
+# Temporary/Generated files
+main.py.url
+ersegoldPycharmProjects320aitemplates
+ersegoldPycharmProjects320aistaticimagesgame2
+.venv/ 

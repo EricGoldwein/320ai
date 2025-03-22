@@ -86,7 +86,7 @@
 
 .meet-daisy-image {
     float: right;
-    width: 120px;
+    width: 150px;
     margin: 0 0 1rem 2rem;
 }
 
@@ -114,11 +114,18 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    position: relative;
 }
 
 .feature-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 188, 212, 0.15);
+}
+
+.feature-card h3, .feature-card p {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .feature-card h3 {
@@ -128,6 +135,16 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+.feature-card h3 span {
+    display: inline;
+    letter-spacing: normal;
+}
+
+.feature-card h3 span[style*="color"] {
+    margin: 0;
+    padding: 0;
 }
 
 .feature-card h3 a {
@@ -818,6 +835,37 @@ p {
         gap: 25px;
     }
 }
+
+/* Add this to existing styles */
+.feature-card {
+    position: relative;
+}
+
+.feature-card a.card-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    text-decoration: none;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 188, 212, 0.15);
+}
+
+.feature-card h3, .feature-card p {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.feature-card h3 .daisy-text {
+    letter-spacing: 0.1em;
+    display: inline-block;
+}
 </style>
 {% endblock %}
 
@@ -866,28 +914,34 @@ p {
                         
                         <div class="feature-cards">
                             <div class="feature-card">
-                                <h3><a href="/coach-daisy">🐴 Coach <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span></a></h3>
-                                <p>Personalized training and life advice from your 150-year-old equine running coach.</p>
+                                <a href="/coach" class="card-link"></a>
+                                <h3>🐎 Coach DAISY<span style="margin-left: -0.5em">™</span></h3>
+                                <p>Personalized training and life advice from your trusted 150-year-old equine running coach.</p>
                             </div>
                             <div class="feature-card">
-                                <h3><a href="/daisy-score">📊 <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span> Score</a></h3>
+                                <a href="/daisy-score" class="card-link"></a>
+                                <h3>📊 DAISY™ Score</h3>
                                 <p>Measure your harmonic efficiency and conformity index with the natural rhythms of running.</p>
                             </div>
                             <div class="feature-card">
-                                <h3><a href="/320Day">⚡ Wingo Workouts</a></h3>
-                                <p>Refine running macrodata to receive custom <span style="color: #000000;">D</span><span style="color: #000000;">A</span><span style="color: #000000;">I</span><span style="color: #000000;">S</span><span style="color: #000000;">Y</span><span style="color: #000000;">™</span> designed workouts.</p>
+                                <a href="/320day" class="card-link"></a>
+                                <h3>⚡ Wingo Workouts</h3>
+                                <p>Refine running macrodata to receive custom hyper-optimized DAISY™ workouts.</p>
                             </div>
                             <div class="feature-card">
-                                <h3><a href="/wingo-converter">🧮 Wingo Converter</a></h3>
+                                <a href="/wingo-converter" class="card-link"></a>
+                                <h3>🧮 Wingo Converter</h3>
                                 <p>From Wingos to Mare-athons, DAISY™ crunches pace conversion calculations so you don't have to.</p>
                             </div>
                             <div class="feature-card">
-                                <h3><a href="/game2">🤠 Yellowstone</a></h3>
+                                <a href="/game" class="card-link"></a>
+                                <h3>🤠 Yellowstone</h3>
                                 <p>Relive Daisy and George's legendary 1885 journey in our interactive videogame.</p>
                             </div>
                             <div class="feature-card">
-                                <h3><a href="/merch">🌸 Merch</a></h3>
-                                <p>Check out the DAISY x Christina Collection minted on our carbon plate-neutral blockchain.</p>
+                                <a href="/merch" class="card-link"></a>
+                                <h3>🌸 Merch</h3>
+                                <p>Check out the DAISY™ x Christina Collection minted on our carbon plate-neutral blockchain.</p>
                             </div>
                         </div>
 

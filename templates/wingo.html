@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}$WINGO • 320AI{% endblock %}
+{% block title %}$WINGO{% endblock %}
 
 {% block content %}
 <div class="matrix-bg" id="matrix-bg"></div>
 
 <div class="ai-banner">
-    🏃 MINE $WINGO BY RUNNING LAPS • CURRENT MINING RATE: 3.2 $WINGO/LAP
+    🏃 MINE $WINGO BY RUNNING 320s • CURRENT MINING RATE: 0.198839 $WINGO/LAP
 </div>
 
 <div class="crypto-header">
     <img src="{{ url_for('static', filename='images/logo_trim.png') }}" alt="WINGO Logo" class="divot-logo">
     <h1>$WINGO</h1>
     <h2 class="acronym">Workout Independence Network Gains & Optimization</h2>
-    <p>Powered by DAISY™</p>
+    <p>Powered by D<span class="ai-part">AI</span>SY™</p>
     <div class="header-buttons">
-        <a href="{{ url_for('whitepaper') }}" class="quantum-button">READ THE WHITEPAPER</a>
+        <a href="{{ url_for('whitepaper') }}" class="quantum-button">READ WHITEPAPER</a>
         <button class="quantum-button" onclick="showWaitlist()">TRADE NOW</button>
     </div>
 </div>
@@ -56,14 +56,14 @@
         </div>
         <button class="quantum-button" onclick="showWaitlist()">QUANTUM SWAP</button>
         <p class="swap-info">1 $WINGO = ${{ price }} • Slippage: 3.2%</p>
-        <p class="swap-warning">* Swaps are validated by our AI and may require proof of running</p>
+        <p class="swap-warning">* Swaps validated by DAISY™ and require Proof of Run</p>
     </div>
 </div>
 
 <div class="features">
     <div class="feature-card">
         <h3>🏃‍♂️ RUN-TO-EARN</h3>
-        <p>Mine new tokens by running 320m repeats. Each lap = 3.2 $WINGO</p>
+        <p>Mine new tokens by running 320s ($WINGO = PentaWingo).</p>
         <button class="quantum-button" onclick="showWaitlist()">START MINING</button>
     </div>
     <div class="feature-card">
@@ -73,7 +73,7 @@
     </div>
     <div class="feature-card">
         <h3>🎯 TRACK DAO</h3>
-        <p>Governance token for the world's first AI-powered track</p>
+        <p>Governance token for DAISY™ Autonomous Organization</p>
         <button class="quantum-button" onclick="showWaitlist()">JOIN DAO</button>
     </div>
 </div>
@@ -81,14 +81,14 @@
 <div style="text-align: center; padding: 2rem;">
     <h2>WARNING</h2>
     <p style="color: #666;">This is not financial advice. Only invest what you can afford to run off.</p>
-    <p style="font-size: 0.8em">* All metrics quantum-verified by our AI</p>
+    <p style="font-size: 0.8em">* All metrics verified by DAISY™</p>
 </div>
 
 <!-- Waitlist Modal -->
 <div id="waitlistModal" class="modal" style="display: none;">
     <div class="modal-content">
-        <h2>Join the $WINGO Waitlist</h2>
-        <p>We're currently in private beta. Enter your email to join the waitlist and be notified when we launch.</p>
+        <h2>Join $WINGO Waitlist</h2>
+        <p>We're currently in private beta. Enter email to join waitlist and be notified when we launch.</p>
         <form id="waitlistForm" onsubmit="return handleWaitlistSubmit(event)">
             <input type="email" placeholder="Enter your email" required>
             <button type="submit" class="quantum-button">SUBMIT</button>
@@ -279,12 +279,20 @@
 }
 
 .acronym {
+    color: #E0E0E0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.crypto-header p {
+    color: white;
     font-size: 1.2rem;
-    color: #3498db;
-    margin: 1rem 0;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: glow 2s ease-in-out infinite;
+}
+
+.crypto-header p .ai-part {
+    color: #009999;
+    text-shadow: 0 0 10px rgba(0, 153, 153, 0.4);
 }
 
 .identity-verification {
