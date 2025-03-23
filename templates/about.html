@@ -170,6 +170,10 @@
     color: #00bcd4 !important;
 }
 
+.feature-card h3 a[href="/workouts"] strong span {
+    color: #00bcd4 !important;
+}
+
 .feature-card p {
     color: var(--text-color) !important;
     font-size: 1.1rem;
@@ -919,7 +923,7 @@ p {
                                 <p>Personalized training and life advice from your trusted 150-year-old equine running coach.</p>
                             </div>
                             <div class="feature-card">
-                                <a href="/320day" class="card-link"></a>
+                                <a href="/workouts" class="card-link"></a>
                                 <h3>⚡ Wingo Workouts</h3>
                                 <p>Refine running macrodata to receive custom hyper-optimized DAISY™ workouts.</p>
                             </div>
@@ -1086,10 +1090,10 @@ p {
 
                         <div class="benefactor-card yellowstone">
                             <div class="tier-badge">Yellowstone Tier</div>
-                            <h2>Lincoln Ice Cream</h2>
-                            <p class="tagline">"Fuel your Wingos one pint at a time"</p>
-                            <h2>NY Post Cooking</h2>
-                            <p class="tagline">"The right way to eat"</p>
+                            <h2>The Pacers' Tribune</h2>
+                            <p class="tagline">"Straight from the horse's mouth."</p>
+                            <h2>Filly Mag</h2>
+                            <p class="tagline">"Unbridled. Untamed. Unstable."</p>
                         </div>
 
                         <div class="benefactor-card supporters">
@@ -1230,17 +1234,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Show popup immediately after page load
-    setTimeout(() => {
-        const popup = document.getElementById('signupPopup');
-        if (popup) {
-            popup.style.display = 'flex';
-            setTimeout(() => {
-                popup.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }, 100);
-        }
-    }, 1500);
+    // Show popup only if user hasn't seen it before
+    const popup = document.getElementById('signupPopup');
+    const hasSeenPopup = localStorage.getItem('hasSeenDaisyPopup');
+    
+    if (!hasSeenPopup) {
+        setTimeout(() => {
+            if (popup) {
+                popup.style.display = 'flex';
+                setTimeout(() => {
+                    popup.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    // Set flag in localStorage after showing popup
+                    localStorage.setItem('hasSeenDaisyPopup', 'true');
+                }, 100);
+            }
+        }, 2000);
+    }
 });
 
 function closePopup() {

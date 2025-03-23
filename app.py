@@ -536,7 +536,7 @@ def home():
 def ai_system():
     return render_template("320AI.html")
 
-@app.route("/320day", methods=["GET"])
+@app.route("/workouts", methods=["GET"])
 def three_twenty_day():
     # Simple predefined workouts
     workouts = [
@@ -1313,14 +1313,18 @@ def wingo_converter():
 @app.route("/wingo")
 def wingo():
     # Mock price data for the $WINGO token
-    price = "0.19884"
-    market_cap = "156.25M"
-    volume = "32M"
+    price = "1.885"
+    market_cap = "41.25M"
+    volume = "112.03M"
     return render_template("wingo.html", price=price, market_cap=market_cap, volume=volume)
 
 @app.route("/whitepaper")
 def whitepaper():
     return render_template("whitepaper.html")
+
+@app.route("/archive-320")
+def archive_320():
+    return render_template("archive_320.html")
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
