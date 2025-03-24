@@ -88,6 +88,19 @@
         transition: border-color 0.3s ease;
     }
 
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1.2em;
+        padding-right: 2.5rem;
+    }
+
+    select.form-control option[value=""] {
+        color: #7f8c8d;
+    }
+
     .form-control:focus {
         border-color: #3498db;
         box-shadow: none;
@@ -276,11 +289,12 @@
                     <div class="mb-3">
                         <label class="form-label">Distance</label>
                         <select class="form-control" id="targetDistance">
+                            <option value="" disabled selected>---</option>
                             <option value="201.168">Furlong</option>
                             <option value="320">Wingo (320m)</option>
                             <option value="400">400m</option>
                             <option value="800">800m</option>
-                            <option value="1000" selected>Kilometer</option>
+                            <option value="1000">Kilometer</option>
                             <option value="1600">Fingo (1600m)</option>
                             <option value="1609.34">M*le</option>
                             <option value="2000">2000m</option>
@@ -337,7 +351,9 @@
                         <li><span class="distance">M*le</span><span class="time" id="projectedMile">--</span></li>
                         <li><span class="distance">5K</span><span class="time" id="projected5k">--</span></li>
                         <li><span class="distance">The Loop</span><span class="time" id="projectedLoop">--</span></li>
+                        <li><span class="distance">Derby</span><span class="time" id="projectedDerby">--</span></li>
                         <li><span class="distance">10K</span><span class="time" id="projected10k">--</span></li>
+                        <li><span class="distance">15K</span><span class="time" id="projected15k">--</span></li>
                         <li><span class="distance">Half Mare-athon</span><span class="time" id="projectedHM">--</span></li>
                         <li><span class="distance">Mare-athon</span><span class="time" id="projectedMarathon">--</span></li>
                         <li><span class="distance">Yellowstone</span><span class="time" id="projectedYellowstone">--</span></li>
@@ -389,7 +405,9 @@ function convertFromTarget() {
     const pacePerMile = (targetTime / targetDistance) * 1609.34;
     const pace5k = (targetTime / targetDistance) * 5000;
     const paceLoop = (targetTime / targetDistance) * 5407;
+    const paceDerby = (targetTime / targetDistance) * 2011.68;
     const pace10k = (targetTime / targetDistance) * 10000;
+    const pace15k = (targetTime / targetDistance) * 15000;
     const paceHM = (targetTime / targetDistance) * 21097.5;
     const paceMarathon = (targetTime / targetDistance) * 42195;
     const paceYellowstone = (targetTime / targetDistance) * 644000;
@@ -406,7 +424,9 @@ function convertFromTarget() {
     document.getElementById('projectedMile').textContent = formatTime(pacePerMile);
     document.getElementById('projected5k').textContent = formatTime(pace5k);
     document.getElementById('projectedLoop').textContent = formatTime(paceLoop);
+    document.getElementById('projectedDerby').textContent = formatTime(paceDerby);
     document.getElementById('projected10k').textContent = formatTime(pace10k);
+    document.getElementById('projected15k').textContent = formatTime(pace15k);
     document.getElementById('projectedHM').textContent = formatTime(paceHM);
     document.getElementById('projectedMarathon').textContent = formatTime(paceMarathon);
     document.getElementById('projectedYellowstone').textContent = formatTime(paceYellowstone);
@@ -437,8 +457,8 @@ function resetConverter() {
     document.getElementById('targetMinutes').value = '';
     document.getElementById('targetSeconds').value = '';
     
-    // Reset distance to Kilometer
-    document.getElementById('targetDistance').value = '1000';
+    // Reset distance to default state
+    document.getElementById('targetDistance').value = '';
     
     // Reset results
     document.getElementById('wingoTimeDisplay').textContent = '--';
@@ -449,7 +469,9 @@ function resetConverter() {
     document.getElementById('projectedMile').textContent = '--';
     document.getElementById('projected5k').textContent = '--';
     document.getElementById('projectedLoop').textContent = '--';
+    document.getElementById('projectedDerby').textContent = '--';
     document.getElementById('projected10k').textContent = '--';
+    document.getElementById('projected15k').textContent = '--';
     document.getElementById('projectedHM').textContent = '--';
     document.getElementById('projectedMarathon').textContent = '--';
     document.getElementById('projectedYellowstone').textContent = '--';

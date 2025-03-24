@@ -6,17 +6,16 @@
 <div class="matrix-bg" id="matrix-bg"></div>
 
 <div class="ai-banner">
-    🏃 MINE $WINGO BY RUNNING 320s • CURRENT MINING RATE: 0.198839 $WINGO/LAP
+    🏃 MINE $WINGO BY RUNNING • CURRENT MINING RATE: 0.198839 $WINGO/320m
 </div>
 
 <div class="crypto-header">
-    <img src="{{ url_for('static', filename='images/logo_trim.png') }}" alt="WINGO Logo" class="divot-logo">
     <h1>$WINGO</h1>
     <h2 class="acronym">Workout Independence Network Gains & Optimization</h2>
     <p>Powered by D<span class="ai-part">AI</span>SY™</p>
     <div class="header-buttons">
-        <a href="{{ url_for('whitepaper') }}" class="quantum-button">READ WHITEPAPER</a>
-        <button class="quantum-button" onclick="showWaitlist()">TRADE NOW</button>
+        <a href="{{ url_for('whitepaper') }}" class="quantum-button">WHITEPAPER</a>
+        <button class="quantum-button" onclick="showWaitlist()">TRADE</button>
     </div>
 </div>
 
@@ -24,12 +23,12 @@
     <div class="price-stat">
         <h3>CURRENT PRICE</h3>
         <div class="price-value">${{ price }}</div>
-        <p>+32% (Last 24h)</p>
+        <p>+3.2% (Last 24h)</p>
     </div>
     <div class="price-stat">
         <h3>MARKET CAP</h3>
         <div class="price-value">${{ market_cap }}</div>
-        <p>Fully Diluted: $32B</p>
+        <p>Fully Diluted: $15.625B</p>
     </div>
     <div class="price-stat">
         <h3>24H VOLUME</h3>
@@ -55,7 +54,7 @@
             <div class="token-select">$WINGO</div>
         </div>
         <button class="quantum-button" onclick="showWaitlist()">QUANTUM SWAP</button>
-        <p class="swap-info">1 $WINGO = ${{ price }} • Slippage: 3.2%</p>
+        <p class="swap-info">1 $WINGO = ${{ price }} • Slippage: .32%</p>
         <p class="swap-warning">* Swaps validated by DAISY™ and require Proof of Run</p>
     </div>
 </div>
@@ -63,7 +62,7 @@
 <div class="features">
     <div class="feature-card">
         <h3>🏃‍♂️ RUN-TO-EARN</h3>
-        <p>Mine new tokens by running 320s ($WINGO = PentaWingo).</p>
+        <p>Mine new tokens by running (0.198839 $WINGO/320m).</p>
         <button class="quantum-button" onclick="showWaitlist()">START MINING</button>
     </div>
     <div class="feature-card">
@@ -81,7 +80,6 @@
 <div style="text-align: center; padding: 2rem;">
     <h2>WARNING</h2>
     <p style="color: #666;">This is not financial advice. Only invest what you can afford to run off.</p>
-    <p style="font-size: 0.8em">* All metrics verified by DAISY™</p>
 </div>
 
 <!-- Waitlist Modal -->
@@ -279,10 +277,11 @@
 }
 
 .acronym {
-    color: #E0E0E0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: #00ffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     font-weight: 500;
     font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
 
 .crypto-header p {
@@ -291,8 +290,10 @@
 }
 
 .crypto-header p .ai-part {
-    color: #009999;
-    text-shadow: 0 0 10px rgba(0, 153, 153, 0.4);
+    color: #00ffff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.6),
+                 0 0 30px rgba(0, 255, 255, 0.4);
+    font-weight: 600;
 }
 
 .identity-verification {
@@ -616,9 +617,9 @@ window.onclick = function(event) {
 setInterval(() => {
     const priceElement = document.querySelector('.price-value');
     const currentPrice = parseFloat(priceElement.textContent.substring(1));
-    const newPrice = currentPrice + (Math.random() - 0.3) * 0.01;
-    priceElement.textContent = '$' + newPrice.toFixed(8);
-}, 3200);
+    const newPrice = currentPrice + (Math.random() * 0.001);
+    priceElement.textContent = '$' + newPrice.toFixed(4);
+}, 32000);
 
 // Matrix background effect
 const canvas = document.createElement('canvas');
