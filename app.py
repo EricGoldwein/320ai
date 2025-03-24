@@ -135,156 +135,133 @@ class WorkoutOptimizer:
     """Advanced Track Workout Generation System™"""
 
     NEURAL_RESPONSES = {
-        "workout_intros": [
-            "DAISY™ has analyzed your data and generated a precision-optimized workout...",
-            "Based on your unique biomechanical waveform, DAISY™ prescribes this session...",
-            "Your quantum fitness signature suggests this DAISY™-approved workout..."
-        ],
-
         "predefined_workouts": [
             {
                 "intensity": "AGILITY",
-                "workout": "Mind the Divot:\n\nWarm-up: 1-2 easy Wingos\nMain Set: 6 x Wingo at tempo pace\nAt the divot: 15 two-legged hops",
-                "science": "A test of agility, awareness, and your ability to laugh through pain"
-            },
-            {
-                "intensity": "LEGEND",
-                "workout": "ERock's 160:\n\n5 x Half-Wingos at threshold\nBetween HWs, select 2 from:\n- Pushups, Planks, Wall sits, Lunges, Bicycle crunches, Burpees, Situps, Jump lunges, Squat lunges, Squats\n 5 minute break\n Repeat",
-                "science": "Choose wisely, suffer greatly"
-            },
-            {
-                "intensity": "GRAB YOUR PARTNER",
-                "workout": "Three-Legged Daisy:\n\nPartner Workout: 3 x Wingo three-legged runs:\n- First Wingo: Moderate pace, focus on coordination\n- Second Wingo: Moderate pace, focus on efficiency\n- Third Wingo: On your own\nRest 2-3 minutes and switch leg positions between sets",
-                "science": "Three legs are better than two - a true test of coordination"
+                "workout": "Mind the Divot:\nWarm-up: 1-2 easy Wingos\nMain Set: 6 Wingos at tempo pace\nAt the divot: 10 two-legged hops",
+                "science": "Embrace your natural variation."
             },
             {
                 "intensity": "CLASSIC",
-                "workout": "The TRIMBLE:\n\nWingo repeats (10x)\n- First 160m very fast\n- Second 160m very slow",
-                "science": "The key is maximizing the contrast between fast and slow"
-            },
-            {
-                "intensity": "CORE",
-                "workout": "320 Seconds of Pain:\n\n- 60s standard plank\n- 60s left side\n- 60s right side\n- 60s reverse plank\n- 80s finale (standard)",
-                "science": "The ultimate core stability test"
-            },
-            {
-                "intensity": "MUSICAL",
-                "workout": "Song Roulette:\n\n3km of Christina chaos:\n- Each km paced to random Christina\n- Hit 'Fighter'? Time to sprint!\n- 'Beautiful'? Recovery pace",
-                "science": "Music-synchronized training for optimal performance"
-            },
-            {
-                "intensity": "BACKWARDS",
-                "workout": "Do Look Back in Anger:\n\n- 8 x 80m backwards buildup\n- 6 x alternating half-Wingo (front-back)\n- 4 x alternating Wingo (front-back)\n- Stay out of lane 1",
-                "science": "Sally can no longer wait"
-            },
-            {
-                "intensity": "LADDER",
-                "workout": "Get Lost:\n\n- 40m sprint\n- 80m, 150m, 160m progression\n- 230m, 420m buildup\n- Down the ladder\n- Do it again",
-                "science": "We have to go back"
-            },
-            {
-                "intensity": "ENDURANCE",
-                "workout": "The Yellowstone:\n\n- 32 x Wingo\n- That's it. That's the workout.\n- Keep the pace consistently inconsistent",
-                "science": "Simple but brutal - sometimes less is more"
-            },
-            {
-                "intensity": "PRECISION",
-                "workout": "The Clock:\n\n- Run for exactly 320 seconds\n- Must finish within 5s window\n- Outside range? Start over!",
-                "science": "Time is of the essence - precision is key"
+                "workout": "ERock's 160:\n2 sets: 5 Half-Wingo repeats\nTwo workouts in between\nSelect 2 from: pushups, planks, wall sit, lunges, bicycle crunches, burpees, situps...\nFive minute rest, then repeat",
+                "science": "Hyper-individualized efficiency is where it's at."
             },
             {
                 "intensity": "STRENGTH",
-                "workout": "The G.W. Wingate Challenge:\n\n- Hang on field goal post\n- Total time: 320 seconds\n- Add 10 seconds for every 30 seconds of rest",
-                "science": "Grip it and trip it"
+                "workout": "The G.W. Wingate Challenge:\nHang on field goal post\nTotal time: 320 seconds\nAdd 10 seconds for every 30 seconds of rest",
+                "science": "A perfect balance of strength and strength."
             },
             {
-                "intensity": "RECOVERY",
-                "workout": "Caroline in My Mind:\n\n- 10-minute yoga/stretch routine\n- Follow video but at your own pace\n- Perfect for post-workout\n\nWatch Video: https://www.youtube.com/watch?v=nlitqDM40BE",
-                "science": "Essential recovery for optimal performance"
+                "intensity": "CLASSIC",
+                "workout": "The Yellowstone:\n32 Wingos\nThat's it. That's the workout.\nKeep the pace consistently inconsistent",
+                "science": "This sequence was discovered during Mr. Wingate's 1885 Yellowstone Expedition."
+            },
+            {
+                "intensity": "STRENGTH",
+                "workout": "Stairmaster:\nSet 1: 3:20 up/down stairs\nWingo loop\nSet 2: 3:20 up/down stairs\nWingo loop\nSet 3: 3:20 up/down stairs",
+                "science": "Building power and endurance through vertical movement."
+            },
+            {
+                "intensity": "PRECISION",
+                "workout": "The Naked Wrist Challenge\nTempo for exactly 320 seconds\nMust finish within 5s of 320s\nOutside range? Start over!",
+                "science": "Developing internal clock and harmonic efficiency."
+            },
+            {
+                "intensity": "GLORY DAYS",
+                "workout": "The Comeback:\nStart with old PR pace\nGradually increase speed\nEnd with a new PR attempt",
+                "science": "Reconnecting with past performance levels."
+            },
+            {
+                "intensity": "PRECISION",
+                "workout": "The Garmin-free Gallop:\nTake off watch\nRun 1 m*le at mareathon pace\nIf off by 6+ seconds, repeat",
+                "science": "Timing is everything."
+            },
+            {
+                "intensity": "ROCKY",
+                "workout": "The Pain Train:\n10 Wingos at max effort\nRest: walk backwards\nRepeat until you can't walk forwards",
+                "science": "Make it Hurts."
+            },
+            {
+                "intensity": "HUSTLE",
+                "workout": "The Filly Special:\n10 Wingos at half mare-athon pace...then stop!\nEnjoy the city's energy\nRun the Wingate stairs",
+                "science": "Trust the DAISY™ process."
+            },
+            {
+                "intensity": "PARTNER",
+                "workout": "Three-Legged Daisy:\nGrap a partner for 3 x three-legged Wingos\nFirst Wingo: Moderate pace\nSecond Wingo: Modereter pace, focus on efficiency\nThird Wingo, sprint on your own\nSwitch inside/outside leg positions each round\nFinish with victory Wingo (regular two legs)",
+                "science": "Three legs are better than two."
+            },
+            {
+                "intensity": "BUFFALO",
+                "workout": "The TRIMBLE:\n10 x Wingos total\nFirst 160m: Very Fast\nSecond 160m: Very Slow",
+                "science": "Maximize the contrast between fast and slow"
+            },
+            {
+                "intensity": "PAIN",
+                "workout": "Goran Dragic:\n320 seconds of plank\nVictory Wingo trot",
+                "science": "Take care of your core and your core will take care of you."
+            },
+            {
+                "intensity": "GENIE",
+                "workout": "Shuffle Roulette:\n5 x km repeats: \nEach km paced to random Christina\nGenie in a bottle? 3:36 KM. Come On Over? 3:09 KM\nOne minute rest between songs",
+                "science": "Tip: 1 KM is equal to 3.125 Wingos"
+            },
+            {
+                "intensity": "REVERSE",
+                "workout": "Do Look Back in Anger:\nMaster the art of backwards running:\n8 x 80m backwards buildup\n4 x Furlongs alternating (front-back)\n3 x Wingos (front-back-front)",
+                "science": "Sally can no longer wait"
+            },
+            {
+                "intensity": "MYSTERIOUS",
+                "workout": "Double Lost Ladder:\nSprints: 40m-80m-150m-160m-230m-420m\n60s rest between each sprint\nBack down the ladder\nDo it again",
+                "science": "We have to go back"
+            },
+            {
+                "intensity": "PRECISION",
+                "workout": "The Naked Wrist Challenge:\nTake off the Garmin:\nTempo for exactly 320 seconds\nMust finish within 5s of 320s\nOutside range? Start over!",
+                "science": "Because the only device you need is DAISY™."
+            },
+            {
+                "intensity": "STRENGTH",
+                "workout": "The G.W. Wingate Challenge:\nHang on field goal post\nTotal time: 320 seconds\nAdd 10s for every 30s of rest",
+                "science": "Can you hang?"
+            },
+            {
+                "intensity": "ENDURANCE",
+                "workout": "The Yellowstone:\n32 Wingos\nThat's it. That's the workout.\nKeep the pace consistently inconsistent",
+                "science": "32 Wingos is equal to 50.9 furlongs, according to DAISY™."
+            },
+
+            {
+                "intensity": "CHAOTIC",
+                "workout": "The Porcupine Prance:\nRun in random directions and paces for 3:20\n32s break\nrepeat 3x\nLook out for bikers and lane 1 walkers",
+                "science": "Designed by DAISY™ for optimized natural variation."
+            },
+            
+            {
+                "intensity": "EXAM",
+                "workout": "Uncle George:\nRun 32 Wingos\nAt your best pace\nNo stopping allowed",
+                "science": "The ultimate Wingate test."
+            },
+            {
+                "intensity": "HARMONY",
+                "workout": "The Shuffle:\nGallop (tempo) pace to your favorite album\nTempo song 1, trot song 2, tempo song 3, trot song 4...\nRepeat until album is complete",
+                "science": "Music-synchronized training increases harmonic efficiency by 32%."
             }
         ],
-
-        "workouts": [
-            {
-                "intensity": "MODERATE",
-                "workout": "Warm-up: 1-2 easy laps\nMain Set: 6 x Wingo at tempo pace\nCool-down: 1-2 easy laps",
-                "science": "This workout targets your aerobic threshold while maintaining form integrity."
-            },
-            {
-                "intensity": "HIGH",
-                "workout": "Warm-up: 1-2 easy laps\nMain Set: 8 x Wingo at 5k pace\nRecovery: 90s between repeats\nCool-down: 1-2 easy laps",
-                "science": "High-intensity intervals improve your VO2 max and running economy."
-            },
-            {
-                "intensity": "VERY HIGH",
-                "workout": "Warm-up: 1-2 easy laps\nMain Set: 12 x Wingo at m*le pace\nRecovery: 60s between repeats\nCool-down: 1-2 easy laps",
-                "science": "Short, fast intervals enhance your anaerobic capacity and speed."
-            },
-            {
-                "intensity": "THE_DAISY",
-                "workout": "Partner Workout: The Three-Legged Daisy\n\n3 x three-legged Wingos:\n- First Wingo: Moderate pace, focus on coordination\n- Second Wingo: Pick up the pace, channel your inner mutant\n- Third Wingo: All out (if you dare)\n\nRest 2-3 minutes between sets\nSwitch inside/outside leg positions each round\n\nFinish with a victory trot (regular two legs)",
-                "science": "Because two legs are boring and four legs would be cheating"
-            },
-            {
-                "intensity": "TRIMBLE_SPECIAL",
-                "workout": "The TRIMBLE Split:\n\n10 x Wingo total\n- First 160m: Very Fast\n- Second 160m: Very Slow\n- Maximize the contrast",
-                "science": "Scientifically designed to confuse your legs and entertain spectators"
-            },
-            {
-                "intensity": "ENDURANCE_PLUS",
-                "workout": "4 sets of (Wingo at 5K pace + 50 crunches + 160m fast + 25 mountain climbers), Wingo trot between sets\nFinish with Double Wingo cooldown",
-                "science": "Perfect for building comprehensive track strength"
-            },
-            {
-                "intensity": "PROGRESSIVE_MADNESS",
-                "workout": "2 rounds of:\n- Double Wingo at tempo pace, 30 jumping jacks\n- Wingo at 5K pace, 40-second plank\n- Furlong at 3K pace, 50 high knees\n- half-Wingo all out, collapse gracefully",
-                "science": "Calculated to maximize both entertainment and gains"
-            },
-            {
-                "intensity": "RANDOM_GLORY",
-                "workout": f"6 x ({random.choice([80, 160])}m sprint + {random.randint(5, 15)} burpees)\nFinish with victory Wingo",
-                "science": "DAISY™-designed chaos for maximum adaptation"
-            },
-            {
-                "intensity": "THRESHOLD_PLUS",
-                "workout": "8 x (half-Wingo at threshold + 15 squat jumps)\n2 x Wingo float\nFinish with 1 minute plank for good luck",
-                "science": "Designed by our most chaotic algorithm"
-            },
-            {
-                "intensity": "TRACK_PARTY",
-                "workout": "Warmup: 2 Wingo easy\nMain Set:\n- backwards Wingo\n- Sideways Wingo (switch halfway)\n- Normal Wingo\nRepeat 3 times with 20 jumping jacks between rounds\nCooldown: victory WIngo",
-                "science": "Because training should be fun sometimes"
-            },
-            {
-                "intensity": "SPEED_ROULETTE",
-                "workout": f"Warmup: 2 Wingos\n6 x ({random.choice([80, 160])}m sprint + {random.randint(10, 30)} jumping jacks)\n2 x Wingo float\nCooldown: victory Wingo",
-                "science": "Randomized for optimal unpredictability"
-            },
-            {
-                "intensity": "PLANK_CHALLENGE",
-                "workout": "The 320-Second Plank Challenge:\n\n1. 60s standard plank\n2. 60s left side plank\n3. 60s right side plank\n4. 60s reverse plank\n5. 80s standard plank finale\n\nTotal: 320 seconds of core stability mastery",
-                "science": "Perfectly calibrated to strengthen your core in exactly 320 seconds"
-            },
-            {
-                "intensity": "EROCK_160",
-                "workout": "ERock's 160 - The Ultimate Track + Strength Combo:\n\n5 x 160m repeats (at threshold) - Round 1:\n- After #1: 32s forearm plank + 32 jumping jacks\n- After #2: 32 situps + 32s wall sit\n- After #3: 32 bicycles + 32 squats\n- After #4: 16 pushups + 16 jump squats\n- After #5: 32s straight arm plank + 16 burpees\n\nRest 2-3 minutes, then...\n\nRepeat entire sequence once more!\n\nCooldown: 320m easy jog",
-                "science": "A legendary workout crafted by the track master himself"
-            },
-            {
-                "intensity": "SONG_ROULETTE",
-                "workout": "Song Roulette Challenge:\n\n3 rounds of:\n- 1km at the pace of whatever song plays\n- Recovery: Walk until next song starts\n\nRules:\n1. No skipping songs\n2. Must adjust pace to match song tempo\n3. If 'Fighter' comes on, sprint the remainder\n\nTotal: 3km of musical mayhem",
-                "science": "Music-synchronized training proven to be 320% more entertaining"
-            }
+        "workout_intros": [
+            "Based on your metrics, DAISY™ has crafted a specialized training protocol.",
+            "Your personalized workout has been calculated using advanced algorithms.",
+            "DAISY™ designed a workout that matches your unique profile.",
+            "Here's your DAISY™-optimized training sequence."
         ],
-
         "insights": [
             "DAISY™ analysis indicates a {probability}% chance of optimal conditions today.",
             "Your training patterns suggest {animal}-like efficiency on the track.",
             "Based on your metrics, lane {lane} might be your power lane today.",
             "Our models suggest you're ready for {pace}-level Wingos.",
-            "DAISY™ suggests you're {probability}% more likely to PR while making race car noises.",
+            "DAISY™ suggests you're {probability}% more likely to PR while making race car noises."
         ],
-
         "ai_catchphrases": [
             "Quantum-calibrating your gallop length...",
             "Neural networks analyzing your running aura...",
@@ -292,7 +269,6 @@ class WorkoutOptimizer:
             "Engaging 320-dimensional hyperspace analysis...",
             "Converting caffeine levels to quantum states..."
         ],
-
         "easter_eggs": {
             "x": {
                 "title": "LEGENDARY",
@@ -307,7 +283,7 @@ class WorkoutOptimizer:
             },
             "sam": {
                 "title": "STRENGTH",
-                "workout": "Blink Time:\n32 pushups\n32 squats\n32 plank rotations\n32 mountain climbers\n32 burpees\n32 jumping jacks\n32 high knees\n32 butt kicks\n32 arm circles\n32 leg swings",
+                "workout": "Blink Time:\n3 sets of: \n32 pushups\n32 squats\n32s plank\n32 burpees\n32 jumping jacks\n32 high knees\n32 butt kicks",
                 "science": "A perfect balance of strength and strength.",
                 "ai_insight": "DAISY™ suggests you need something... muscular.",
                 "meta": {
@@ -318,8 +294,8 @@ class WorkoutOptimizer:
             },
             "mel": {
                 "title": "ENDURANCE",
-                "workout": "Triple Plank Protocol:\nSet 1: 320 second plank\nRest: 60 seconds\nSet 2: 320 second plank\nRest: 60 seconds\nSet 3: 320 second plank",
-                "science": "Building core stability and mental fortitude.",
+                "workout": "Goran Dragic:\nPlank for 320 seconds\nVictory Wngo\nStretch",
+                "science": "Take care of your core and your core will take care of you.",
                 "ai_insight": "DAISY™ suggests you need something... enduring.",
                 "meta": {
                     "models_consulted": 320,
@@ -382,7 +358,6 @@ class WorkoutOptimizer:
                     "quantum_states_analyzed": "32M+"
                 }
             },
-
             "job": {
                 "title": "Fly Like an Eagle",
                 "workout": "Infield sprints\n20 x field goal posts to wall\nAll-out effort",
@@ -393,7 +368,6 @@ class WorkoutOptimizer:
                     "processing_time_ms": 0.8,
                     "quantum_states_analyzed": "32M+"
                 }
-            },
                         },
             "Eric": {
                 "title": "Hustle",
@@ -417,9 +391,8 @@ class WorkoutOptimizer:
                     "quantum_states_analyzed": "32M+"
                 }
             },
-
             "scarlett": {
-                "title": "Watch Out",
+                "title": "The Naked Wrist Challenge",
                 "workout": "Take off the Garmin:\nTempo for exactly 320 seconds\nMust finish within 5 seconds of 320s\nOutside range? Start over!",
                 "science": "Timing is everything.",
                 "ai_insight": "DAISY™ suggests you need something... punctual.",
@@ -429,7 +402,6 @@ class WorkoutOptimizer:
                     "quantum_states_analyzed": "32M+"
                 }
             },
-
             "meghan": {
                 "title": "PARTNER",
                 "workout": "Three-Legged Daisy:\n3 x three-legged Wingos\nFirst Wingo: Trot\nSecond Wingo: Canter \nThird Wingo: Gallop on your own\nRest 2-3 minutes between sets\nSwitch inside/outside leg positions each round\nFinish with victory lap",
@@ -474,16 +446,6 @@ class WorkoutOptimizer:
                     "quantum_states_analyzed": "32M+"
                 }
             },
-            "arielle": {
-                "title": "PROMISE",
-                "workout": "The Promise Protocol:\n1. Swear to sign up for Al Goldstein 5k\n2. Complete 8 Wingos\n3. Keep your word",
-                "science": "Building commitment and follow-through.",
-                "ai_insight": "DAISY™ suggests you need something... meaningful.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 1.2,
-                    "quantum_states_analyzed": "32M+"
-                }
             }
         }
 
@@ -497,9 +459,7 @@ class WorkoutOptimizer:
         template = random.choice(WorkoutOptimizer.NEURAL_RESPONSES["insights"])
         return template.format(
             probability=random.randint(87, 99),
-            animal=random.choice(["gazelle", "cheetah", "falcon", "antelope"]),
-            lane=random.choice(["3", "4", "5", "6"]),
-            pace=random.choice(["threshold", "interval", "repetition", "race"])
+            animal=random.choice(["cheetah", "gazelle", "quantum horse", "winged unicorn", "time-traveling ostrich"])
         )
 
 
@@ -619,408 +579,31 @@ def generate_workout():
         if not user_data:
             return jsonify({"error": "No data provided"}), 400
             
-        name = user_data.get('name', '').lower().strip()
+        name = user_data.get('name', '').strip()
         if not name:
             return jsonify({"error": "Name is required"}), 400
             
-        # Easter egg for name containing "x"
-        if 'x' in name:
-            response = {
+        # Generate a random workout from the predefined list
+        workout_optimizer = WorkoutOptimizer()
+        workout = random.choice(workout_optimizer.NEURAL_RESPONSES["predefined_workouts"])
+        
+        response = {
                 "timestamp": datetime.now().isoformat(),
                 "fitness_coefficient": 3.20,
                 "confidence_score": "320.00%",
-                "workout_intro": "You have unlocked the legendary X workout...",
-                "workout_details": {
-                    "intensity": "LEGENDARY",
-                    "workout": "Run 320 laps.\n\nThat's it.\nThat's the workout.\n\nGood luck.",
-                    "science": "Some say this workout was crafted by the ancient track gods themselves"
-                },
-                "ai_insight": "Our models are both impressed and concerned.",
+            "workout_intro": random.choice(workout_optimizer.NEURAL_RESPONSES["workout_intros"]),
+            "workout_details": workout,
+            "ai_insight": "DAISY™ has analyzed your data and generated this optimal workout.",
                 "meta": {
                     "models_consulted": 320,
                     "processing_time_ms": 0.320,
                     "quantum_states_analyzed": "320^320"
                 }
             }
-            return jsonify(response)
-
-        # Easter egg for Samuel variations
-        samuel_variations = ['sam', 'samuel', 'sammy']
-        if any(variation in name for variation in samuel_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Shin Splint Prevention Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "STRENGTH",
-                    "workout": "32 pushups. 32 squats. 32s plank (3x). 32 jump lunges. 32 calf raises. \n\nYou'll be a regular at the gym starting... now",
-                    "science": "Our wingatian algorithms have determined this is the optimal number. Trust the process."
-                },
-                "ai_insight": "DAISY™ suggests you need something ... stronger.",
-                "meta": {
-                    "models_consulted": 32,
-                    "processing_time_ms": 3.20,
-                    "quantum_states_analyzed": "32^2"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Mel variations
-        mel_variations = ['mel', 'melissa', 'melanie', 'melvin']
-        if any(variation in name for variation in mel_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "Initiating the Triple Plank Protocol...",
-                "workout_details": {
-                    "intensity": "ENDURANCE",
-                    "workout": "Triple Plank:\n3 x 320-second planks (2 minute breaks)\n1 victory Wingo\n\nRunning is overrated",
-                    "science": "Take care of your core and your core will take care of you."
-                },
-                "ai_insight": "DAISY™ suggests counting backwards from 320 to maintain sanity.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 320.0,
-                    "quantum_states_analyzed": "plank^3"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Maddy variations
-        maddy_variations = ['maddy', 'madeline', 'madison', 'maddie']
-        if any(variation in name for variation in maddy_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Smoke Monster has been summoned...",
-                "workout_details": {
-                    "intensity": "MYSTERIOUS",
-                    "workout": "A Double Lost Ladder:\n40m-80m-150m-160m-230m-420m\nClimb down the ladder\nDo it again",
-                    "science": "This sequence was discovered during Mr. Wingate's 1885 Yellowstone Expedition."
-                },
-                "ai_insight": "Don't tell DAISY™ what you can't do.",
-                "meta": {
-                    "models_consulted": 1080,
-                    "processing_time_ms": 3.20,
-                    "quantum_states_analyzed": "40+80+150+160+230+420"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Nina variations
-        nina_variations = ['nina', 'nena', 'ninah']
-        if any(variation in name for variation in nina_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Sacred Stretch Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "FLEXIBILITY",
-                    "workout": "The Ultimate Stretch Sequence:\n\n1. 10-minute yoga/stretch routine\n2. Follow along with video\n3. Perfect for post-workout recovery\n\nWatch Video: https://www.youtube.com/watch?v=nlitqDM40BE",
-                    "science": "Our quantum algorithms have determined this is the optimal recovery protocol."
-                },
-                "ai_insight": "The ancient scrolls speak of the power of proper stretching.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 3.20,
-                    "quantum_states_analyzed": "stretch^3"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Katherine variations
-        katherine_variations = ['katherine', 'katie', 'kat', 'kate']
-        if any(variation in name for variation in katherine_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Stairmaster Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "FLIGHT MODE",
-                    "workout": "Step it up:\nSet 1: 3:20 up/down stairs\nWingo trot\nSet 2: 3:20 up/down stairs\nWingo trot\nSet 3: 3:20 up/down stairs\nWingo trot",
-                    "science": "Building power and endurance through vertical movement."
-                },
-                "ai_insight": "DAISY™ suggests you need something... elevated.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.6,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Lorena
-        if 'lorena' in name:
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Filly Special has been activated...",
-                "workout_details": {    
-                    "intensity": "HUSTLE",
-                    "workout": "The Filly Special:\n10 Wingos at half mare-athon pace...then stop!\nEnjoy the city's energy\nRun the Wingate stairs",
-                    "science": "Train like Rocky"
-                },
-                "ai_insight": "DAISY™ suggests you need something... legendary.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.8,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Will variations
-        will_variations = ['will', 'william', 'willy', 'wil']
-        if any(variation in name for variation in will_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Naked Wrist Challenge has been activated...",
-                "workout_details": {
-                    "intensity": "TIMING",
-                    "workout": "The Naked Wrist Challenge:\nRun 1 m*le in exactly 6:50\nNo watch allowed\nIf off by 6+ seconds, repeat\nFocus on internal pacing",
-                    "science": "Developing internal clock and pace awareness."
-                },
-                "ai_insight": "DAISY™ suggests you need something... precise.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.7,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Chris variations
-        chris_variations = ['chris', 'christopher', 'christian']
-        if any(variation in name for variation in chris_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Glory Days Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "TIME MACHINE",
-                    "workout": "The Glory Days Protocol:\n640m in 1:57\nThen 7 victory Wingos\nRelive your high school glory\nChannel your inner champion",
-                    "science": "Reconnecting with past performance levels."
-                },
-                "ai_insight": "DAISY™ suggests you need something... nostalgic.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 1.0,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Ben variations
-        ben_variations = ['ben', 'benjamin', 'bennie']
-        if any(variation in name for variation in ben_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Pullup Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "STRENGTH",
-                    "workout": "Pullups and Wingos:\n10 pullups, Wingo (sub-70s)\n8 pullups, Wingo (sub-70s)\n6 pullups, Wingo (sub-70s)\n4 pullups, Wingo (sub-70s)\n2 pullups, Wingo (sub-70s)",
-                    "science": "Insane gains only comes with pains."
-                },
-                "ai_insight": "DAISY™ suggests you need something... powerful.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 1.1,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Arielle variations
-        arielle_variations = ['arielle', 'ariel', 'ariella']
-        if any(variation in name for variation in arielle_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Promise Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "TRUST",
-                    "workout": "The Promise:\n1. Swear to sign up for Al Goldstein 5k\n2. Complete 8 Wingos\n3. Keep your word",
-                    "science": "Building commitment and follow-through."
-                },
-                "ai_insight": "DAISY™ suggests you need something... meaningful.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 1.2,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Meghan variations
-        meghan_variations = ['meghan', 'meg', 'megh']
-        if any(variation in name for variation in meghan_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Three-Legged Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "PARTNER",
-                    "workout": "Three-Legged Daisy:\n3 x Wingo three-legged runs\nFirst Wingo: Moderate pace\nSecond Wingo: Moderate pace\nThird Wingo: On your own\nRest 2-3 minutes between sets\nSwitch inside/outside leg positions each round\nFinish with victory lap",
-                    "science": "Building coordination and teamwork."
-                },
-                "ai_insight": "Your data suggests you need something... connected.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.9,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-
-        # Easter egg for Eli variations
-        eli_variations = ['eli', 'elijah', 'elias']
-        if any(variation in name for variation in eli_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Three-Legged Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "PARTNER",
-                    "workout": "Three-Legged Daisy:\n3 x Wingo three-legged runs\nFirst Wingo: Moderate pace\nSecond Wingo: Moderate pace\nThird Wingo: On your own\nRest 2-3 minutes between sets\nSwitch inside/outside leg positions each round\nFinish with victory lap",
-                    "science": "Building coordination and teamwork."
-                },
-                "ai_insight": "Your data suggests you need something... connected.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.9,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-        
-        # Easter egg for Scarlett variations
-        scarlett_variations = ['scarlett', 'scarlet']
-        if any(variation in name for variation in scarlett_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Watch Out Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "PRECISION",
-                    "workout": "Take off the Garmin:\nTempo for exactly 320 seconds\nMust finish within 5 seconds of 320s\nOutside range? Start over!",
-                    "science": "Timing is everything."
-                },
-                "ai_insight": "Your data suggests you need something... punctual.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.8,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-        
-        # Easter egg for Job variations
-        job_variations = ['job', 'jobby']
-        if any(variation in name for variation in job_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Eagle Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "GRITTY",
-                    "workout": "Fly Like an Eagle:\nInfield sprints\n20 x field goal posts to wall\nAll-out effort",
-                    "science": "Make it Hurts."
-                },
-                "ai_insight": "DAISY™ suggests you need something... painful.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.8,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
- 
- # Easter egg for Eric variations
-        eric_variations = ['eric', 'erock', 'ericr']
-        if any(variation in name for variation in eric_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Hustle Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "PRESSURE",
-                    "workout": "5K TIME:\nRun 15.625 Wingos in 17:37 (67.6s per Wingo)",
-                    "science": "Be like Bo Cruz."
-                },
-                "ai_insight": "DAISY™ suggests you need ... Therapy.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.8,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-        
-        # Easter egg for Matt variations
-        matt_variations = ['matt', 'matthew', 'matty']
-        if any(variation in name for variation in matt_variations):
-            response = {
-                "timestamp": datetime.now().isoformat(),
-                "fitness_coefficient": 3.20,
-                "confidence_score": "320.00%",
-                "workout_intro": "The Christina Protocol has been activated...",
-                "workout_details": {
-                    "intensity": "SONG ROULETTE",
-                    "workout": "Christina-powered chaos:\n5 x km, each paced to random Christina song\nGenie in a bottle? 3:36. Come On Over? 3:09\nOne minute rest",
-                    "science": "Consult Wingo Pace Converter for assistance."
-                },
-                "ai_insight": "DAISY™ suggests you need something... legendary.",
-                "meta": {
-                    "models_consulted": 320,
-                    "processing_time_ms": 0.8,
-                    "quantum_states_analyzed": "32M+"
-                }
-            }
-            return jsonify(response)
-        
-        # Regular workout generation continues...
-        fitness_coefficient = WorkoutOptimizer.calculate_fitness_coefficient(user_data)
-        
-        # Always select from predefined workouts
-        workout_package = random.choice(WorkoutOptimizer.NEURAL_RESPONSES["predefined_workouts"])
-        intro = "DAISY™ has selected a proven workout from our collection..."
-        
-        response = {
-            "timestamp": datetime.now().isoformat(),
-            "fitness_coefficient": round(fitness_coefficient, 4),
-            "confidence_score": f"{random.randint(98, 100)}.{random.randint(10, 99)}%",
-            "workout_intro": intro,
-            "workout_details": workout_package,
-            "ai_insight": WorkoutOptimizer.generate_insight(user_data),
-            "meta": {
-                "models_consulted": random.randint(320, 999),
-                "processing_time_ms": random.uniform(0.1, 2.0),
-                "quantum_states_analyzed": "320M+"
-            }
-        }
-        
         return jsonify(response)
 
     except Exception as e:
-        logger.error(f"Error in generate_workout: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/analyze_potential", methods=["POST"])
 def analyze_potential():
@@ -1325,6 +908,31 @@ def whitepaper():
 @app.route("/archive-320")
 def archive_320():
     return render_template("archive_320.html")
+
+@app.route("/random_workout", methods=["GET"])
+def random_workout():
+    """Generate a random workout without requiring user input"""
+    try:
+        workout_optimizer = WorkoutOptimizer()
+        workout = random.choice(workout_optimizer.NEURAL_RESPONSES["predefined_workouts"])
+        
+        response = {
+            "timestamp": datetime.now().isoformat(),
+            "fitness_coefficient": 3.20,
+            "confidence_score": "320.00%",
+            "workout_intro": random.choice(workout_optimizer.NEURAL_RESPONSES["workout_intros"]),
+            "workout_details": workout,
+            "ai_insight": "DAISY™ has generated this optimal workout for you.",
+            "meta": {
+                "models_consulted": 320,
+                "processing_time_ms": 0.320,
+                "quantum_states_analyzed": "320^320"
+            }
+        }
+        return jsonify(response)
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)

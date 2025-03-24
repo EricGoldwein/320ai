@@ -717,6 +717,84 @@
     70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
     100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
 }
+
+/* Random Workout Button Styling */
+#randomWorkoutBtn {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    text-decoration: none;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+#randomWorkoutBtn:hover {
+    transform: none;
+    box-shadow: none;
+    background: none;
+}
+
+#randomWorkoutBtn i {
+    transition: none;
+}
+
+#randomWorkoutBtn:hover i {
+    transform: none;
+}
+
+/* Random Workout Modal */
+.random-workout-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.random-workout-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.random-workout-content {
+    background: white;
+    max-width: 600px;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 20px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.random-workout-modal.active .random-workout-content {
+    transform: translateY(0);
+}
+
+.close-random-workout {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #495057;
+    transition: color 0.3s ease;
+}
+
+.close-random-workout:hover {
+    color: #212529;
+}
 </style>
 {% endblock %}
 
@@ -855,11 +933,11 @@
 
             <!-- Move learn more link to bottom and make it more subtle -->
             <div class="text-center mt-3">
-                <a href="{{ url_for('daisy') }}" class="btn btn-link text-muted small" style="text-decoration: none; font-size: 0.85rem; opacity: 0.8;">
-                    WTF is DAISY™? <i class="fas fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
+                <a href="{{ url_for('daisy') }}" class="text-muted" style="text-decoration: none; font-size: 0.85rem; margin-right: 2rem;">
+                    WTF IS DAISY™? <i class="fas fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
                 </a>
-                <a href="{{ url_for('wingo_converter') }}" class="btn btn-link text-muted small" style="text-decoration: none; font-size: 0.85rem; opacity: 0.8;">
-                    Wingo Converter <i class="fas fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
+                <a href="#" onclick="generateRandomWorkout(event)" class="text-muted" style="text-decoration: none; font-size: 0.85rem;">
+                    WILDCARD <i class="fas fa-random ms-1" style="font-size: 0.7rem;"></i>
                 </a>
             </div>
         </div>
@@ -1140,6 +1218,14 @@
     </div>
 </div>
 
+<!-- Random Workout Modal -->
+<div class="random-workout-modal">
+    <div class="random-workout-content">
+        <button class="close-random-workout">&times;</button>
+        <div id="randomWorkoutContent"></div>
+    </div>
+</div>
+
 {% block extra_js %}
 <script>
 function validateInput(questionId) {
@@ -1235,22 +1321,21 @@ async function submitForm() {
 
         // Update result template
         resultDiv.innerHTML = `
-            <div class="alert" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 12px; color: white; padding: 2rem;">
+            <div class="alert" style="background: rgba(0, 0, 0, 0.7); border-radius: 12px; color: white; padding: 2rem;">
                 <div class="track-badge mb-3">SESSION ${Math.floor(Math.random() * 900000) + 100000}</div>
-                <h4 class="alert-heading mb-4">${data.workout_intro}</h4>
+                <h4 class="alert-heading mb-4" style="font-size: 1.4rem;">${data.workout_intro}</h4>
                 <div class="workout-text">
-                    <h3 class="text-gradient mb-3" style="color: #ffffff; font-size: 2rem; letter-spacing: 0.05em; font-style: italic;">${data.workout_details.intensity}</h3>
+                    <span class="workout-type" style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 4px; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 1rem; font-weight: 500; text-transform: uppercase; font-style: italic;">${data.workout_details.intensity}</span>
                     <h2 style="color: white; font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">${data.workout_details.workout.split('\n')[0]}</h2>
-                    ${data.workout_details.workout.split('\n').slice(1).join('<br>')}
+                    <div style="font-size: 1.1rem; line-height: 1.6;">${data.workout_details.workout.split('\n').slice(1).join('<br>')}</div>
                 </div>
-                <hr style="border-color: rgba(52, 152, 219, 0.3);">
-                <p><em>${data.workout_details.science}</em></p>
-                <p class="mb-0"><small class="text-uppercase" style="letter-spacing: 1px;">${data.ai_insight}</small></p>
-                <div class="mt-3" style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
-                    <span class="text-uppercase">Custom Workout</span> • 
+                <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
+                <p style="font-style: italic; color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; margin-bottom: 1rem;">${data.workout_details.science}</p>
+                <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; text-transform: uppercase;">
+                    <span>Custom Workout</span> • 
                     Validated by ${data.meta.models_consulted} track club members • 
                     Analysis time: ${data.meta.processing_time_ms}ms
-                </div>
+                </p>
             </div>
         `;
     } catch (error) {
@@ -1262,6 +1347,98 @@ async function submitForm() {
 
     document.getElementById('homeButton').style.display = 'block';
 }
+
+async function generateRandomWorkout(e) {
+    e.preventDefault();
+    // Hide form, show loading
+    document.getElementById('questionnaireForm').style.display = 'none';
+    const loadingSection = document.getElementById('loadingSection');
+    loadingSection.style.display = 'block';
+
+    // Rest of the random workout generation code...
+    const progressBar = document.querySelector('.progress-bar');
+    const statusDiv = document.getElementById('calculationStatus');
+    const statuses = [
+        "Analyzing divots...",
+        "Processing DAISY™ insights...",
+        "Calibrating Wingatian parameters...",
+        "Measuring harmonic efficiency...",
+        "Optimizing for Wingo distance...",
+        "Fine-tuning furlong intensity...",
+        "Preparing your custom dynamic session..."
+    ];
+
+    for (let i = 0; i < statuses.length; i++) {
+        statusDiv.textContent = statuses[i];
+        progressBar.style.width = `${(i + 1) * (100 / statuses.length)}%`;
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    try {
+        const response = await fetch('/generate_workout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: "Wildcard Runner",
+                miles_past_320_days: 0,
+                kilometers_2025: 0,
+                avg_hr_walking: 0,
+                recent_haircut: 0,
+                iron_levels: 0,
+                last_race_date: "",
+                last_date_race: "",
+                ssn_digit_sum: 0
+            })
+        });
+        
+        const data = await response.json();
+
+        // Hide loading, show results
+        loadingSection.style.display = 'none';
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+
+        // Update result template
+        resultDiv.innerHTML = `
+            <div class="alert" style="background: rgba(0, 0, 0, 0.7); border-radius: 12px; color: white; padding: 2rem;">
+                <div class="track-badge mb-3">SESSION ${Math.floor(Math.random() * 900000) + 100000}</div>
+                <h4 class="alert-heading mb-4" style="font-size: 1.4rem;">${data.workout_intro}</h4>
+                <div class="workout-text">
+                    <span class="workout-type" style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 4px; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 1rem; font-weight: 500; text-transform: uppercase; font-style: italic;">${data.workout_details.intensity}</span>
+                    <h2 style="color: white; font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">${data.workout_details.workout.split('\n')[0]}</h2>
+                    <div style="font-size: 1.1rem; line-height: 1.6;">${data.workout_details.workout.split('\n').slice(1).join('<br>')}</div>
+                </div>
+                <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
+                <p style="font-style: italic; color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; margin-bottom: 1rem;">${data.workout_details.science}</p>
+                <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; text-transform: uppercase;">
+                    <span>Custom Workout</span> • 
+                    Validated by ${data.meta.models_consulted} track club members • 
+                    Analysis time: ${data.meta.processing_time_ms}ms
+                </p>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error generating workout. Please try again.');
+        loadingSection.style.display = 'none';
+        document.getElementById('questionnaireForm').style.display = 'block';
+    }
+
+    document.getElementById('homeButton').style.display = 'block';
+}
+
+document.querySelector('.close-random-workout').addEventListener('click', () => {
+    document.querySelector('.random-workout-modal').classList.remove('active');
+});
+
+// Close modal when clicking outside
+document.querySelector('.random-workout-modal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('active');
+    }
+});
 </script>
 {% endblock %}
 
