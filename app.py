@@ -12,34 +12,34 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import time
 import httpx
+from openai import AsyncOpenAI
 
 # Configure logging with more detail
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger(__name__)
 
 # Initialize environment variables first
-logger.info("Loading environment variables...")
+logging.info("Loading environment variables...")
 load_dotenv()
 
 # Set proxy configuration for PythonAnywhere
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-    logger.info("Running on PythonAnywhere - setting proxy configuration")
+    logging.info("Running on PythonAnywhere - setting proxy configuration")
     os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
     os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
 else:
-    logger.info("Running locally - no proxy configuration needed")
+    logging.info("Running locally - no proxy configuration needed")
 
 # Get environment variables with defaults
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
+logging.info(f"API Key present: {bool(OPENAI_API_KEY)}")
 if not OPENAI_API_KEY:
-    logger.error("No OpenAI API key found in environment variables!")
+    logging.error("No OpenAI API key found in environment variables!")
 
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
-logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
+logging.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
 MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
 TIMEOUT = int(os.environ.get('TIMEOUT', '120'))
@@ -53,7 +53,7 @@ def init_openai_client():
     """Initialize the OpenAI client with enhanced retry logic"""
     for attempt in range(max_init_retries):
         try:
-            logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_init_retries})")
+            logging.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_init_retries})")
             return OpenAI(
                 api_key=OPENAI_API_KEY,
                 timeout=TIMEOUT,
@@ -65,28 +65,28 @@ def init_openai_client():
                 )
             )
         except Exception as e:
-            logger.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
+            logging.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
             if attempt < max_init_retries - 1:
-                logger.info(f"Waiting {init_retry_delay} seconds before retrying...")
+                logging.info(f"Waiting {init_retry_delay} seconds before retrying...")
                 time.sleep(init_retry_delay)
     return None
 
 # Initialize the client
-logger.info("About to initialize OpenAI client...")
+logging.info("About to initialize OpenAI client...")
 client = init_openai_client()
-logger.info(f"Client initialization result: {client is not None}")
+logging.info(f"Client initialization result: {client is not None}")
 
 # Add error handler for OpenAI API errors with more specific handling
 def handle_openai_error(error):
     error_str = str(error).lower()
-    logger.error(f"OpenAI API error: {error_str}")
+    logging.error(f"OpenAI API error: {error_str}")
     
     if "rate limit" in error_str:
         return "I'm processing too many requests right now. Please try again in a minute."
     elif "timeout" in error_str:
         return "The response took too long. Please try again."
     elif "api key" in error_str:
-        logger.critical("API key error detected - attempting to reinitialize client")
+        logging.critical("API key error detected - attempting to reinitialize client")
         global client
         client = init_openai_client()
         return "I'm having trouble connecting. Please try again."
@@ -120,7 +120,7 @@ try:
     if not os.path.exists(CHAT_HISTORY_DIR):
         os.makedirs(CHAT_HISTORY_DIR)
 except Exception as e:
-    logger.error(f"Failed to create chat history directory: {e}")
+    logging.error(f"Failed to create chat history directory: {e}")
     # Fallback to temp directory if main directory creation fails
     CHAT_HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'chat_histories')
     if not os.path.exists(CHAT_HISTORY_DIR):
@@ -132,7 +132,7 @@ def save_chat_history(user_id, history):
         with open(filename, 'w') as f:
             json.dump(history, f)
     except Exception as e:
-        logger.error(f"Failed to save chat history: {e}")
+        logging.error(f"Failed to save chat history: {e}")
         # Fallback to memory if file save fails
         conversation_history[user_id] = history
 
@@ -143,7 +143,7 @@ def load_chat_history(user_id):
             with open(filename, 'r') as f:
                 return json.load(f)
     except Exception as e:
-        logger.error(f"Failed to load chat history: {e}")
+        logging.error(f"Failed to load chat history: {e}")
         # Fallback to memory if file load fails
         return conversation_history.get(user_id, [])
     return []
@@ -550,7 +550,7 @@ def game_leaderboard():
             # TODO: Implement leaderboard database operations
             return jsonify({"status": "success"})
         except Exception as e:
-            logger.error(f"Error in leaderboard POST: {str(e)}")
+            logging.error(f"Error in leaderboard POST: {str(e)}")
             return jsonify({"error": "Internal server error"}), 500
     else:
         try:
@@ -558,7 +558,7 @@ def game_leaderboard():
             # TODO: Implement leaderboard retrieval
             return jsonify({"scores": []})
         except Exception as e:
-            logger.error(f"Error in leaderboard GET: {str(e)}")
+            logging.error(f"Error in leaderboard GET: {str(e)}")
             return jsonify({"error": "Internal server error"}), 500
 
 @app.route("/generate_workout", methods=["POST"])
@@ -622,7 +622,7 @@ def analyze_potential():
 
         return jsonify(analysis)
     except Exception as e:
-        logger.error(f"Error in analyze_potential: {str(e)}")
+        logging.error(f"Error in analyze_potential: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 @app.route("/subscribe", methods=["POST"])
@@ -658,7 +658,7 @@ def subscribe():
             conn.close()
             
     except Exception as e:
-        logger.error(f"Error in subscribe: {str(e)}")
+        logging.error(f"Error in subscribe: {str(e)}")
         return jsonify({
             "success": False,
             "message": "Server error. Please try again."
@@ -669,17 +669,17 @@ def subscribe():
 def chat():
     """Handle chat interactions with DAISY™"""
     try:
-        logger.info("\n=== DAISY Chat Debug ===")
-        logger.info("1. Checking API client...")
+        logging.info("\n=== DAISY Chat Debug ===")
+        logging.info("1. Checking API client...")
         
         global client
         if not client:
-            logger.warning("OpenAI client not initialized - attempting to initialize")
+            logging.warning("OpenAI client not initialized - attempting to initialize")
             client = init_openai_client()
             if not client:
                 return jsonify({"error": "Unable to initialize API client"}), 503
         
-        logger.info("2. Client initialized successfully")
+        logging.info("2. Client initialized successfully")
             
         data = request.get_json()
         if not data:
@@ -692,8 +692,8 @@ def chat():
         user_id = request.remote_addr
         conversation_history = load_chat_history(user_id)
         
-        logger.info(f"3. Received message: '{message}'")
-        logger.info(f"4. Conversation history length: {len(conversation_history)}")
+        logging.info(f"3. Received message: '{message}'")
+        logging.info(f"4. Conversation history length: {len(conversation_history)}")
         
         try:
             # Create a thread with retry logic
@@ -705,7 +705,7 @@ def chat():
                 except Exception as e:
                     if attempt == max_attempts - 1:
                         raise
-                    logger.warning(f"Thread creation failed (attempt {attempt + 1}): {e}")
+                    logging.warning(f"Thread creation failed (attempt {attempt + 1}): {e}")
                     time.sleep(1)
             
             # Add the conversation history to the thread
@@ -734,7 +734,7 @@ def chat():
                 except Exception as e:
                     if attempt == max_attempts - 1:
                         raise
-                    logger.warning(f"Run creation failed (attempt {attempt + 1}): {e}")
+                    logging.warning(f"Run creation failed (attempt {attempt + 1}): {e}")
                     time.sleep(1)
             
             # Wait for the run to complete with improved timeout handling
@@ -760,7 +760,7 @@ def chat():
                     elif run_status.status == 'expired':
                         raise Exception("Assistant run expired")
                 except Exception as e:
-                    logger.error(f"Error checking run status: {e}")
+                    logging.error(f"Error checking run status: {e}")
                     time.sleep(check_interval)
             
             # Get the assistant's response with retry logic
@@ -772,7 +772,7 @@ def chat():
                 except Exception as e:
                     if attempt == max_attempts - 1:
                         raise
-                    logger.warning(f"Failed to get assistant response (attempt {attempt + 1}): {e}")
+                    logging.warning(f"Failed to get assistant response (attempt {attempt + 1}): {e}")
                     time.sleep(1)
             
             # Update conversation history
@@ -787,9 +787,9 @@ def chat():
             try:
                 save_chat_history(user_id, conversation_history)
             except Exception as e:
-                logger.error(f"Failed to save chat history: {e}")
+                logging.error(f"Failed to save chat history: {e}")
             
-            logger.info("5. Assistant response received successfully!")
+            logging.info("5. Assistant response received successfully!")
             return jsonify({
                 "response": assistant_response,
                 "conversation_history": conversation_history
@@ -797,16 +797,16 @@ def chat():
             
         except TimeoutError as te:
             error_message = "Response took too long. Please try again."
-            logger.error(f"Timeout error: {te}")
+            logging.error(f"Timeout error: {te}")
             return jsonify({"error": error_message}), 504
             
         except Exception as api_error:
             error_message = handle_openai_error(api_error)
-            logger.error(f"API Error: {api_error}")
+            logging.error(f"API Error: {api_error}")
             return jsonify({"error": error_message}), 500
             
     except Exception as e:
-        logger.error(f"Error in chat endpoint: {e}")
+        logging.error(f"Error in chat endpoint: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
 
 def generate_transition_text(question_type):
@@ -944,7 +944,7 @@ def view_subscribers():
         conn.close()
         return render_template('admin/subscribers.html', subscribers=subscribers)
     except Exception as e:
-        logger.error(f"Error viewing subscribers: {str(e)}")
+        logging.error(f"Error viewing subscribers: {str(e)}")
         return render_template('admin/subscribers.html', error="Error loading subscribers")
 
 @app.route("/admin/logout")
@@ -997,6 +997,14 @@ def random_workout():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"})
+
+@app.route('/test')
+def test():
+    return jsonify({"status": "ok", "message": "Test endpoint working"})
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
