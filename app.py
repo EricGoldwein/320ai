@@ -41,28 +41,24 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-# Increase retries and timeout for better handling of rate limits
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))  # Increased from 3 to 5
-TIMEOUT = int(os.environ.get('TIMEOUT', '60'))  # Increased from 30 to 60 seconds
+# Use simpler timeout and retry settings
+MAX_RETRIES = 3
+TIMEOUT = 30
 
 # Initialize OpenAI client as a global variable
 client = None
 
 def init_openai_client():
-    """Initialize the OpenAI client with retry logic"""
+    global client
     try:
-        # Create client with increased timeout and retries
+        logger.info("Starting OpenAI client initialization...")
         client = OpenAI(
             api_key=OPENAI_API_KEY,
             timeout=TIMEOUT,
             max_retries=MAX_RETRIES
         )
-        
-        # Test the client with a simple API call
-        client.models.list()
-        logger.info("OpenAI client successfully initialized and tested")
+        logger.info("OpenAI client created successfully")
         return client
-        
     except Exception as e:
         logger.error(f"Failed to initialize OpenAI client: {str(e)}")
         return None
