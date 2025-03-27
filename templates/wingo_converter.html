@@ -19,6 +19,7 @@
 {% block extra_css %}
 <style>
     .brand-heading {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         font-size: 2.5rem;
         font-weight: 700;
         color: #2c3e50;
@@ -29,15 +30,15 @@
         max-width: 600px;
         margin: 2rem auto;
         padding: 2rem;
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 250, 0.98));
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     }
 
     .input-section {
-        background: rgba(52, 152, 219, 0.1);
+        background: #f5faff;
         padding: 2rem;
-        border-radius: 15px;
+        border-radius: 16px;
         margin-bottom: 1rem;
         max-width: 600px;
         margin-left: auto;
@@ -46,17 +47,39 @@
 
     .pace-display {
         text-align: center;
-        font-size: 1.2rem;
-        color: #2c3e50;
-        margin: 1rem 0;
-        padding: 0.5rem;
-        background: rgba(46, 204, 113, 0.1);
-        border-radius: 8px;
+        font-size: 1.1rem;
+        color: #333;
+        margin: 1.5rem 0;
+        padding: 1.25rem 2rem;
+        background: #f5faff;
+        border-radius: 16px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pace-display::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #2c3e50;
     }
 
     .pace-display span {
-        color: #2ecc71;
+        color: #1e1e1e;
         font-weight: 600;
+        font-size: 1.1rem;
     }
 
     .result-section {
@@ -95,11 +118,12 @@
     }
 
     .form-control {
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
+        border: 2px solid #e5e5e5;
+        border-radius: 12px;
         padding: 0.75rem;
         font-size: 1.1rem;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
+        background: #ffffff;
     }
 
     select.form-control {
@@ -116,28 +140,31 @@
     }
 
     .form-control:focus {
-        border-color: #3498db;
-        box-shadow: none;
+        border-color: #222;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
     }
 
     .btn-convert {
-        background: linear-gradient(45deg, #3498db, #2980b9);
+        background: #2c3e50;
         color: white;
         border: none;
         padding: 0.75rem 2rem;
-        border-radius: 8px;
+        border-radius: 12px;
         font-weight: 600;
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
     }
 
     .btn-convert:hover {
         transform: translateY(-2px);
-        background: linear-gradient(45deg, #2980b9, #3498db);
+        box-shadow: 0 4px 12px rgba(44, 62, 80, 0.25);
+        background: #34495e;
+        color: white;
     }
 
     .btn-reset {
         background: none;
-        color: #7f8c8d;
+        color: #666;
         border: none;
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
@@ -146,9 +173,7 @@
     }
 
     .btn-reset:hover {
-        transform: none;
-        background: none;
-        color: #34495e;
+        color: #1e1e1e;
     }
 
     .button-group {
@@ -223,76 +248,120 @@
 
     .projections-card {
         grid-column: 1 / -1;
-        background: linear-gradient(145deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
-        border: 2px solid #3498db;
+        background: #f5faff;
+        border: 1px solid rgba(0, 0, 0, 0.06);
         -webkit-user-select: all;
         user-select: all;
         -webkit-touch-callout: default;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
-    }
-
-    .daisy-badge {
-        font-size: 0.95rem;
-        padding: 0.4rem 0.8rem;
-        background: rgba(46, 64, 87, 0.12);
-        border-radius: 4px;
-        color: #2c3e50;
-        font-weight: 500;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        letter-spacing: 0.02em;
-    }
-
-    .daisy-badge .ai {
-        color: #00B4B4;
-        font-weight: 600;
-        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    }
-
-    .projections-title {
-        color: #3498db;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        -webkit-user-drag: element;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        position: relative;
+        cursor: default;
+        border-radius: 16px;
+        padding: 1.5rem;
     }
 
     .projections-content {
+        position: relative;
+        z-index: 1;
         font-size: 1.1rem;
-        color: #2c3e50;
+        color: #666;
+    }
+
+    .projections-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .projections-content p {
+        margin: 0;
+        padding: 0;
+        color: #666;
+        font-weight: 400;
+        font-size: 1.1rem;
+        line-height: 1.5;
+        letter-spacing: 0.3px;
+    }
+
+    .projections-content p span {
+        font-weight: 500;
+        color: #444;
+        letter-spacing: 0;
     }
 
     .projections-list {
         list-style: none;
         padding: 0;
-        margin: 1rem 0 0 0;
+        margin: 0;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 0.5rem;
     }
 
     .projections-list li {
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 6px;
-        font-weight: 500;
+        padding: 0.75rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-direction: row-reverse;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
     .projections-list .distance {
-        color: #7f8c8d;
-        font-weight: 500;
-        text-align: right;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        color: #555;
+        text-align: left;
     }
 
     .projections-list .time {
-        color: #2c3e50;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-weight: 500;
+        color: #333;
+        text-align: right;
+        font-size: 1.05rem;
+    }
+
+    .daisy-badge {
+        font-size: 0.95rem;
+        padding: 0.35rem 0.7rem;
+        background: #34495e;
+        border: none;
+        border-radius: 6px;
+        color: #ffffff;
+        font-weight: 500;
+        letter-spacing: 0;
+        pointer-events: none;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        position: static;
+        margin-left: 1rem;
+    }
+
+    .daisy-badge .ai {
+        color: #00ffeb;
         font-weight: 600;
-        text-align: left;
+        margin: 0;
+    }
+
+    .projections-title {
+        color: #2c3e50;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        padding-right: 1rem;
+        letter-spacing: -0.02em;
     }
 
     @media (max-width: 768px) {
@@ -309,6 +378,20 @@
         .main-result .result-value {
             font-size: 2.5rem;
         }
+        .daisy-badge {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.6rem;
+            top: 0.15rem;
+            right: 0.5rem;
+        }
+        .projections-card {
+            padding: 1.25rem;
+        }
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5faff;
     }
 </style>
 {% endblock %}
@@ -373,17 +456,16 @@
         </div>
 
         <div class="pace-display">
-            Your Pace: <span id="wingoTimeDisplay">--</span> per Wingo
+            Wingo (320m) Pace: <span id="wingoTimeDisplay">--</span>
         </div>
 
         <div class="result-section" id="results">
             <div class="result-card projections-card" id="projections">
-                <h3 class="projections-title">
-                    Wingo Pace Conversions
-                    <span class="daisy-badge">D<span class="ai">AI</span>SY™</span>
-                </h3>
                 <div class="projections-content">
-                    <p>At <span id="wingoTimeDisplay">--</span> per Wingo (<span id="selectedDistance">--</span>), you will run a:</p>
+                    <div class="projections-header">
+                        <p>Your pace at <span id="selectedDistance">--</span> (<span id="wingoTimeDisplay">--</span>)</p>
+                        <span class="daisy-badge">D<span class="ai">AI</span>SY™</span>
+                    </div>
                     <ul class="projections-list">
                         <li><span class="distance">Furlong</span><span class="time" id="projectedFurlong">--</span></li>
                         <li><span class="distance">400m</span><span class="time" id="projected400">--</span></li>
@@ -442,15 +524,14 @@ function updateTimeInputs() {
     // Show/hide days input for Yellowstone
     if (distance === 644000) {
         daysInput.style.display = 'block';
+        hoursInput.style.display = 'block';
+        minutesInput.style.display = 'block';
+        secondsInput.style.display = 'none';
     } else {
         daysInput.style.display = 'none';
-    }
-    
-    // Show/hide hours input for distances > 10K
-    if (distance > 10000) {
-        hoursInput.style.display = 'block';
-    } else {
-        hoursInput.style.display = 'none';
+        hoursInput.style.display = distance > 10000 ? 'block' : 'none';
+        minutesInput.style.display = 'block';
+        secondsInput.style.display = 'block';
     }
 }
 
@@ -477,7 +558,7 @@ function convertFromTarget() {
 
     let hasValidInput = false;
     for (const input of inputs) {
-        if (input.elem.value.trim() !== '') {
+        if (input.elem.style.display !== 'none' && input.elem.value.trim() !== '') {
             hasValidInput = true;
             if (!validateTimeInput(input.elem)) {
                 return;
@@ -494,14 +575,19 @@ function convertFromTarget() {
     const days = daysInput.style.display !== 'none' ? (parseFloat(daysInput.value) || 0) : 0;
     const hours = hoursInput.style.display !== 'none' ? (parseFloat(hoursInput.value) || 0) : 0;
     const minutes = parseFloat(minutesInput.value) || 0;
-    const seconds = parseFloat(secondsInput.value) || 0;
+    const seconds = secondsInput.style.display !== 'none' ? (parseFloat(secondsInput.value) || 0) : 0;
 
     // Calculate total time in seconds
     const targetTime = (days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds;
     
     // Get selected distance label
     const distanceSelect = document.getElementById('targetDistance');
-    const selectedDistance = distanceSelect.options[distanceSelect.selectedIndex].text;
+    let selectedDistance = distanceSelect.options[distanceSelect.selectedIndex].text;
+    
+    // Special case for Half Mare-athon in the header
+    if (selectedDistance === 'Half Mare-athon') {
+        selectedDistance = 'HM';
+    }
     
     // Calculate pace per unit distance (seconds per meter)
     const pacePerMeter = targetTime / targetDistance;
@@ -523,9 +609,15 @@ function convertFromTarget() {
     const paceYellowstone = pacePerMeter * 644000;
 
     // Update results with proper formatting
-    const wingoTime = `${pacePer320.toFixed(1)} seconds`;
-    document.querySelectorAll('#wingoTimeDisplay').forEach(el => el.textContent = wingoTime);
-    document.getElementById('selectedDistance').textContent = `${formatTime(targetTime)} / ${selectedDistance}`;
+    const wingoTime = `${pacePer320.toFixed(1)}s`;
+    document.querySelectorAll('#wingoTimeDisplay').forEach(el => {
+        if (el.closest('.pace-display')) {
+            el.textContent = wingoTime;
+        } else {
+            el.textContent = `${pacePer320.toFixed(1)}s/W`;
+        }
+    });
+    document.getElementById('selectedDistance').textContent = `${formatTime(targetTime)} per ${selectedDistance}`;
     
     // Update all projections with proper formatting
     document.getElementById('projectedFurlong').textContent = formatTime(paceFurlong);
@@ -535,7 +627,6 @@ function convertFromTarget() {
     document.getElementById('projectedMile').textContent = formatTime(pacePerMile);
     document.getElementById('projected5k').textContent = formatTime(pace5k);
     document.getElementById('projectedLoop').textContent = formatTime(paceLoop);
-    document.getElementById('projectedDerby').textContent = formatTime(paceDerby);
     document.getElementById('projected10k').textContent = formatTime(pace10k);
     document.getElementById('projected15k').textContent = formatTime(pace15k);
     document.getElementById('projectedHM').textContent = formatTime(paceHM);
@@ -581,7 +672,6 @@ function resetConverter() {
     document.getElementById('projectedMile').textContent = '--';
     document.getElementById('projected5k').textContent = '--';
     document.getElementById('projectedLoop').textContent = '--';
-    document.getElementById('projectedDerby').textContent = '--';
     document.getElementById('projected10k').textContent = '--';
     document.getElementById('projected15k').textContent = '--';
     document.getElementById('projectedHM').textContent = '--';
