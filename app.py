@@ -123,14 +123,6 @@ def init_openai_client():
         client = None
 
 
-# Initialize the client
-logger.info("About to initialize OpenAI client...")
-init_openai_client()
-if not client:
-    logger.error("Failed to initialize OpenAI client!")
-else:
-    logger.info("OpenAI client initialized successfully")
-
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
     logger.error(f"OpenAI API error: {str(error)}")
@@ -1004,6 +996,14 @@ def random_workout():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+def startup():
+    global client
+    logger.info("Calling init_openai_client() from startup()")
+    init_openai_client()
+
+with app.app_context():
+    startup()
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
