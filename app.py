@@ -1009,5 +1009,16 @@ def startup():
 with app.app_context():
     startup()
 
+@app.route('/debug-env')
+def debug_env():
+    """Temporary debug route to check environment variables"""
+    return jsonify({
+        'OPENAI_API_KEY': bool(os.environ.get('OPENAI_API_KEY')),
+        'ASSISTANT_ID': os.environ.get('ASSISTANT_ID'),
+        'PYTHONANYWHERE_DOMAIN': os.environ.get('PYTHONANYWHERE_DOMAIN'),
+        'HTTP_PROXY': os.environ.get('HTTP_PROXY'),
+        'HTTPS_PROXY': os.environ.get('HTTPS_PROXY')
+    })
+
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
