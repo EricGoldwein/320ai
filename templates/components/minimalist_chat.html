@@ -18,7 +18,6 @@
 
     .chat-widget.collapsed {
         height: 60px;
-        width: 240px;
     }
 
     .chat-header {
@@ -29,16 +28,6 @@
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .chat-widget.collapsed .chat-header {
-        justify-content: center;
-        padding: 1rem 0.75rem;
-    }
-
-    .chat-header:hover {
-        background: #34495e;
     }
 
     .chat-header-title {
@@ -46,33 +35,10 @@
         align-items: center;
         gap: 0.5rem;
         font-weight: 500;
-        font-size: 0.95rem;
-    }
-
-    .chat-widget.collapsed .chat-header-title {
-        flex: 1;
-        justify-content: center;
     }
 
     .chat-header .ai {
         color: #00ffeb;
-    }
-
-    .expanded-title {
-        display: none;
-        font-size: 1rem;
-    }
-
-    .collapsed-title {
-        display: inline;
-    }
-
-    .chat-widget:not(.collapsed) .expanded-title {
-        display: inline;
-    }
-
-    .chat-widget:not(.collapsed) .collapsed-title {
-        display: none;
     }
 
     .chat-messages {
@@ -146,15 +112,6 @@
         cursor: not-allowed;
     }
 
-    .chat-toggle {
-        display: flex;
-        align-items: center;
-    }
-
-    .chat-widget.collapsed .chat-toggle {
-        margin-left: 0.5rem;
-    }
-
     .chat-toggle i {
         transition: transform 0.3s ease;
     }
@@ -205,8 +162,7 @@
 <div class="chat-widget collapsed" id="chatWidget">
     <div class="chat-header" onclick="toggleChat()">
         <div class="chat-header-title">
-            <span class="expanded-title">Coach D<span class="ai">AI</span>SY™</span>
-            <span class="collapsed-title">Chat with Coach D<span class="ai">AI</span>SY™</span>
+            <span>Coach D<span class="ai">AI</span>SY™</span>
         </div>
         <div class="chat-toggle">
             <i class="fas fa-chevron-down"></i>
@@ -214,7 +170,7 @@
     </div>
     <div class="chat-messages" id="chatMessages">
         <div class="chat-message assistant">
-            Hay hay hay! I'm Coach DAISY™, your AI-powered running coach and also a horse.
+            Hay hay hay! I'm Coach DAISY™. Need help with Wingo paces or training?
         </div>
     </div>
     <div class="chat-input">
@@ -227,32 +183,10 @@
 {% block minimalist_chat_js %}
 <script>
 let isProcessing = false;
-let conversationHistory = [];
-
-// Load conversation history from localStorage on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const savedHistory = localStorage.getItem('daisyChatHistory');
-    if (savedHistory) {
-        conversationHistory = JSON.parse(savedHistory);
-        // Rebuild the chat messages UI from history
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = ''; // Clear initial message
-        conversationHistory.forEach(msg => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`;
-            messageDiv.textContent = msg.content;
-            chatMessages.appendChild(messageDiv);
-        });
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    } else {
-        // Initialize with welcome message if no history exists
-        conversationHistory = [{
-            role: "assistant",
-            content: "Hay hay hay! I'm Coach DAISY™. Need help with Wingo paces or training?"
-        }];
-        localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
-    }
-});
+let conversationHistory = [{
+    role: "assistant",
+    content: "Hay hay hay! I'm Coach DAISY™. Need help with Wingo paces or training?"
+}];
 
 function toggleChat() {
     const widget = document.getElementById('chatWidget');
@@ -272,9 +206,6 @@ function addMessage(content, isUser = false) {
         role: isUser ? "user" : "assistant",
         content: content
     });
-
-    // Save updated history to localStorage
-    localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
 }
 
 function addLoadingIndicator() {
@@ -326,7 +257,6 @@ async function sendMessage() {
             addMessage(data.response, false);
             if (data.conversation_history) {
                 conversationHistory = data.conversation_history;
-                localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
             }
         }
     } catch (error) {

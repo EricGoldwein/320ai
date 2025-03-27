@@ -271,12 +271,6 @@ body {
     .chat-input button {
         padding: 0.6rem 1rem;
     }
-    
-    /* Hide suggestion icons on mobile */
-    .suggestion-icons,
-    .suggestion-icon {
-        display: none !important;
-    }
 }
 
 /* Fix iOS input zoom */
@@ -424,10 +418,6 @@ body {
     scrollbar-width: thin;
     scrollbar-color: rgba(46, 204, 113, 0.3) rgba(0, 0, 0, 0.2);
 }
-
-.header-title .ai {
-    color: #00ffeb;
-}
 </style>
 {% endblock %}
 
@@ -477,40 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     
     let isProcessing = false;
-    let conversationHistory = [];
-
-    // Load conversation history from localStorage
-    const savedHistory = localStorage.getItem('daisyChatHistory');
-    if (savedHistory) {
-        conversationHistory = JSON.parse(savedHistory);
-        // Rebuild the chat messages UI from history
-        chatMessages.innerHTML = ''; // Clear initial message
-        conversationHistory.forEach(msg => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${msg.role === 'user' ? 'user' : 'assistant'}`;
-            
-            // Add tex2jax_process class to assistant messages
-            if (msg.role === 'assistant') {
-                messageDiv.classList.add('tex2jax_process');
-            }
-            
-            const formattedContent = msg.content
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>')
-                .replace(/^(.+)$/, '<p>$1</p>');
-            
-            messageDiv.innerHTML = formattedContent;
-            chatMessages.appendChild(messageDiv);
-        });
-        scrollToBottom();
-    } else {
-        // Initialize with welcome message if no history exists
-        conversationHistory = [{
-            role: "assistant",
-            content: "Hay hay hay! I'm Coach DAISY™, your AI-powered running coach and also a horse. How can I help you?"
-        }];
-        localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
-    }
+    let conversationHistory = [{
+        role: "assistant",
+        content: "Hay hay hay! I'm Coach DAISY™, your AI-powered running coach and also a horse. How can I help you?"
+    }];
     
     // Handle mobile viewport height
     function setVHOffset() {
@@ -551,9 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
             role: isUser ? "user" : "assistant",
             content: content
         });
-
-        // Save updated history to localStorage
-        localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
         
         // Typeset any math in the new message with retry mechanism
         if (!isUser && window.MathJax) {
@@ -628,7 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update conversation history with the server's version if provided
                 if (data.conversation_history) {
                     conversationHistory = data.conversation_history;
-                    localStorage.setItem('daisyChatHistory', JSON.stringify(conversationHistory));
                 }
             }
         } catch (error) {
