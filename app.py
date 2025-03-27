@@ -12,17 +12,29 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import time
 import httpx
+import openai
 
-# Configure logging with more detail
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Configure logging: file on PythonAnywhere, console locally
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    logging.basicConfig(
+        filename='/tmp/daisy320-debug.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
 logger = logging.getLogger(__name__)
 
 # Initialize environment variables first
 logger.info("Loading environment variables...")
 load_dotenv()
+
+# Log OpenAI package version
+logger.info(f"OpenAI package version: {openai.__version__}")
 
 # Set proxy configuration for PythonAnywhere
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
@@ -42,7 +54,7 @@ logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
 if not OPENAI_API_KEY:
     logger.error("No OpenAI API key found in environment variables!")
 
-ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_6xnlbT9tnP62VLss0ondKtIw')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
 # Use simpler timeout and retry settings
@@ -54,27 +66,33 @@ PROXY_TIMEOUT = 120  # Added longer timeout for proxy connections
 client = None
 
 def init_openai_client():
-    global client
+    global client  # 
     try:
-        logger.info("Starting OpenAI client initialization...")
+        logger.info("\n=== DAISY Chat Debug ===")
+        logger.info("1. Checking environment variables...")
+        logger.info(f"OPENAI_API_KEY exists: {'OPENAI_API_KEY' in os.environ}")
+        logger.info(f"ASSISTANT_ID exists: {'ASSISTANT_ID' in os.environ}")
+
+        if 'OPENAI_API_KEY' not in os.environ:
+            logger.error("OPENAI_API_KEY not found in environment variables")
+            return None
 
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
             logger.info("Creating proxy-aware HTTPX transport for PythonAnywhere...")
-            # Create a more permissive SSL context
             import ssl
             ssl_context = ssl.create_default_context()
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
-            
+
             transport = httpx.ProxyTransport(
                 proxy_url="http://proxy.pythonanywhere.com:3128",
                 verify=ssl_context
             )
-            
+
             http_client = httpx.Client(
                 transport=transport,
                 timeout=httpx.Timeout(PROXY_TIMEOUT, connect=TIMEOUT),
-                verify=False  # Disable SSL verification at client level
+                verify=False
             )
             logger.info("Proxy-aware HTTPX client created")
         else:
@@ -83,24 +101,27 @@ def init_openai_client():
                 timeout=httpx.Timeout(TIMEOUT, connect=TIMEOUT)
             )
 
+        logger.info("2. Initializing OpenAI client...")
         client = OpenAI(
-            api_key=OPENAI_API_KEY,
+            api_key=os.environ['OPENAI_API_KEY'],
             http_client=http_client,
-            max_retries=MAX_RETRIES
+            timeout=60.0,
+            max_retries=5
         )
 
         # Test the client with a simple API call
         logger.info("Testing client with a simple API call...")
         try:
-            client.models.list()  # This will raise an exception if there's an issue
+            client.models.list()
             logger.info("OpenAI client created and tested successfully")
         except Exception as test_error:
             logger.error(f"Error during client test: {str(test_error)}")
-            raise  # Re-raise to be caught by outer try-except
+            raise
+
     except Exception as e:
         logger.error(f"Error initializing OpenAI client: {str(e)}")
         client = None
-        # Don't raise the exception, just log it and continue
+
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
@@ -123,8 +144,8 @@ def handle_openai_error(error):
 # Get the template directory
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 
-app = Flask(__name__, 
-    static_folder='static', 
+app = Flask(__name__,
+    static_folder='static',
     static_url_path='/static',
     template_folder=template_dir
 )
@@ -280,7 +301,7 @@ class WorkoutOptimizer:
                 "workout": "The Porcupine Prance:\nRun in random directions and paces for 3:20\n32s break\nrepeat 3x\nLook out for bikers and lane 1 walkers",
                 "science": "Designed by DAISY™ for optimized natural variation."
             },
-            
+
             {
                 "intensity": "EXAM",
                 "workout": "The Uncle George:\nRun 32 Wingos\nAt your best pace\nNo stopping",
@@ -572,7 +593,7 @@ def game_leaderboard():
             data = request.json
             score = data.get('score', 0)
             player_name = data.get('player_name', 'Anonymous')
-            
+
             # TODO: Implement leaderboard database operations
             return jsonify({"status": "success"})
         except Exception as e:
@@ -594,15 +615,15 @@ def generate_workout():
         user_data = request.json
         if not user_data:
             return jsonify({"error": "No data provided"}), 400
-            
+
         name = user_data.get('name', '').strip()
         if not name:
             return jsonify({"error": "Name is required"}), 400
-            
+
         # Generate a random workout from the predefined list
         workout_optimizer = WorkoutOptimizer()
         workout = random.choice(workout_optimizer.NEURAL_RESPONSES["predefined_workouts"])
-        
+
         response = {
                 "timestamp": datetime.now().isoformat(),
                 "fitness_coefficient": 3.20,
@@ -658,16 +679,16 @@ def subscribe():
         data = request.json
         if not data:
             return jsonify({"error": "No data provided"}), 400
-            
+
         email = data.get('email')
         if not email or not isinstance(email, str):
             return jsonify({"error": "Valid email is required"}), 400
-            
+
         # Connect to database
         db_path = os.path.join(app.root_path, 'subscribers.db')
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
-        
+
         try:
             c.execute('INSERT INTO subscribers (email) VALUES (?)', (email,))
             conn.commit()
@@ -682,7 +703,7 @@ def subscribe():
             }), 400
         finally:
             conn.close()
-            
+
     except Exception as e:
         logger.error(f"Error in subscribe: {str(e)}")
         return jsonify({
@@ -697,32 +718,32 @@ def chat():
     try:
         logger.info("\n=== DAISY Chat Debug ===")
         logger.info("1. Checking API client...")
-        
+
         if not client:
             logger.error("OpenAI client is not initialized!")
             return jsonify({"error": "API client not configured"}), 500
-        
+
         logger.info("2. Client initialized successfully")
-            
+
         data = request.get_json()
         if not data:
             logger.error("No data provided in request")
             return jsonify({"error": "No data provided"}), 400
-            
+
         message = data.get('message', '')
         conversation_history = data.get('conversation_history', [])
         user_id = request.remote_addr
-        
+
         logger.info(f"3. Received message: '{message}'")
         logger.info(f"4. Conversation history length: {len(conversation_history)}")
         logger.info(f"5. Using Assistant ID: {ASSISTANT_ID}")
-        
+
         try:
             # Create a thread
             logger.info("6. Creating new thread...")
             thread = client.beta.threads.create()
             logger.info(f"7. Thread created with ID: {thread.id}")
-            
+
             # Add the conversation history to the thread
             logger.info("8. Adding conversation history to thread...")
             for msg in conversation_history:
@@ -731,7 +752,7 @@ def chat():
                     role=msg['role'],
                     content=msg['content']
                 )
-            
+
             # Add the current message to the thread
             logger.info("9. Adding current message to thread...")
             client.beta.threads.messages.create(
@@ -739,7 +760,7 @@ def chat():
                 role="user",
                 content=message
             )
-            
+
             # Run the assistant
             logger.info("10. Creating assistant run...")
             run = client.beta.threads.runs.create(
@@ -747,7 +768,7 @@ def chat():
                 assistant_id=ASSISTANT_ID
             )
             logger.info(f"11. Run created with ID: {run.id}")
-            
+
             # Wait for the run to complete with timeout
             logger.info("12. Waiting for run to complete...")
             start_time = time.time()
@@ -755,13 +776,13 @@ def chat():
                 if time.time() - start_time > TIMEOUT:
                     logger.error("Run timed out")
                     raise TimeoutError("Response took too long")
-                    
+
                 run_status = client.beta.threads.runs.retrieve(
                     thread_id=thread.id,
                     run_id=run.id
                 )
                 logger.info(f"13. Run status: {run_status.status}")
-                
+
                 if run_status.status == 'completed':
                     break
                 elif run_status.status == 'failed':
@@ -769,28 +790,28 @@ def chat():
                     logger.error(error_msg)
                     raise Exception(error_msg)
                 time.sleep(0.5)
-            
+
             # Get the assistant's response
             logger.info("14. Retrieving assistant response...")
             messages = client.beta.threads.messages.list(thread_id=thread.id)
             assistant_response = messages.data[0].content[0].text.value
             logger.info(f"15. Assistant response: {assistant_response[:100]}...")
-            
+
             # Save the updated conversation history
             conversation_history.append({"role": "user", "content": message})
             conversation_history.append({"role": "assistant", "content": assistant_response})
-            
+
             logger.info("16. Chat completed successfully!")
             return jsonify({
                 "response": assistant_response,
                 "conversation_history": conversation_history
             })
-            
+
         except Exception as api_error:
             error_message = f"API Error: {str(api_error)}"
             logger.error(error_message)
             return jsonify({"error": error_message}), 500
-            
+
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
         return jsonify({"error": "An unexpected error occurred"}), 500
@@ -820,28 +841,28 @@ def generate_transition_text(question_type):
             "Your text is creating beautiful quantum patterns..."
         ]
     }
-    
+
     transition_array = transitions.get(question_type, transitions['text'])
     return random.choice(transition_array)
 
 def generate_wingate_workout(answers):
     """Generate a personalized workout based on Wingate questionnaire answers"""
     name = answers.get('name', 'Runner')
-    
+
     workouts = [
         f"Based on your quantum state analysis, {name}, here's your optimized workout:\n\n"
         "1. Warmup: 15 minutes of dimensional shifting (easy jogging)\n"
         "2. Main Set: 6-8 x Double Wingo at 5K pace with 2-minute recovery\n"
         "3. Cooldown: 10 minutes of temporal realignment (light jog)\n\n"
         "Remember: Time is relative, but proper form is constant! 🌌",
-        
+
         f"I've analyzed your metrics, {name}. Your workout:\n\n"
         "1. Dynamic warmup: 20 minutes progressive\n"
         "2. Speed work: 12-15 x Wingos at m*le race pace\n"
         "3. Recovery: 2 minutes between reps\n"
         "4. Cooldown: 15 minutes easy\n\n"
         "Pro tip: Channel your inner quantum horse! 🐎",
-        
+
         f"Your data suggests this optimal sequence, {name}:\n\n"
         "1. Warmup: 2 KM easy pace\n"
         "2. Main set: 3 x (KM @ 5K pace, 3 min rest)\n"
@@ -849,7 +870,7 @@ def generate_wingate_workout(answers):
         "4. Cooldown: 1 KM + stretching\n\n"
         "Remember: Pain is temporary, quantum gains are forever! ⚛️"
     ]
-    
+
     return random.choice(workouts)
 
 # Wingate questionnaire state
@@ -920,7 +941,7 @@ def view_subscribers():
     """Display the subscribers admin page"""
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-        
+
     try:
         db_path = os.path.join(app.root_path, 'subscribers.db')
         conn = sqlite3.connect(db_path)
@@ -965,7 +986,7 @@ def random_workout():
     try:
         workout_optimizer = WorkoutOptimizer()
         workout = random.choice(workout_optimizer.NEURAL_RESPONSES["predefined_workouts"])
-        
+
         response = {
             "timestamp": datetime.now().isoformat(),
             "fitness_coefficient": 3.20,
@@ -980,26 +1001,9 @@ def random_workout():
             }
         }
         return jsonify(response)
-        
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route("/test-openai")
-def test_openai():
-    try:
-        if not client:
-            return "OpenAI client not initialized!", 500
-
-        models = client.models.list()
-        return jsonify([m.id for m in models.data])
-    except Exception as e:
-        return f"Error testing OpenAI client: {e}", 500
-    
-@app.route("/check-secret")
-def check_secret():
-    return f"Secret key starts with: {app.secret_key[:5]}"
-
-
 
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
