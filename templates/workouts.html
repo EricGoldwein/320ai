@@ -1,13 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Workouts • DAISY™{% endblock %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-{% endblock %}
-
 {% block extra_css %}
-{% include 'components/minimalist_chat.html' %}
 <style>
 /* Base container adjustments */
 .container {
@@ -1256,8 +1249,6 @@
     </div>
 </div>
 
-{% endblock %}
-
 {% block extra_js %}
 <script>
 function validateInput(questionId) {
@@ -1557,4 +1548,6 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
+{% endblock %}
+
 {% endblock %}
