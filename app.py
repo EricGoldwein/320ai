@@ -65,7 +65,7 @@ def init_openai_client():
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
-client = init_openai_client()
+init_openai_client()
 if not client:
     logger.error("Failed to initialize OpenAI client!")
 else:
