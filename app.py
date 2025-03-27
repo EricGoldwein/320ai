@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 import time
+import httpx
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -40,8 +41,8 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))
-TIMEOUT = int(os.environ.get('TIMEOUT', '60'))
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '120'))
 
 # Initialize OpenAI client as a global variable with retry mechanism
 client = None
@@ -56,7 +57,12 @@ def init_openai_client():
             return OpenAI(
                 api_key=OPENAI_API_KEY,
                 timeout=TIMEOUT,
-                max_retries=MAX_RETRIES
+                max_retries=MAX_RETRIES,
+                http_client=httpx.Client(
+                    timeout=TIMEOUT,
+                    verify=True,
+                    follow_redirects=True
+                )
             )
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
