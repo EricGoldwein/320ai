@@ -14,6 +14,7 @@
 <meta name="twitter:image" content="{{ url_for('static', filename='img/wingo-converter-card.png', _external=True) }}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 {% endblock %}
 
 {% block extra_css %}
@@ -257,9 +258,29 @@
         -webkit-user-drag: element;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
         position: relative;
-        cursor: default;
+        cursor: pointer;
         border-radius: 16px;
         padding: 1.5rem;
+    }
+
+    .copy-tooltip {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    .projections-card:hover .copy-tooltip {
+        opacity: 1;
     }
 
     .projections-content {
@@ -295,10 +316,16 @@
     .projections-list {
         list-style: none;
         padding: 0;
-        margin: 0;
+        margin: 1.5rem 0 0 0;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 0.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .projections-list {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
     }
 
     .projections-list li {
@@ -310,6 +337,16 @@
         align-items: center;
         transition: all 0.2s ease;
         border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    @media (max-width: 380px) {
+        .projections-list .distance,
+        .projections-list .time {
+            font-size: 0.95rem;
+        }
+        .projections-list li {
+            padding: 0.65rem 0.85rem;
+        }
     }
 
     .projections-list .distance {
@@ -460,7 +497,7 @@
         </div>
 
         <div class="result-section" id="results">
-            <div class="result-card projections-card" id="projections">
+            <div class="result-card projections-card" id="projections" onclick="copyAsImage()">
                 <div class="projections-content">
                     <div class="projections-header">
                         <p>Your pace at <span id="selectedDistance">--</span> (<span id="wingoTimeDisplay">--</span>)</p>
@@ -481,6 +518,7 @@
                         <li><span class="distance">Yellowstone</span><span class="time" id="projectedYellowstone">--</span></li>
                     </ul>
                 </div>
+                <div class="copy-tooltip">Click to copy as image</div>
             </div>
         </div>
     </div>
@@ -700,5 +738,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+async function copyAsImage() {
+    const element = document.getElementById('projections');
+    try {
+        // Create canvas from the element
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#f5faff',
+            scale: 2, // Higher quality
+            logging: false,
+            useCORS: true
+        });
+
+        // Convert to blob
+        canvas.toBlob(async (blob) => {
+            try {
+                // Create ClipboardItem
+                const item = new ClipboardItem({ "image/png": blob });
+                await navigator.clipboard.write([item]);
+                
+                // Show success message
+                const tooltip = element.querySelector('.copy-tooltip');
+                tooltip.textContent = 'Copied!';
+                setTimeout(() => {
+                    tooltip.textContent = 'Click to copy as image';
+                }, 2000);
+            } catch (err) {
+                // Fallback for browsers that don't support clipboard.write
+                const url = canvas.toDataURL();
+                const img = new Image();
+                img.src = url;
+                
+                // Open in new tab as fallback
+                const tab = window.open();
+                tab.document.write(img.outerHTML);
+                
+                // Show fallback message
+                const tooltip = element.querySelector('.copy-tooltip');
+                tooltip.textContent = 'Opened in new tab!';
+                setTimeout(() => {
+                    tooltip.textContent = 'Click to copy as image';
+                }, 2000);
+            }
+        });
+    } catch (error) {
+        console.error('Error creating image:', error);
+    }
+}
 </script>
 {% endblock %}
