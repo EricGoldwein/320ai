@@ -55,8 +55,12 @@ def init_openai_client():
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
             # Use proxy on PythonAnywhere
             httpx_client = httpx.Client(
-                proxies="http://proxy.pythonanywhere.com:3128",
-                timeout=TIMEOUT
+                proxies={
+                    "http://": "http://proxy.pythonanywhere.com:3128",
+                    "https://": "http://proxy.pythonanywhere.com:3128"
+                },
+                timeout=TIMEOUT,
+                verify=False  # Disable SSL verification for proxy
             )
             logger.info("Proxy-enabled HTTPX client created.")
         else:
@@ -64,18 +68,27 @@ def init_openai_client():
             httpx_client = httpx.Client(timeout=TIMEOUT)
             logger.info("Standard HTTPX client created (no proxy).")
 
-        return OpenAI(
+        client = OpenAI(
             api_key=OPENAI_API_KEY,
             http_client=httpx_client
         )
+        
+        # Test the client with a simple API call
+        client.models.list()
+        logger.info("OpenAI client successfully initialized and tested")
+        return client
+        
     except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {e}")
+        logger.error(f"Failed to initialize OpenAI client: {str(e)}")
         return None
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
-logger.info(f"Client initialization result: {client is not None}")
+if not client:
+    logger.error("Failed to initialize OpenAI client!")
+else:
+    logger.info("OpenAI client initialized successfully")
 
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
@@ -656,6 +669,7 @@ def chat():
             
         data = request.get_json()
         if not data:
+            logger.error("No data provided in request")
             return jsonify({"error": "No data provided"}), 400
             
         message = data.get('message', '')
@@ -664,12 +678,16 @@ def chat():
         
         logger.info(f"3. Received message: '{message}'")
         logger.info(f"4. Conversation history length: {len(conversation_history)}")
+        logger.info(f"5. Using Assistant ID: {ASSISTANT_ID}")
         
         try:
             # Create a thread
+            logger.info("6. Creating new thread...")
             thread = client.beta.threads.create()
+            logger.info(f"7. Thread created with ID: {thread.id}")
             
             # Add the conversation history to the thread
+            logger.info("8. Adding conversation history to thread...")
             for msg in conversation_history:
                 client.beta.threads.messages.create(
                     thread_id=thread.id,
@@ -678,6 +696,7 @@ def chat():
                 )
             
             # Add the current message to the thread
+            logger.info("9. Adding current message to thread...")
             client.beta.threads.messages.create(
                 thread_id=thread.id,
                 role="user",
@@ -685,36 +704,46 @@ def chat():
             )
             
             # Run the assistant
+            logger.info("10. Creating assistant run...")
             run = client.beta.threads.runs.create(
                 thread_id=thread.id,
                 assistant_id=ASSISTANT_ID
             )
+            logger.info(f"11. Run created with ID: {run.id}")
             
             # Wait for the run to complete with timeout
+            logger.info("12. Waiting for run to complete...")
             start_time = time.time()
             while True:
                 if time.time() - start_time > TIMEOUT:
+                    logger.error("Run timed out")
                     raise TimeoutError("Response took too long")
                     
                 run_status = client.beta.threads.runs.retrieve(
                     thread_id=thread.id,
                     run_id=run.id
                 )
+                logger.info(f"13. Run status: {run_status.status}")
+                
                 if run_status.status == 'completed':
                     break
                 elif run_status.status == 'failed':
-                    raise Exception("Assistant run failed")
+                    error_msg = f"Assistant run failed: {run_status.last_error}"
+                    logger.error(error_msg)
+                    raise Exception(error_msg)
                 time.sleep(0.5)
             
             # Get the assistant's response
+            logger.info("14. Retrieving assistant response...")
             messages = client.beta.threads.messages.list(thread_id=thread.id)
             assistant_response = messages.data[0].content[0].text.value
+            logger.info(f"15. Assistant response: {assistant_response[:100]}...")
             
             # Save the updated conversation history
             conversation_history.append({"role": "user", "content": message})
             conversation_history.append({"role": "assistant", "content": assistant_response})
             
-            logger.info("5. Assistant response received successfully!")
+            logger.info("16. Chat completed successfully!")
             return jsonify({
                 "response": assistant_response,
                 "conversation_history": conversation_history
