@@ -102,20 +102,37 @@ limiter = Limiter(
 conversation_history = {}  # Clear this if it exists
 
 # Add file-based storage for chat history
-CHAT_HISTORY_DIR = "/tmp/chat_histories"
+CHAT_HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chat_histories')
 if not os.path.exists(CHAT_HISTORY_DIR):
-    os.makedirs(CHAT_HISTORY_DIR)
+    try:
+        os.makedirs(CHAT_HISTORY_DIR)
+    except OSError as e:
+        logger.error(f"Failed to create chat history directory: {e}")
+        # Fallback to using /tmp if we can't create in the app directory
+        CHAT_HISTORY_DIR = "/tmp/chat_histories"
+        if not os.path.exists(CHAT_HISTORY_DIR):
+            try:
+                os.makedirs(CHAT_HISTORY_DIR)
+            except OSError as e:
+                logger.error(f"Failed to create chat history directory in /tmp: {e}")
 
 def save_chat_history(user_id, history):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    with open(filename, 'w') as f:
-        json.dump(history, f)
+    try:
+        filename = os.path.join(CHAT_HISTORY_DIR, f"{user_id}.json")
+        with open(filename, 'w') as f:
+            json.dump(history, f)
+    except OSError as e:
+        logger.error(f"Failed to save chat history: {e}")
+        # Don't raise the error, just log it
 
 def load_chat_history(user_id):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
+    try:
+        filename = os.path.join(CHAT_HISTORY_DIR, f"{user_id}.json")
+        if os.path.exists(filename):
+            with open(filename, 'r') as f:
+                return json.load(f)
+    except OSError as e:
+        logger.error(f"Failed to load chat history: {e}")
     return []
 
 class WorkoutOptimizer:
