@@ -72,6 +72,7 @@ def init_openai_client():
         logger.info("1. Checking environment variables...")
         logger.info(f"OPENAI_API_KEY exists: {'OPENAI_API_KEY' in os.environ}")
         logger.info(f"ASSISTANT_ID exists: {'ASSISTANT_ID' in os.environ}")
+        logger.info(f"PYTHONANYWHERE_DOMAIN exists: {'PYTHONANYWHERE_DOMAIN' in os.environ}")
 
         if 'OPENAI_API_KEY' not in os.environ:
             logger.error("OPENAI_API_KEY not found in environment variables")
@@ -113,14 +114,16 @@ def init_openai_client():
         # Test the client with a simple API call
         logger.info("Testing client with a simple API call...")
         try:
-            client.models.list()
-            logger.info("OpenAI client created and tested successfully")
+            models = client.models.list()
+            logger.info(f"OpenAI client created and tested successfully. Available models: {[model.id for model in models.data]}")
         except Exception as test_error:
             logger.error(f"Error during client test: {str(test_error)}")
             raise
 
     except Exception as e:
         logger.error(f"Error initializing OpenAI client: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error details: {e.__dict__ if hasattr(e, '__dict__') else 'No details available'}")
         client = None
 
 
