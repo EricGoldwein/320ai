@@ -27,8 +27,12 @@ load_dotenv()
 # Set proxy configuration for PythonAnywhere
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
     logger.info("Running on PythonAnywhere - setting proxy configuration")
+    # Set both HTTP and HTTPS proxies
     os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
     os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
+    # Disable SSL verification for proxy
+    os.environ['PYTHONHTTPSVERIFY'] = '0'
+    logger.info("Proxy environment variables set")
 else:
     logger.info("Running locally - no proxy configuration needed")
 
@@ -43,7 +47,8 @@ logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
 # Use simpler timeout and retry settings
 MAX_RETRIES = 3
-TIMEOUT = 30
+TIMEOUT = 60  # Increased from 30 to 60 seconds
+PROXY_TIMEOUT = 120  # Added longer timeout for proxy connections
 
 # Initialize OpenAI client as a global variable
 client = None
@@ -55,13 +60,28 @@ def init_openai_client():
 
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
             logger.info("Creating proxy-aware HTTPX transport for PythonAnywhere...")
+            # Create a more permissive SSL context
+            import ssl
+            ssl_context = ssl.create_default_context()
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+            
             transport = httpx.ProxyTransport(
-                proxy_url="http://proxy.pythonanywhere.com:3128"
+                proxy_url="http://proxy.pythonanywhere.com:3128",
+                verify=ssl_context
             )
-            http_client = httpx.Client(transport=transport, timeout=TIMEOUT)
+            
+            http_client = httpx.Client(
+                transport=transport,
+                timeout=httpx.Timeout(PROXY_TIMEOUT, connect=TIMEOUT),
+                verify=False  # Disable SSL verification at client level
+            )
+            logger.info("Proxy-aware HTTPX client created")
         else:
             logger.info("Creating standard HTTPX client (no proxy)...")
-            http_client = httpx.Client(timeout=TIMEOUT)
+            http_client = httpx.Client(
+                timeout=httpx.Timeout(TIMEOUT, connect=TIMEOUT)
+            )
 
         client = OpenAI(
             api_key=OPENAI_API_KEY,
@@ -69,11 +89,18 @@ def init_openai_client():
             max_retries=MAX_RETRIES
         )
 
-        logger.info("OpenAI client created successfully")
+        # Test the client with a simple API call
+        logger.info("Testing client with a simple API call...")
+        try:
+            client.models.list()  # This will raise an exception if there's an issue
+            logger.info("OpenAI client created and tested successfully")
+        except Exception as test_error:
+            logger.error(f"Error during client test: {str(test_error)}")
+            raise  # Re-raise to be caught by outer try-except
     except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {str(e)}")
+        logger.error(f"Error initializing OpenAI client: {str(e)}")
         client = None
-
+        # Don't raise the exception, just log it and continue
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
