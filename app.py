@@ -25,7 +25,7 @@ logger.info("Loading environment variables...")
 load_dotenv()
 
 # Set proxy configuration for PythonAnywhere
-if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+if 'PYTHONANYWHERE_SITE' in os.environ or 'PYTHONANYWHERE' in os.environ:
     logger.info("Running on PythonAnywhere - setting proxy configuration")
     os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
     os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
