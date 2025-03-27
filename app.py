@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 import time
+import httpx
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -40,28 +41,63 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
-TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
+# Adjust timeout and retry settings for PythonAnywhere
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))  # Reduced from 5 to 3
+TIMEOUT = int(os.environ.get('TIMEOUT', '30'))  # Reduced from 60 to 30
+RETRY_INITIAL_WAIT = 1
+MAX_WAIT = 5  # Reduced from 10 to 5
 
 # Initialize OpenAI client as a global variable
 client = None
 
 def init_openai_client():
-    """Initialize the OpenAI client with retry logic"""
+    """Initialize the OpenAI client with proper configuration"""
+    global client
     try:
-        return OpenAI(
+        logger.info("About to initialize OpenAI client...")
+        
+        # Configure HTTP client with proxy if on PythonAnywhere
+        http_client = None
+        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+            logger.info("Configuring HTTP client with PythonAnywhere proxy")
+            http_client = httpx.Client(
+                proxies={
+                    "http://": os.environ.get('HTTP_PROXY'),
+                    "https://": os.environ.get('HTTPS_PROXY')
+                },
+                timeout=httpx.Timeout(TIMEOUT, connect=10.0),
+                limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+                transport=httpx.HTTPTransport(retries=2)
+            )
+        else:
+            http_client = httpx.Client(
+                timeout=httpx.Timeout(TIMEOUT, connect=10.0),
+                limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+                transport=httpx.HTTPTransport(retries=2)
+            )
+        
+        # Initialize OpenAI client with custom HTTP client
+        client = OpenAI(
             api_key=OPENAI_API_KEY,
-            timeout=TIMEOUT,
-            max_retries=MAX_RETRIES
+            http_client=http_client
         )
+        
+        logger.info("Client initialization result: True")
+        return True
     except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {e}")
-        return None
+        logger.error(f"Failed to initialize OpenAI client: {str(e)}")
+        return False
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
 logger.info(f"Client initialization result: {client is not None}")
+
+def exponential_backoff(attempt, max_wait=MAX_WAIT, initial_wait=RETRY_INITIAL_WAIT):
+    """Calculate wait time with exponential backoff and jitter"""
+    wait = min(initial_wait * (2 ** attempt), max_wait)
+    jitter = random.uniform(0, 0.1 * wait)
+    return wait + jitter
 
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
@@ -652,49 +688,108 @@ def chat():
         logger.info(f"4. Conversation history length: {len(conversation_history)}")
         
         try:
-            # Create a thread
-            thread = client.beta.threads.create()
+            # Create a thread with retries
+            for attempt in range(MAX_RETRIES):
+                try:
+                    thread = client.beta.threads.create()
+                    break
+                except Exception as e:
+                    if attempt == MAX_RETRIES - 1:
+                        raise
+                    wait_time = exponential_backoff(attempt)
+                    logger.info(f"Retrying thread creation in {wait_time:.6f} seconds")
+                    time.sleep(wait_time)
             
-            # Add the conversation history to the thread
+            # Add messages with retries
             for msg in conversation_history:
-                client.beta.threads.messages.create(
-                    thread_id=thread.id,
-                    role=msg['role'],
-                    content=msg['content']
-                )
+                for attempt in range(MAX_RETRIES):
+                    try:
+                        client.beta.threads.messages.create(
+                            thread_id=thread.id,
+                            role=msg['role'],
+                            content=msg['content']
+                        )
+                        break
+                    except Exception as e:
+                        if attempt == MAX_RETRIES - 1:
+                            raise
+                        wait_time = exponential_backoff(attempt)
+                        logger.info(f"Retrying message creation in {wait_time:.6f} seconds")
+                        time.sleep(wait_time)
             
-            # Add the current message to the thread
-            client.beta.threads.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content=message
-            )
+            # Add current message with retries
+            for attempt in range(MAX_RETRIES):
+                try:
+                    client.beta.threads.messages.create(
+                        thread_id=thread.id,
+                        role="user",
+                        content=message
+                    )
+                    break
+                except Exception as e:
+                    if attempt == MAX_RETRIES - 1:
+                        raise
+                    wait_time = exponential_backoff(attempt)
+                    logger.info(f"Retrying current message creation in {wait_time:.6f} seconds")
+                    time.sleep(wait_time)
             
-            # Run the assistant
-            run = client.beta.threads.runs.create(
-                thread_id=thread.id,
-                assistant_id=ASSISTANT_ID
-            )
+            # Run the assistant with retries
+            for attempt in range(MAX_RETRIES):
+                try:
+                    run = client.beta.threads.runs.create(
+                        thread_id=thread.id,
+                        assistant_id=ASSISTANT_ID
+                    )
+                    break
+                except Exception as e:
+                    if attempt == MAX_RETRIES - 1:
+                        raise
+                    wait_time = exponential_backoff(attempt)
+                    logger.info(f"Retrying run creation in {wait_time:.6f} seconds")
+                    time.sleep(wait_time)
             
-            # Wait for the run to complete with timeout
+            # Wait for the run to complete with timeout and retries
             start_time = time.time()
             while True:
                 if time.time() - start_time > TIMEOUT:
+                    logger.error("Run timed out")
                     raise TimeoutError("Response took too long")
-                    
-                run_status = client.beta.threads.runs.retrieve(
-                    thread_id=thread.id,
-                    run_id=run.id
-                )
-                if run_status.status == 'completed':
-                    break
-                elif run_status.status == 'failed':
-                    raise Exception("Assistant run failed")
-                time.sleep(0.5)
+                
+                try:
+                    run_status = client.beta.threads.runs.retrieve(
+                        thread_id=thread.id,
+                        run_id=run.id
+                    )
+                    if run_status.status == 'completed':
+                        break
+                    elif run_status.status == 'failed':
+                        error_message = f"Assistant run failed: {run_status.last_error}"
+                        logger.error(error_message)
+                        raise Exception(error_message)
+                    elif run_status.status == 'expired':
+                        logger.error("Run expired")
+                        raise TimeoutError("Run expired")
+                    time.sleep(2)  # Increased sleep time to reduce API load
+                except Exception as e:
+                    if time.time() - start_time > TIMEOUT:
+                        logger.error(f"Status check timed out: {str(e)}")
+                        raise
+                    wait_time = exponential_backoff(0)  # Use initial backoff for status checks
+                    logger.info(f"Retrying status check in {wait_time:.6f} seconds")
+                    time.sleep(wait_time)
             
-            # Get the assistant's response
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
-            assistant_response = messages.data[0].content[0].text.value
+            # Get the assistant's response with retries
+            for attempt in range(MAX_RETRIES):
+                try:
+                    messages = client.beta.threads.messages.list(thread_id=thread.id)
+                    assistant_response = messages.data[0].content[0].text.value
+                    break
+                except Exception as e:
+                    if attempt == MAX_RETRIES - 1:
+                        raise
+                    wait_time = exponential_backoff(attempt)
+                    logger.info(f"Retrying response retrieval in {wait_time:.6f} seconds")
+                    time.sleep(wait_time)
             
             # Save the updated conversation history
             conversation_history.append({"role": "user", "content": message})
