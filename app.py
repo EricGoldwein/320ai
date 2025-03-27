@@ -984,5 +984,22 @@ def random_workout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/test-openai")
+def test_openai():
+    try:
+        if not client:
+            return "OpenAI client not initialized!", 500
+
+        models = client.models.list()
+        return jsonify([m.id for m in models.data])
+    except Exception as e:
+        return f"Error testing OpenAI client: {e}", 500
+    
+@app.route("/check-secret")
+def check_secret():
+    return f"Secret key starts with: {app.secret_key[:5]}"
+
+
+
 if __name__ == "__main__":
     app.run(port=5009, debug=True)
