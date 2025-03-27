@@ -213,7 +213,7 @@ class WorkoutOptimizer:
 
             {
                 "intensity": "CHAOTIC",
-                "workout": "The Porcupine Prance:\nRun in random directions and paces for 3:20\n32s break\nrepeat 3x\nLook out for bikers and lane 1 walkers",
+                "workout": "The Porcupine Prance:\nChange paces every 40s, for 3:20\n30s break\nrepeat 3x\nLook out for bikers and lane 1 walkers",
                 "science": "Designed by DAISY™ for optimized natural variation."
             },
             
