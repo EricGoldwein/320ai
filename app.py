@@ -54,18 +54,18 @@ def init_openai_client():
         logger.info("Starting OpenAI client initialization...")
 
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-            logger.info("Creating HTTPX client with proxy for PythonAnywhere...")
-            proxy_transport = httpx.ProxyTransport(
+            logger.info("Creating proxy-aware HTTPX transport for PythonAnywhere...")
+            transport = httpx.ProxyTransport(
                 proxy_url="http://proxy.pythonanywhere.com:3128"
             )
-            httpx_client = httpx.Client(transport=proxy_transport, timeout=TIMEOUT)
+            http_client = httpx.Client(transport=transport, timeout=TIMEOUT)
         else:
             logger.info("Creating standard HTTPX client (no proxy)...")
-            httpx_client = httpx.Client(timeout=TIMEOUT)
+            http_client = httpx.Client(timeout=TIMEOUT)
 
         client = OpenAI(
             api_key=OPENAI_API_KEY,
-            http_client=httpx_client,
+            http_client=http_client,
             max_retries=MAX_RETRIES
         )
 
