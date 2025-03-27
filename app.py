@@ -66,7 +66,7 @@ PROXY_TIMEOUT = 120  # Added longer timeout for proxy connections
 client = None
 
 def init_openai_client():
-    global client  # 
+    global client
     try:
         logger.info("\n=== DAISY Chat Debug ===")
         logger.info("1. Checking environment variables...")
@@ -106,7 +106,8 @@ def init_openai_client():
             api_key=os.environ['OPENAI_API_KEY'],
             http_client=http_client,
             timeout=60.0,
-            max_retries=5
+            max_retries=5,
+            default_headers={"OpenAI-Beta": "assistants=v1"}
         )
 
         # Test the client with a simple API call
