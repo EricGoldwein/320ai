@@ -10,7 +10,6 @@ import json
 from typing import Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
-from functools import wraps
 import time
 
 # Configure logging with more detail
@@ -48,31 +47,15 @@ TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
 client = None
 
 def init_openai_client():
-    """Initialize the OpenAI client with proper error handling"""
-    global client
+    """Initialize the OpenAI client with retry logic"""
     try:
-        logger.info("Starting OpenAI client initialization...")
-        if not OPENAI_API_KEY:
-            logger.error("Cannot initialize OpenAI client: No API key found")
-            return None
-
-        # Remove any existing proxy settings
-        if 'HTTP_PROXY' in os.environ:
-            del os.environ['HTTP_PROXY']
-        if 'HTTPS_PROXY' in os.environ:
-            del os.environ['HTTPS_PROXY']
-        if 'OPENAI_PROXY' in os.environ:
-            del os.environ['OPENAI_PROXY']
-
-        # Create client with only the API key
-        client = OpenAI(api_key=OPENAI_API_KEY)
-        logger.info("OpenAI client initialized successfully")
-        return client
-            
+        return OpenAI(
+            api_key=OPENAI_API_KEY,
+            timeout=TIMEOUT,
+            max_retries=MAX_RETRIES
+        )
     except Exception as e:
-        logger.error(f"Error initializing OpenAI client: {str(e)}")
-        logger.error(f"Error type: {type(e)}")
-        logger.error(f"Error args: {e.args}")
+        logger.error(f"Failed to initialize OpenAI client: {e}")
         return None
 
 # Initialize the client
@@ -90,28 +73,8 @@ def handle_openai_error(error):
     else:
         return f"I encountered an error: {str(error)}"
 
-# Get the absolute path to the templates directory
+# Get the template directory
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-logger.info(f"Template directory: {template_dir}")
-logger.info(f"Template directory exists: {os.path.exists(template_dir)}")
-logger.info(f"Template directory contents: {os.listdir(template_dir)}")
-
-# Configure chat history storage
-CHAT_HISTORY_DIR = "/tmp/chat_histories"
-if not os.path.exists(CHAT_HISTORY_DIR):
-    os.makedirs(CHAT_HISTORY_DIR)
-
-def save_chat_history(user_id, history):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    with open(filename, 'w') as f:
-        json.dump(history, f)
-
-def load_chat_history(user_id):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
-    return []
 
 app = Flask(__name__, 
     static_folder='static', 
@@ -129,7 +92,23 @@ limiter = Limiter(
 
 # Make sure chat memory is using file system
 conversation_history = {}  # Clear this if it exists
+
 # Add file-based storage for chat history
+CHAT_HISTORY_DIR = "/tmp/chat_histories"
+if not os.path.exists(CHAT_HISTORY_DIR):
+    os.makedirs(CHAT_HISTORY_DIR)
+
+def save_chat_history(user_id, history):
+    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
+    with open(filename, 'w') as f:
+        json.dump(history, f)
+
+def load_chat_history(user_id):
+    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
+            return json.load(f)
+    return []
 
 class WorkoutOptimizer:
     """Advanced Track Workout Generation System™"""
@@ -240,8 +219,8 @@ class WorkoutOptimizer:
             
             {
                 "intensity": "EXAM",
-                "workout": "Uncle George:\nRun 32 Wingos\nAt your best pace\nNo stopping allowed",
-                "science": "The ultimate Wingate test."
+                "workout": "The Uncle George:\nRun 32 Wingos\nAt your best pace\nNo stopping",
+                "science": "10.24 km: The ultimate Wingate test."
             },
             {
                 "intensity": "HARMONY",
@@ -462,32 +441,6 @@ class WorkoutOptimizer:
             animal=random.choice(["cheetah", "gazelle", "quantum horse", "winged unicorn", "time-traveling ostrich"])
         )
 
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        # Only check login for coach page and admin routes
-        if request.endpoint in ['coach_daisy', 'chat', 'view_subscribers']:
-            if 'logged_in' not in session:
-                return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        password = request.form.get('password')
-        if password == 'Old-Ril$y':  # Simple password
-            session['logged_in'] = True
-            return redirect(url_for('coach_daisy'))
-        return render_template('login.html', error='Invalid password')
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    return redirect(url_for('login'))
-
 @app.route("/", methods=["GET"])
 def home():
     return render_template("intro-daisy.html")
@@ -544,7 +497,6 @@ def game():
     return render_template("game.html")
 
 @app.route("/coach", methods=["GET"])
-@login_required
 def coach_daisy():
     return render_template("coach.html")
 
@@ -675,8 +627,7 @@ def subscribe():
         }), 500
 
 @app.route('/api/chat', methods=['POST'])
-@login_required
-@limiter.limit("30 per minute")
+@limiter.limit("10 per minute")
 def chat():
     """Handle chat interactions with DAISY™"""
     try:
@@ -873,10 +824,23 @@ wingateState = {
 def transformation():
     return render_template("transformation.html")
 
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Handle admin login"""
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == os.environ.get('ADMIN_PASSWORD', '320admin'):  # Default password if not set
+            session['admin_logged_in'] = True
+            return redirect(url_for('view_subscribers'))
+        return render_template('admin/login.html', error='Invalid password')
+    return render_template('admin/login.html')
+
 @app.route("/admin/subscribers", methods=["GET"])
-@login_required  # Keep admin routes protected
 def view_subscribers():
     """Display the subscribers admin page"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+        
     try:
         db_path = os.path.join(app.root_path, 'subscribers.db')
         conn = sqlite3.connect(db_path)
@@ -888,6 +852,12 @@ def view_subscribers():
     except Exception as e:
         logger.error(f"Error viewing subscribers: {str(e)}")
         return render_template('admin/subscribers.html', error="Error loading subscribers")
+
+@app.route("/admin/logout")
+def admin_logout():
+    """Handle admin logout"""
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
 
 @app.route("/wingo-converter", methods=["GET"])
 def wingo_converter():

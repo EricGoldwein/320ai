@@ -2,6 +2,20 @@
 
 {% block title %}WINGO Converter • DAISY™{% endblock %}
 
+{# Add meta tags for social sharing #}
+{% block extra_head %}
+<meta property="og:title" content="WINGO Pace Converter • DAISY™">
+<meta property="og:description" content="Convert your running times between Wingos, Mare-athons, and everything in between with DAISY™'s intelligent pace calculator.">
+<meta property="og:image" content="{{ url_for('static', filename='img/wingo-converter-card.png', _external=True) }}">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WINGO Pace Converter • DAISY™">
+<meta name="twitter:description" content="Convert your running times between Wingos, Mare-athons, and everything in between.">
+<meta name="twitter:image" content="{{ url_for('static', filename='img/wingo-converter-card.png', _external=True) }}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+{% endblock %}
+
 {% block extra_css %}
 <style>
     .brand-heading {
@@ -211,6 +225,27 @@
         grid-column: 1 / -1;
         background: linear-gradient(145deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
         border: 2px solid #3498db;
+        -webkit-user-select: all;
+        user-select: all;
+        -webkit-touch-callout: default;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+
+    .daisy-badge {
+        font-size: 0.95rem;
+        padding: 0.4rem 0.8rem;
+        background: rgba(46, 64, 87, 0.12);
+        border-radius: 4px;
+        color: #2c3e50;
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        letter-spacing: 0.02em;
+    }
+
+    .daisy-badge .ai {
+        color: #00B4B4;
+        font-weight: 600;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     }
 
     .projections-title {
@@ -218,6 +253,9 @@
         font-size: 1.5rem;
         margin-bottom: 1rem;
         font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .projections-content {
@@ -297,7 +335,6 @@
                             <option value="1000">Kilometer</option>
                             <option value="1600">Fingo (1600m)</option>
                             <option value="1609.34">M*le</option>
-                            <option value="2000">2000m</option>
                             <option value="5000">5K</option>
                             <option value="10000">10K</option>
                             <option value="21097.5">Half Mare-athon</option>
@@ -340,18 +377,21 @@
         </div>
 
         <div class="result-section" id="results">
-            <div class="result-card projections-card">
-                <h3 class="projections-title">Projections</h3>
+            <div class="result-card projections-card" id="projections">
+                <h3 class="projections-title">
+                    Wingo Pace Conversions
+                    <span class="daisy-badge">D<span class="ai">AI</span>SY™</span>
+                </h3>
                 <div class="projections-content">
                     <p>At <span id="wingoTimeDisplay">--</span> per Wingo (<span id="selectedDistance">--</span>), you will run a:</p>
                     <ul class="projections-list">
                         <li><span class="distance">Furlong</span><span class="time" id="projectedFurlong">--</span></li>
                         <li><span class="distance">400m</span><span class="time" id="projected400">--</span></li>
                         <li><span class="distance">800m</span><span class="time" id="projected800">--</span></li>
+                        <li><span class="distance">1000m</span><span class="time" id="projectedKM">--</span></li>
                         <li><span class="distance">M*le</span><span class="time" id="projectedMile">--</span></li>
                         <li><span class="distance">5K</span><span class="time" id="projected5k">--</span></li>
                         <li><span class="distance">The Loop</span><span class="time" id="projectedLoop">--</span></li>
-                        <li><span class="distance">Derby</span><span class="time" id="projectedDerby">--</span></li>
                         <li><span class="distance">10K</span><span class="time" id="projected10k">--</span></li>
                         <li><span class="distance">15K</span><span class="time" id="projected15k">--</span></li>
                         <li><span class="distance">Half Mare-athon</span><span class="time" id="projectedHM">--</span></li>
@@ -367,60 +407,131 @@
 
 {% block extra_js %}
 <script>
+function validateTimeInput(input) {
+    const value = input.value.trim();
+    if (value !== '') {
+        // Allow only digits and decimal points
+        if (!/^[0-9.]+$/.test(value)) {
+            alert(`Time values can only contain numbers and decimal points`);
+            input.value = '';
+            return false;
+        }
+        // Check for multiple decimal points
+        if ((value.match(/\./g) || []).length > 1) {
+            alert(`Time values can only have one decimal point`);
+            input.value = '';
+            return false;
+        }
+    }
+    return true;
+}
+
 function updateTimeInputs() {
     const distance = parseFloat(document.getElementById('targetDistance').value);
     const daysInput = document.getElementById('targetDays');
     const hoursInput = document.getElementById('targetHours');
+    const minutesInput = document.getElementById('targetMinutes');
+    const secondsInput = document.getElementById('targetSeconds');
+    
+    // Clear all time inputs when distance changes
+    daysInput.value = '';
+    hoursInput.value = '';
+    minutesInput.value = '';
+    secondsInput.value = '';
     
     // Show/hide days input for Yellowstone
-    daysInput.style.display = distance === 644000 ? 'block' : 'none';
+    if (distance === 644000) {
+        daysInput.style.display = 'block';
+    } else {
+        daysInput.style.display = 'none';
+    }
     
     // Show/hide hours input for distances > 10K
-    hoursInput.style.display = distance > 10000 ? 'block' : 'none';
+    if (distance > 10000) {
+        hoursInput.style.display = 'block';
+    } else {
+        hoursInput.style.display = 'none';
+    }
 }
 
 function convertFromTarget() {
     const targetDistance = parseFloat(document.getElementById('targetDistance').value);
-    const days = parseFloat(document.getElementById('targetDays').value) || 0;
-    const hours = parseFloat(document.getElementById('targetHours').value) || 0;
-    const minutes = parseFloat(document.getElementById('targetMinutes').value) || 0;
-    const seconds = parseFloat(document.getElementById('targetSeconds').value) || 0;
+    if (!targetDistance) {
+        alert('Please select a distance');
+        return;
+    }
     
-    if (isNaN(minutes) && isNaN(seconds) && isNaN(hours) && isNaN(days)) {
-        alert('Please enter a valid target time');
+    // Get all time inputs
+    const daysInput = document.getElementById('targetDays');
+    const hoursInput = document.getElementById('targetHours');
+    const minutesInput = document.getElementById('targetMinutes');
+    const secondsInput = document.getElementById('targetSeconds');
+    
+    // Validate all inputs
+    const inputs = [
+        { elem: daysInput, name: 'Days' },
+        { elem: hoursInput, name: 'Hours' },
+        { elem: minutesInput, name: 'Minutes' },
+        { elem: secondsInput, name: 'Seconds' }
+    ];
+
+    let hasValidInput = false;
+    for (const input of inputs) {
+        if (input.elem.value.trim() !== '') {
+            hasValidInput = true;
+            if (!validateTimeInput(input.elem)) {
+                return;
+            }
+        }
+    }
+
+    if (!hasValidInput) {
+        alert('Please enter at least one time value');
         return;
     }
 
+    // Only parse values after validation
+    const days = daysInput.style.display !== 'none' ? (parseFloat(daysInput.value) || 0) : 0;
+    const hours = hoursInput.style.display !== 'none' ? (parseFloat(hoursInput.value) || 0) : 0;
+    const minutes = parseFloat(minutesInput.value) || 0;
+    const seconds = parseFloat(secondsInput.value) || 0;
+
+    // Calculate total time in seconds
     const targetTime = (days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds;
     
     // Get selected distance label
     const distanceSelect = document.getElementById('targetDistance');
     const selectedDistance = distanceSelect.options[distanceSelect.selectedIndex].text;
     
-    // Calculate paces
-    const pacePer320 = (targetTime / targetDistance) * 320;
-    const pace400 = (targetTime / targetDistance) * 400;
-    const paceFurlong = (targetTime / targetDistance) * 201.168;
-    const pace800 = (targetTime / targetDistance) * 800;
-    const pacePerMile = (targetTime / targetDistance) * 1609.34;
-    const pace5k = (targetTime / targetDistance) * 5000;
-    const paceLoop = (targetTime / targetDistance) * 5407;
-    const paceDerby = (targetTime / targetDistance) * 2011.68;
-    const pace10k = (targetTime / targetDistance) * 10000;
-    const pace15k = (targetTime / targetDistance) * 15000;
-    const paceHM = (targetTime / targetDistance) * 21097.5;
-    const paceMarathon = (targetTime / targetDistance) * 42195;
-    const paceYellowstone = (targetTime / targetDistance) * 644000;
+    // Calculate pace per unit distance (seconds per meter)
+    const pacePerMeter = targetTime / targetDistance;
+    
+    // Calculate times for each distance using the pace
+    const pacePer320 = pacePerMeter * 320;
+    const pace400 = pacePerMeter * 400;
+    const paceFurlong = pacePerMeter * 201.168;
+    const pace800 = pacePerMeter * 800;
+    const paceKM = pacePerMeter * 1000;
+    const pacePerMile = pacePerMeter * 1609.34;
+    const pace5k = pacePerMeter * 5000;
+    const paceLoop = pacePerMeter * 5407;
+    const paceDerby = pacePerMeter * 2011.68;
+    const pace10k = pacePerMeter * 10000;
+    const pace15k = pacePerMeter * 15000;
+    const paceHM = pacePerMeter * 21097.5;
+    const paceMarathon = pacePerMeter * 42195;
+    const paceYellowstone = pacePerMeter * 644000;
 
-    // Update results
+    // Update results with proper formatting
     const wingoTime = `${pacePer320.toFixed(1)} seconds`;
     document.querySelectorAll('#wingoTimeDisplay').forEach(el => el.textContent = wingoTime);
     document.getElementById('selectedDistance').textContent = `${formatTime(targetTime)} / ${selectedDistance}`;
     
-    // Update all projections
+    // Update all projections with proper formatting
     document.getElementById('projectedFurlong').textContent = formatTime(paceFurlong);
     document.getElementById('projected400').textContent = formatTime(pace400);
     document.getElementById('projected800').textContent = formatTime(pace800);
+    document.getElementById('projectedKM').textContent = formatTime(paceKM);
     document.getElementById('projectedMile').textContent = formatTime(pacePerMile);
     document.getElementById('projected5k').textContent = formatTime(pace5k);
     document.getElementById('projectedLoop').textContent = formatTime(paceLoop);
@@ -461,11 +572,12 @@ function resetConverter() {
     document.getElementById('targetDistance').value = '';
     
     // Reset results
-    document.getElementById('wingoTimeDisplay').textContent = '--';
+    document.querySelectorAll('#wingoTimeDisplay').forEach(el => el.textContent = '--');
     document.getElementById('selectedDistance').textContent = '--';
     document.getElementById('projectedFurlong').textContent = '--';
     document.getElementById('projected400').textContent = '--';
     document.getElementById('projected800').textContent = '--';
+    document.getElementById('projectedKM').textContent = '--';
     document.getElementById('projectedMile').textContent = '--';
     document.getElementById('projected5k').textContent = '--';
     document.getElementById('projectedLoop').textContent = '--';
@@ -482,5 +594,21 @@ function resetConverter() {
 
 // Add event listener for distance change
 document.getElementById('targetDistance').addEventListener('change', updateTimeInputs);
+
+// Add input validation listeners to all time inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const timeInputs = [
+        document.getElementById('targetDays'),
+        document.getElementById('targetHours'),
+        document.getElementById('targetMinutes'),
+        document.getElementById('targetSeconds')
+    ];
+
+    timeInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateTimeInput(this);
+        });
+    });
+});
 </script>
 {% endblock %}

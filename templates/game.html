@@ -184,17 +184,17 @@
 
 .victory-screen {
     position: absolute;
-    top: 50%;
+    top: 20%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
+    transform: translate(-50%, 0);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px;  /* Reduced from 20px */
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     display: none;
     z-index: 40;
-    width: 90%;
-    max-width: 600px;
+    width: 70%;  /* Reduced from 90% */
+    max-width: 400px;  /* Reduced from 600px */
     font-family: 'Press Start 2P', monospace;
     color: #fff;
     text-align: center;
@@ -204,19 +204,17 @@
     border: 2px solid #8B4513;
     box-sizing: border-box;
     margin: 0 auto;
-    animation: bounce 1s infinite;
 }
 
 .victory-screen .victory-text {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem;  /* Reduced from 1.5rem */
     word-wrap: break-word;
     overflow-wrap: break-word;
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
+    padding: 15px;  /* Reduced from 20px */
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    flex-grow: 1;
-    overflow: hidden;
+    line-height: 1.6;  /* Slightly reduced from 1.8 */
 }
 
 .victory-screen .victory-image {
@@ -239,11 +237,11 @@
     color: #fff;
     border: none;
     border-radius: 5px;
-    padding: 10px 20px;
+    padding: 12px 24px;  /* Reduced from 15px 30px */
     font-family: 'Press Start 2P', monospace;
-    font-size: 1rem;
+    font-size: 0.9rem;  /* Reduced from 1rem */
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: 0.8rem;  /* Reduced from 1rem */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
     animation: pulse 1s infinite;
@@ -562,7 +560,8 @@ let daisy = {
     calfRaiseHeight: 0,
     doingCalfRaises: false,
     streak: 0,
-    multiplier: 1
+    multiplier: 1,
+    rotation: 0
 };
 
 let obstacles = [];
@@ -813,7 +812,7 @@ function togglePause() {
     if (pauseResumeBtn) pauseResumeBtn.textContent = gameState.paused ? "RESUME" : "PAUSE";
     
     if (gameState.paused) {
-        showMessage("PAUSED - PRESS R TO RESUME");
+        showMessage("PAUSED - R TO RESUME");
         // Cancel animation frame when paused
         if (gameState.gameLoop) {
             cancelAnimationFrame(gameState.gameLoop);
@@ -861,6 +860,7 @@ function resetGameState() {
     daisy.doingCalfRaises = false;
     daisy.streak = 0;
     daisy.multiplier = 1;
+    daisy.rotation = 0;  // Explicitly reset rotation to 0
     
     // Reset game state
     gameState.running = false;
@@ -1073,7 +1073,7 @@ function kick() {
                     `320 COMBO x${daisy.streak}!`,
                     `WINGATE POWER x${daisy.streak}!`,
                     `320 SPLIT x${daisy.streak}!`,
-                    `TRACK MASTER x${daisy.streak}!`
+                    `PORKY PRANCE x${daisy.streak}!`
                 ];
                 const message = comboMessages[Math.min(daisy.streak - 2, comboMessages.length - 1)];
                 showMessage(`${message} +${Math.floor(10 * daisy.multiplier)} WINGOS!`, 500);
@@ -1518,6 +1518,11 @@ function draw() {
         
         ctx.translate(daisy.x + daisy.width/2, yPosition + daisy.height/2);
         
+        // Add rotation for flips during victory dance
+        if (daisy.rotation) {
+            ctx.rotate(daisy.rotation);
+        }
+        
         // Add bouncing effect (only when not doing calf raises)
         if (!daisy.doingCalfRaises) {
             const bounce = Math.sin(daisy.frameCount * 0.1) * 2;
@@ -1629,14 +1634,7 @@ function draw() {
 
     // Draw multiplier if active with 320 theme
     if (daisy.multiplier > 1) {
-        ctx.save();
-        ctx.font = '16px "Press Start 2P", monospace';
-        ctx.fillStyle = '#FFD700';
-        ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 5;
-        ctx.fillText(`320 PACE x${daisy.multiplier.toFixed(1)}`, daisy.x + daisy.width/2, daisy.y - 20);
-        ctx.restore();
+        // Remove the text drawing
     }
     
     // Draw invincibility timer if active
@@ -1707,7 +1705,7 @@ function draw() {
         
         // Draw "PAUSED" text - changed to be more subtle
         ctx.font = '16px "Press Start 2P", monospace'; // Reduced from 20px to 16px
-        ctx.fillText('PRESS R TO RESUME', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 30); // Changed text
+        ctx.fillText('R TO RESUME', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 30); // Changed text
         ctx.restore();
     }
 
@@ -2152,11 +2150,11 @@ function winGame() {
         <div class="dialogue-content">
             <img src="/static/images/game/george.png" class="dialogue-image" alt="George">
             <div class="dialogue-text">
-                YEEHAW! You've conquered all three levels with style, determination, and harmonic efficiency. 
+                YEEHAW! You've conquered the journey with style, determination, and harmonic efficiency. 
                 From the Rockies to Yellowstone to Brooklyn, you've shown true Wingatian spirit! 
             </div>
         </div>
-        <button class="next-btn">Celebrate!</button>
+        <button class="next-btn">Dance!</button>
     `;
     
     document.getElementById('game-canvas').appendChild(dialogueBox);
@@ -2170,13 +2168,10 @@ function winGame() {
         const victoryScreen = document.createElement('div');
         victoryScreen.className = 'victory-screen';
         victoryScreen.innerHTML = `
-            <div class="victory-content">
-                <img src="/static/images/game/horse.png" class="victory-image" alt="Daisy">
-                <div class="victory-text">
-                    CONGRATULATIONS!<br>
-                    You've completed all levels!<br>
-                    Final Score: ${Math.floor(gameState.score)} WINGOS
-                </div>
+            <div class="victory-text">
+                CONGRATULATIONS!<br>
+                You've completed all levels!<br>
+                Final Score: ${Math.floor(gameState.score)} WINGOS
             </div>
             <button class="play-again-btn">PLAY AGAIN</button>
         `;
@@ -2247,54 +2242,74 @@ function createFirework(x, y, color) {
 
 // Enhance Daisy's victory dance
 function startVictoryDance() {
-    // Create a dancing effect for Daisy that doesn't affect vertical position
-    const baseY = GROUND_HEIGHT - 50; // Keep Daisy at ground level
+    const baseY = GROUND_HEIGHT - 50;
     let danceStep = 0;
-    let direction = 1; // For spinning
+    let flipRotation = 0;
+    let isFlipping = false;
     let jumpHeight = 0;
     
     const danceInterval = setInterval(() => {
         if (!gameState.hasWon || gameState.running) {
-            // Stop dance if game restarted
             clearInterval(danceInterval);
             return;
         }
-        
-        // Add jumping motion
-        jumpHeight = Math.sin(danceStep * 0.5) * 20;
+
+        danceStep = (danceStep + 1) % 120; // Longer cycle for varied movement
+
+        // Flip sequence every 60 frames
+        if (danceStep % 60 === 0) {
+            isFlipping = true;
+            flipRotation = 0;
+        }
+
+        if (isFlipping) {
+            flipRotation += Math.PI / 8; // Rotate by 22.5 degrees per frame
+            if (flipRotation >= Math.PI * 2) {
+                isFlipping = false;
+                flipRotation = 0;
+            }
+            // Higher jump during flip
+            jumpHeight = Math.sin(flipRotation) * 100;
+        } else {
+            // Normal bouncing when not flipping
+            jumpHeight = Math.sin(danceStep * 0.1) * 20;
+        }
+
+        // Update Daisy's position and rotation
         daisy.y = baseY - jumpHeight;
-        
-        // Rotate sprite without changing position
-        danceStep = (danceStep + 1) % 8;
-        direction *= -1;
-        
-        // Create celebratory particles in a circle pattern
+        daisy.rotation = isFlipping ? flipRotation : 0;
+
+        // Create celebratory particles
         if (danceStep % 2 === 0) {
-            // Create a circle of particles
+            // Rainbow trail
+            const hue = (Date.now() / 20) % 360;
             for (let i = 0; i < 8; i++) {
                 const angle = (i / 8) * Math.PI * 2;
-                const radius = 30;
+                const radius = isFlipping ? 50 : 30;
                 const particleX = daisy.x + daisy.width/2 + Math.cos(angle) * radius;
-                const particleY = baseY + daisy.height/2 + Math.sin(angle) * radius;
+                const particleY = daisy.y + daisy.height/2 + Math.sin(angle) * radius;
                 
                 createParticleBurst(
                     particleX,
                     particleY,
                     3,
-                    ['#FFD700', '#FFA500', '#FF69B4'][Math.floor(Math.random() * 3)]
+                    isFlipping ? 
+                        `hsl(${(hue + i * 45) % 360}, 100%, 50%)` : 
+                        ['#FFD700', '#FFA500', '#FF69B4'][Math.floor(Math.random() * 3)]
                 );
             }
         }
-        
-        // Add rainbow trail effect
-        const hue = (Date.now() / 20) % 360;
+
+        // Extra particles during flips
+        if (isFlipping && danceStep % 3 === 0) {
             createParticleBurst(
                 daisy.x + daisy.width/2,
-            daisy.y + daisy.height/2,
-            2,
-            `hsl(${hue}, 100%, 50%)`
-        );
-    }, 100);  // Made animation faster
+                daisy.y + daisy.height/2,
+                5,
+                '#FFD700'
+            );
+        }
+    }, 50);  // Faster animation update
 }
 
 // Add function to handle level transitions

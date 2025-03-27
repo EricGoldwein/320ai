@@ -557,7 +557,7 @@
                         <h2 class="daisy-header">The D<span class="ai-part">AI</span>SY<span class="tm-part">™</span> Collection</h2>
                         <p class="lead">Inspired by the pioneer of non-linear progression. Each piece is a unique Neigh-Fungible Token (NFT), a one-of-a-kind digital collectible minted on our carbon plate-neutral blockchain.</p>
                         <p class="price-tag">Starting at 120 $WINGO</p>
-                        <button class="btn btn-primary btn-lg mt-3" onclick="showSoldOutMessage()">Buy "The Kick" NFT</button>
+                        <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary btn-lg mt-3">Buy "The Kick" NFT</a>
                     </div>
                 </div>
             </div>
@@ -577,7 +577,7 @@
                             <h3>Come On Over</h3>
                             <div class="nft-serial">#7241</div>
                             <p>320 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -587,7 +587,7 @@
                             <h3>Neigh-maste</h3>
                             <div class="nft-serial">#1893</div>
                             <p>240 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -597,7 +597,7 @@
                             <h3>The Classic</h3>
                             <div class="nft-serial">#4567</div>
                             <p>480 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -608,7 +608,7 @@
                             <h3>Uncle George</h3>
                             <div class="nft-serial">#9012</div>
                             <p>160 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -618,7 +618,7 @@
                             <h3>Coach</h3>
                             <div class="nft-serial">#3456</div>
                             <p>200 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -628,7 +628,7 @@
                             <h3>Daised</h3>
                             <div class="nft-serial">#8124</div>
                             <p>180 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                     
@@ -638,7 +638,7 @@
                             <h3>WFH</h3>
                             <div class="nft-serial">#2789</div>
                             <p>150 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
 
@@ -648,7 +648,7 @@
                             <h3>Porky Prance</h3>
                             <div class="nft-serial">#5901</div>
                             <p>190 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
 
@@ -658,7 +658,7 @@
                             <h3>AV Club</h3>
                             <div class="nft-serial">#6345</div>
                             <p>170 $WINGO</p>
-                            <button class="btn btn-primary" onclick="showSoldOutMessage()">Buy</button>
+                            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                 </div>
@@ -755,31 +755,5 @@ document.addEventListener('DOMContentLoaded', function() {
         viewCollectionBtn.href = '#nft-section';
     }
 });
-
-function showSoldOutMessage() {
-    const email = prompt("This NFT is currently sold out. Enter your email to be notified when it becomes available:");
-    if (email) {
-        // Send to backend
-        fetch('/subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Thank you! We'll notify you when this NFT becomes available.");
-            } else {
-                alert(data.message || "Something went wrong. Please try again.");
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error subscribing. Please try again.");
-        });
-    }
-}
 </script>
 {% endblock %} 
