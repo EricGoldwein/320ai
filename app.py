@@ -40,38 +40,52 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
-TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '60'))
 
-# Initialize OpenAI client as a global variable
+# Initialize OpenAI client as a global variable with retry mechanism
 client = None
+max_init_retries = 3
+init_retry_delay = 5  # seconds
 
 def init_openai_client():
-    """Initialize the OpenAI client with retry logic"""
-    try:
-        return OpenAI(
-            api_key=OPENAI_API_KEY,
-            timeout=TIMEOUT,
-            max_retries=MAX_RETRIES
-        )
-    except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {e}")
-        return None
+    """Initialize the OpenAI client with enhanced retry logic"""
+    for attempt in range(max_init_retries):
+        try:
+            logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_init_retries})")
+            return OpenAI(
+                api_key=OPENAI_API_KEY,
+                timeout=TIMEOUT,
+                max_retries=MAX_RETRIES
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
+            if attempt < max_init_retries - 1:
+                logger.info(f"Waiting {init_retry_delay} seconds before retrying...")
+                time.sleep(init_retry_delay)
+    return None
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
 logger.info(f"Client initialization result: {client is not None}")
 
-# Add error handler for OpenAI API errors
+# Add error handler for OpenAI API errors with more specific handling
 def handle_openai_error(error):
-    logger.error(f"OpenAI API error: {str(error)}")
-    if "rate limit" in str(error).lower():
-        return "I'm a bit overwhelmed right now. Please try again in a minute."
-    elif "timeout" in str(error).lower():
+    error_str = str(error).lower()
+    logger.error(f"OpenAI API error: {error_str}")
+    
+    if "rate limit" in error_str:
+        return "I'm processing too many requests right now. Please try again in a minute."
+    elif "timeout" in error_str:
         return "The response took too long. Please try again."
+    elif "api key" in error_str:
+        logger.critical("API key error detected - attempting to reinitialize client")
+        global client
+        client = init_openai_client()
+        return "I'm having trouble connecting. Please try again."
     else:
-        return f"I encountered an error: {str(error)}"
+        return "I encountered an unexpected error. Please try again in a moment."
 
 # Get the template directory
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -81,33 +95,51 @@ app = Flask(__name__,
     static_url_path='/static',
     template_folder=template_dir
 )
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')  # Get from environment variable
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
 
-# Initialize rate limiter with simpler configuration
+# Initialize rate limiter with more lenient configuration
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    storage_uri="memory://"  # Use in-memory storage for Windows compatibility
+    storage_uri="memory://",
+    default_limits=["30 per minute"]  # Increased from 10 to 30
 )
 
-# Make sure chat memory is using file system
-conversation_history = {}  # Clear this if it exists
+# Make sure chat memory is using file system with proper error handling
+conversation_history = {}
 
-# Add file-based storage for chat history
-CHAT_HISTORY_DIR = "/tmp/chat_histories"
-if not os.path.exists(CHAT_HISTORY_DIR):
-    os.makedirs(CHAT_HISTORY_DIR)
+# Add file-based storage for chat history with better path handling
+CHAT_HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chat_histories')
+try:
+    if not os.path.exists(CHAT_HISTORY_DIR):
+        os.makedirs(CHAT_HISTORY_DIR)
+except Exception as e:
+    logger.error(f"Failed to create chat history directory: {e}")
+    # Fallback to temp directory if main directory creation fails
+    CHAT_HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'chat_histories')
+    if not os.path.exists(CHAT_HISTORY_DIR):
+        os.makedirs(CHAT_HISTORY_DIR)
 
 def save_chat_history(user_id, history):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    with open(filename, 'w') as f:
-        json.dump(history, f)
+    try:
+        filename = os.path.join(CHAT_HISTORY_DIR, f"{user_id}.json")
+        with open(filename, 'w') as f:
+            json.dump(history, f)
+    except Exception as e:
+        logger.error(f"Failed to save chat history: {e}")
+        # Fallback to memory if file save fails
+        conversation_history[user_id] = history
 
 def load_chat_history(user_id):
-    filename = f"{CHAT_HISTORY_DIR}/{user_id}.json"
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
+    try:
+        filename = os.path.join(CHAT_HISTORY_DIR, f"{user_id}.json")
+        if os.path.exists(filename):
+            with open(filename, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load chat history: {e}")
+        # Fallback to memory if file load fails
+        return conversation_history.get(user_id, [])
     return []
 
 class WorkoutOptimizer:
@@ -627,16 +659,19 @@ def subscribe():
         }), 500
 
 @app.route('/api/chat', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("30 per minute")
 def chat():
     """Handle chat interactions with DAISY™"""
     try:
         logger.info("\n=== DAISY Chat Debug ===")
         logger.info("1. Checking API client...")
         
+        global client
         if not client:
-            logger.error("OpenAI client is not initialized!")
-            return jsonify({"error": "API client not configured"}), 500
+            logger.warning("OpenAI client not initialized - attempting to initialize")
+            client = init_openai_client()
+            if not client:
+                return jsonify({"error": "Unable to initialize API client"}), 503
         
         logger.info("2. Client initialized successfully")
             
@@ -644,19 +679,31 @@ def chat():
         if not data:
             return jsonify({"error": "No data provided"}), 400
             
-        message = data.get('message', '')
-        conversation_history = data.get('conversation_history', [])
+        message = data.get('message', '').strip()
+        if not message:
+            return jsonify({"error": "Message cannot be empty"}), 400
+            
         user_id = request.remote_addr
+        conversation_history = load_chat_history(user_id)
         
         logger.info(f"3. Received message: '{message}'")
         logger.info(f"4. Conversation history length: {len(conversation_history)}")
         
         try:
-            # Create a thread
-            thread = client.beta.threads.create()
+            # Create a thread with retry logic
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                try:
+                    thread = client.beta.threads.create()
+                    break
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    logger.warning(f"Thread creation failed (attempt {attempt + 1}): {e}")
+                    time.sleep(1)
             
             # Add the conversation history to the thread
-            for msg in conversation_history:
+            for msg in conversation_history[-5:]:  # Only use last 5 messages to prevent context length issues
                 client.beta.threads.messages.create(
                     thread_id=thread.id,
                     role=msg['role'],
@@ -670,35 +717,71 @@ def chat():
                 content=message
             )
             
-            # Run the assistant
-            run = client.beta.threads.runs.create(
-                thread_id=thread.id,
-                assistant_id=ASSISTANT_ID
-            )
-            
-            # Wait for the run to complete with timeout
-            start_time = time.time()
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Response took too long")
-                    
-                run_status = client.beta.threads.runs.retrieve(
-                    thread_id=thread.id,
-                    run_id=run.id
-                )
-                if run_status.status == 'completed':
+            # Run the assistant with retry logic
+            for attempt in range(max_attempts):
+                try:
+                    run = client.beta.threads.runs.create(
+                        thread_id=thread.id,
+                        assistant_id=ASSISTANT_ID
+                    )
                     break
-                elif run_status.status == 'failed':
-                    raise Exception("Assistant run failed")
-                time.sleep(0.5)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    logger.warning(f"Run creation failed (attempt {attempt + 1}): {e}")
+                    time.sleep(1)
             
-            # Get the assistant's response
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
-            assistant_response = messages.data[0].content[0].text.value
+            # Wait for the run to complete with improved timeout handling
+            start_time = time.time()
+            check_interval = 0.5
+            max_wait_time = TIMEOUT
             
-            # Save the updated conversation history
+            while True:
+                if time.time() - start_time > max_wait_time:
+                    raise TimeoutError(f"Response took longer than {max_wait_time} seconds")
+                    
+                try:
+                    run_status = client.beta.threads.runs.retrieve(
+                        thread_id=thread.id,
+                        run_id=run.id
+                    )
+                    
+                    if run_status.status == 'completed':
+                        break
+                    elif run_status.status == 'failed':
+                        error_msg = getattr(run_status, 'last_error', 'Unknown error')
+                        raise Exception(f"Assistant run failed: {error_msg}")
+                    elif run_status.status == 'expired':
+                        raise Exception("Assistant run expired")
+                except Exception as e:
+                    logger.error(f"Error checking run status: {e}")
+                    time.sleep(check_interval)
+            
+            # Get the assistant's response with retry logic
+            for attempt in range(max_attempts):
+                try:
+                    messages = client.beta.threads.messages.list(thread_id=thread.id)
+                    assistant_response = messages.data[0].content[0].text.value
+                    break
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    logger.warning(f"Failed to get assistant response (attempt {attempt + 1}): {e}")
+                    time.sleep(1)
+            
+            # Update conversation history
             conversation_history.append({"role": "user", "content": message})
             conversation_history.append({"role": "assistant", "content": assistant_response})
+            
+            # Keep only the last 10 messages to prevent history from growing too large
+            if len(conversation_history) > 20:
+                conversation_history = conversation_history[-20:]
+            
+            # Save the updated conversation history
+            try:
+                save_chat_history(user_id, conversation_history)
+            except Exception as e:
+                logger.error(f"Failed to save chat history: {e}")
             
             logger.info("5. Assistant response received successfully!")
             return jsonify({
@@ -706,13 +789,18 @@ def chat():
                 "conversation_history": conversation_history
             })
             
+        except TimeoutError as te:
+            error_message = "Response took too long. Please try again."
+            logger.error(f"Timeout error: {te}")
+            return jsonify({"error": error_message}), 504
+            
         except Exception as api_error:
-            error_message = f"API Error: {str(api_error)}"
-            logger.error(error_message)
+            error_message = handle_openai_error(api_error)
+            logger.error(f"API Error: {api_error}")
             return jsonify({"error": error_message}), 500
             
     except Exception as e:
-        logger.error(f"Error in chat endpoint: {str(e)}")
+        logger.error(f"Error in chat endpoint: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
 
 def generate_transition_text(question_type):
