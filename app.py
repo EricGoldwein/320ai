@@ -41,8 +41,8 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))  # Increased from 3 to 5
-TIMEOUT = int(os.environ.get('TIMEOUT', '60'))  # Increased from 30 to 60 seconds
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
 
 # Initialize OpenAI client as a global variable
 client = None
@@ -50,44 +50,19 @@ client = None
 def init_openai_client():
     """Initialize the OpenAI client with retry logic"""
     try:
-        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-            # Use proxy on PythonAnywhere
-            httpx_client = httpx.Client(
-                proxies={
-                    "http://": "http://proxy.pythonanywhere.com:3128",
-                    "https://": "http://proxy.pythonanywhere.com:3128"
-                },
-                timeout=TIMEOUT,
-                verify=False  # Disable SSL verification for proxy
-            )
-            logger.info("Proxy-enabled HTTPX client created.")
-        else:
-            # No proxy for local/dev use
-            httpx_client = httpx.Client(timeout=TIMEOUT)
-            logger.info("Standard HTTPX client created (no proxy).")
-
-        client = OpenAI(
+        return OpenAI(
             api_key=OPENAI_API_KEY,
-            http_client=httpx_client,
+            timeout=TIMEOUT,
             max_retries=MAX_RETRIES
         )
-        
-        # Test the client with a simple API call
-        client.models.list()
-        logger.info("OpenAI client successfully initialized and tested")
-        return client
-        
     except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {str(e)}")
+        logger.error(f"Failed to initialize OpenAI client: {e}")
         return None
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
-if not client:
-    logger.error("Failed to initialize OpenAI client!")
-else:
-    logger.info("OpenAI client initialized successfully")
+logger.info(f"Client initialization result: {client is not None}")
 
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
