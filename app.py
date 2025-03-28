@@ -27,8 +27,6 @@ load_dotenv()
 # Set proxy configuration for PythonAnywhere
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
     logger.info("Running on PythonAnywhere - setting proxy configuration")
-    os.environ['HTTP_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
-    os.environ['HTTPS_PROXY'] = 'http://proxy.pythonanywhere.com:3128'
 else:
     logger.info("Running locally - no proxy configuration needed")
 
@@ -56,9 +54,18 @@ def init_openai_client():
             logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_attempts})")
             
             # Configure the base URL and proxies for httpx client
-            http_client = httpx.Client(
-                timeout=TIMEOUT
-            )
+            if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+                logger.info("Creating httpx client with PythonAnywhere proxy...")
+                proxy = "http://proxy.pythonanywhere.com:3128"
+                http_client = httpx.Client(
+                    timeout=TIMEOUT,
+                    proxies=proxy
+                )
+            else:
+                logger.info("Creating httpx client without proxy...")
+                http_client = httpx.Client(
+                    timeout=TIMEOUT
+                )
             
             # Initialize the OpenAI client
             client = OpenAI(
