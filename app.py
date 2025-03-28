@@ -40,35 +40,41 @@ if not OPENAI_API_KEY:
 ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
-MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
-TIMEOUT = int(os.environ.get('TIMEOUT', '30'))
+MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))
+TIMEOUT = int(os.environ.get('TIMEOUT', '120'))
 
 # Initialize OpenAI client as a global variable
 client = None
 
 def init_openai_client():
     """Initialize the OpenAI client with retry logic"""
-    try:
-        return OpenAI(
-            api_key=OPENAI_API_KEY,
-            timeout=TIMEOUT,
-            max_retries=MAX_RETRIES
-        )
-    except Exception as e:
-        logger.error(f"Failed to initialize OpenAI client: {e}")
-        return None
+    global client
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        try:
+            logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_attempts})")
+            client = OpenAI(
+                api_key=OPENAI_API_KEY,
+                timeout=TIMEOUT,
+                max_retries=MAX_RETRIES
+            )
+            # Test the client with a simple API call
+            client.models.list()
+            logger.info("OpenAI client initialized successfully!")
+            return client
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
+            if attempt < max_attempts - 1:
+                time.sleep(2 ** attempt)  # Exponential backoff
+            else:
+                logger.error("All attempts to initialize OpenAI client failed")
+                return None
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
 if client is None:
-    logger.error("Failed to initialize OpenAI client. Retrying...")
-    client = OpenAI(
-        api_key=os.environ.get('OPENAI_API_KEY'),
-        timeout=int(os.environ.get('TIMEOUT', '30')),
-        max_retries=int(os.environ.get('MAX_RETRIES', '3'))
-    )
-logger.info(f"Client initialization result: {client is not None}")
+    logger.error("Failed to initialize OpenAI client after all attempts")
 
 # Add error handler for OpenAI API errors
 def handle_openai_error(error):
