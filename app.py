@@ -8,7 +8,7 @@ from datetime import datetime
 import sqlite3
 import json
 from typing import Dict, Any, Optional
-from openai import OpenAI
+import openai
 from dotenv import load_dotenv
 import time
 import httpx
@@ -68,7 +68,7 @@ def init_openai_client():
                 )
             
             # Initialize the OpenAI client
-            client = OpenAI(
+            client = openai.OpenAI(
                 api_key=OPENAI_API_KEY,
                 timeout=TIMEOUT,
                 max_retries=MAX_RETRIES,
