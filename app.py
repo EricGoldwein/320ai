@@ -661,84 +661,86 @@ def chat():
     try:
         logger.info("\n=== DAISY Chat Debug ===")
         logger.info("1. Checking API client...")
-        
+
         if not client:
             logger.error("OpenAI client is not initialized!")
             return jsonify({"error": "API client not configured"}), 500
-        
+
         logger.info("2. Client initialized successfully")
-            
+
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-            
-        message = data.get('message', '')
-        conversation_history = data.get('conversation_history', [])
-        user_id = request.remote_addr
-        
+        if not data or "message" not in data:
+            return jsonify({"error": "No message provided"}), 400
+
+        message = data["message"]
         logger.info(f"3. Received message: '{message}'")
-        logger.info(f"4. Conversation history length: {len(conversation_history)}")
-        
-        try:
-            # Create a thread
+
+        # Step 1: Retrieve or create thread for this session
+        thread_id = session.get("thread_id")
+        if not thread_id:
             thread = client.beta.threads.create()
-            
-            # Add the conversation history to the thread
-            for msg in conversation_history:
-                client.beta.threads.messages.create(
-                    thread_id=thread.id,
-                    role=msg['role'],
-                    content=msg['content']
-                )
-            
-            # Add the current message to the thread
-            client.beta.threads.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content=message
+            thread_id = thread.id
+            session["thread_id"] = thread_id
+            logger.info(f"Created new thread: {thread_id}")
+        else:
+            logger.info(f"Using existing thread: {thread_id}")
+
+        # Step 2: Add user message
+        client.beta.threads.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=message
+        )
+
+        # Step 3: Start assistant run
+        run = client.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=ASSISTANT_ID
+        )
+
+        # Step 4: Poll until run completes
+        start_time = time.time()
+        while True:
+            if time.time() - start_time > TIMEOUT:
+                raise TimeoutError("Assistant response timed out")
+
+            run_status = client.beta.threads.runs.retrieve(
+                thread_id=thread_id,
+                run_id=run.id
             )
-            
-            # Run the assistant
-            run = client.beta.threads.runs.create(
-                thread_id=thread.id,
-                assistant_id=ASSISTANT_ID
-            )
-            
-            # Wait for the run to complete with timeout
-            start_time = time.time()
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Response took too long")
-                    
-                run_status = client.beta.threads.runs.retrieve(
-                    thread_id=thread.id,
-                    run_id=run.id
-                )
-                if run_status.status == 'completed':
+            if run_status.status == "completed":
+                break
+            elif run_status.status == "failed":
+                raise Exception("Assistant run failed")
+            time.sleep(1)
+
+        # Step 5: Retrieve messages
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
+        messages_sorted = sorted(messages.data, key=lambda x: x.created_at, reverse=True)
+
+        # Step 6: Get latest assistant response
+        assistant_response = None
+        for msg in messages_sorted:
+            if msg.role == "assistant":
+                for content_part in msg.content:
+                    if hasattr(content_part, "text"):
+                        assistant_response = content_part.text.value
+                        break
+                if assistant_response:
                     break
-                elif run_status.status == 'failed':
-                    raise Exception("Assistant run failed")
-                time.sleep(0.5)
-            
-            # Get the assistant's response
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
-            assistant_response = messages.data[0].content[0].text.value
-            
-            # Save the updated conversation history
-            conversation_history.append({"role": "user", "content": message})
-            conversation_history.append({"role": "assistant", "content": assistant_response})
-            
-            logger.info("5. Assistant response received successfully!")
-            return jsonify({
-                "response": assistant_response,
-                "conversation_history": conversation_history
-            })
-            
-        except Exception as api_error:
-            error_message = f"API Error: {str(api_error)}"
-            logger.error(error_message)
-            return jsonify({"error": error_message}), 500
-            
+
+        if not assistant_response:
+            raise Exception("No valid assistant response found")
+
+        logger.info("4. Assistant response received successfully!")
+        return jsonify({
+            "response": assistant_response,
+            "thread_id": thread_id
+        })
+
+    except TimeoutError as te:
+        logger.error(f"Timeout error: {str(te)}")
+        return jsonify({"error": "Request timed out"}), 504
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
         return jsonify({"error": "An unexpected error occurred"}), 500
