@@ -677,86 +677,114 @@ def chat():
         logger.info(f"3. Received message: '{message}'")
 
         # Step 1: Retrieve or create thread for this session
-        thread_id = session.get("thread_id")
-        logger.info(f"Current session thread_id: {thread_id}")
-        
-        if not thread_id:
-            logger.info("No existing thread found, creating new one...")
-            thread = client.beta.threads.create()
-            thread_id = thread.id
-            session["thread_id"] = thread_id
-            logger.info(f"Created new thread: {thread_id}")
-        else:
-            logger.info(f"Using existing thread: {thread_id}")
-
-        # Step 2: Add user message
-        logger.info("Adding user message to thread...")
-        client.beta.threads.messages.create(
-            thread_id=thread_id,
-            role="user",
-            content=message
-        )
-        logger.info("User message added successfully")
-
-        # Step 3: Start assistant run
-        logger.info("Starting assistant run...")
-        run = client.beta.threads.runs.create(
-            thread_id=thread_id,
-            assistant_id=ASSISTANT_ID
-        )
-        logger.info(f"Assistant run started with ID: {run.id}")
-
-        # Step 4: Poll until run completes
-        start_time = time.time()
-        while True:
-            if time.time() - start_time > TIMEOUT:
-                logger.error("Assistant response timed out")
-                raise TimeoutError("Assistant response timed out")
-
-            run_status = client.beta.threads.runs.retrieve(
-                thread_id=thread_id,
-                run_id=run.id
-            )
-            logger.info(f"Run status: {run_status.status}")
+        try:
+            thread_id = session.get("thread_id")
+            logger.info(f"Current session thread_id: {thread_id}")
+            logger.info(f"Session ID: {session.sid if hasattr(session, 'sid') else 'No session ID'}")
             
-            if run_status.status == "completed":
-                logger.info("Assistant run completed successfully")
-                break
-            elif run_status.status == "failed":
-                logger.error(f"Assistant run failed: {run_status.last_error}")
-                raise Exception(f"Assistant run failed: {run_status.last_error}")
-            time.sleep(1)
+            if not thread_id:
+                logger.info("No existing thread found, creating new one...")
+                try:
+                    thread = client.beta.threads.create()
+                    thread_id = thread.id
+                    session["thread_id"] = thread_id
+                    session.modified = True  # Ensure session is saved
+                    logger.info(f"Created new thread: {thread_id}")
+                except Exception as thread_error:
+                    logger.error(f"Error creating thread: {str(thread_error)}")
+                    return jsonify({"error": "Failed to create conversation thread"}), 500
+            else:
+                logger.info(f"Using existing thread: {thread_id}")
 
-        # Step 5: Retrieve messages
-        logger.info("Retrieving messages from thread...")
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        messages_sorted = sorted(messages.data, key=lambda x: x.created_at, reverse=True)
-        logger.info(f"Found {len(messages_sorted)} messages")
+            # Step 2: Add user message
+            logger.info("Adding user message to thread...")
+            try:
+                client.beta.threads.messages.create(
+                    thread_id=thread_id,
+                    role="user",
+                    content=message
+                )
+                logger.info("User message added successfully")
+            except Exception as msg_error:
+                logger.error(f"Error adding message: {str(msg_error)}")
+                return jsonify({"error": "Failed to add message to thread"}), 500
 
-        # Step 6: Get latest assistant response
-        logger.info("Extracting assistant response...")
-        assistant_response = None
-        for msg in messages_sorted:
-            if msg.role == "assistant":
-                for content_part in msg.content:
-                    if hasattr(content_part, "text"):
-                        assistant_response = content_part.text.value
-                        logger.info("Found assistant response")
+            # Step 3: Start assistant run
+            logger.info("Starting assistant run...")
+            try:
+                run = client.beta.threads.runs.create(
+                    thread_id=thread_id,
+                    assistant_id=ASSISTANT_ID
+                )
+                logger.info(f"Assistant run started with ID: {run.id}")
+            except Exception as run_error:
+                logger.error(f"Error starting assistant run: {str(run_error)}")
+                return jsonify({"error": "Failed to start assistant"}), 500
+
+            # Step 4: Poll until run completes
+            start_time = time.time()
+            while True:
+                if time.time() - start_time > TIMEOUT:
+                    logger.error("Assistant response timed out")
+                    raise TimeoutError("Assistant response timed out")
+
+                try:
+                    run_status = client.beta.threads.runs.retrieve(
+                        thread_id=thread_id,
+                        run_id=run.id
+                    )
+                    logger.info(f"Run status: {run_status.status}")
+                    
+                    if run_status.status == "completed":
+                        logger.info("Assistant run completed successfully")
                         break
-                if assistant_response:
-                    break
+                    elif run_status.status == "failed":
+                        error_msg = getattr(run_status, 'last_error', 'Unknown error')
+                        logger.error(f"Assistant run failed: {error_msg}")
+                        raise Exception(f"Assistant run failed: {error_msg}")
+                except Exception as status_error:
+                    logger.error(f"Error checking run status: {str(status_error)}")
+                    raise
+                time.sleep(1)
 
-        if not assistant_response:
-            logger.error("No valid assistant response found in messages")
-            raise Exception("No valid assistant response found")
+            # Step 5: Retrieve messages
+            logger.info("Retrieving messages from thread...")
+            try:
+                messages = client.beta.threads.messages.list(thread_id=thread_id)
+                messages_sorted = sorted(messages.data, key=lambda x: x.created_at, reverse=True)
+                logger.info(f"Found {len(messages_sorted)} messages")
+            except Exception as list_error:
+                logger.error(f"Error retrieving messages: {str(list_error)}")
+                return jsonify({"error": "Failed to retrieve messages"}), 500
 
-        logger.info("4. Assistant response received successfully!")
-        response_data = {
-            "response": assistant_response,
-            "thread_id": thread_id
-        }
-        logger.info(f"Returning response with thread_id: {thread_id}")
-        return jsonify(response_data)
+            # Step 6: Get latest assistant response
+            logger.info("Extracting assistant response...")
+            assistant_response = None
+            for msg in messages_sorted:
+                if msg.role == "assistant":
+                    for content_part in msg.content:
+                        if hasattr(content_part, "text"):
+                            assistant_response = content_part.text.value
+                            logger.info("Found assistant response")
+                            break
+                    if assistant_response:
+                        break
+
+            if not assistant_response:
+                logger.error("No valid assistant response found in messages")
+                raise Exception("No valid assistant response found")
+
+            logger.info("4. Assistant response received successfully!")
+            response_data = {
+                "response": assistant_response,
+                "thread_id": thread_id
+            }
+            logger.info(f"Returning response with thread_id: {thread_id}")
+            return jsonify(response_data)
+
+        except Exception as session_error:
+            logger.error(f"Session/thread error: {str(session_error)}")
+            return jsonify({"error": "Session error occurred"}), 500
 
     except TimeoutError as te:
         logger.error(f"Timeout error: {str(te)}")
