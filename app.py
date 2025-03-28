@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 import time
+import httpx
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -53,13 +54,20 @@ def init_openai_client():
     for attempt in range(max_attempts):
         try:
             logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_attempts})")
+            
+            # Configure the base URL and proxies for httpx client
+            http_client = httpx.Client(
+                timeout=TIMEOUT
+            )
+            
+            # Initialize the OpenAI client
             client = OpenAI(
                 api_key=OPENAI_API_KEY,
                 timeout=TIMEOUT,
-                max_retries=MAX_RETRIES
+                max_retries=MAX_RETRIES,
+                http_client=http_client
             )
-            # Test the client with a simple API call
-            client.models.list()
+            
             logger.info("OpenAI client initialized successfully!")
             return client
         except Exception as e:
@@ -918,4 +926,4 @@ def random_workout():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(port=5009, debug=True)
+    app.run(port=5009, debug=False)
