@@ -61,6 +61,13 @@ def init_openai_client():
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
 client = init_openai_client()
+if client is None:
+    logger.error("Failed to initialize OpenAI client. Retrying...")
+    client = OpenAI(
+        api_key=os.environ.get('OPENAI_API_KEY'),
+        timeout=int(os.environ.get('TIMEOUT', '30')),
+        max_retries=int(os.environ.get('MAX_RETRIES', '3'))
+    )
 logger.info(f"Client initialization result: {client is not None}")
 
 # Add error handler for OpenAI API errors
