@@ -59,7 +59,7 @@ def init_openai_client():
                 proxy = "http://proxy.pythonanywhere.com:3128"
                 http_client = httpx.Client(
                     timeout=TIMEOUT,
-                    proxies=proxy
+                    transport=httpx.HTTPTransport(proxy=proxy)
                 )
             else:
                 logger.info("Creating httpx client without proxy...")
