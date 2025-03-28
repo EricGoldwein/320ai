@@ -36,7 +36,7 @@ logger.info(f"API Key present: {bool(OPENAI_API_KEY)}")
 if not OPENAI_API_KEY:
     logger.error("No OpenAI API key found in environment variables!")
 
-ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_ThPrNwQfjvTWDUkDlp5XwvCm')
+ASSISTANT_ID = os.environ.get('ASSISTANT_ID', 'asst_6xnlbT9tnP62VLss0ondKtIw')
 logger.info(f"Using Assistant ID: {ASSISTANT_ID}")
 
 MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '5'))
