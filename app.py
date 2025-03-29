@@ -53,22 +53,32 @@ def init_openai_client():
         logger.info("Initializing OpenAI client...")
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
             logger.info("Detected PythonAnywhere — setting up proxy...")
-            proxy = "http://proxy.pythonanywhere.com:3128"
+            # Configure both HTTP and HTTPS proxies
+            proxies = {
+                "http": "http://proxy.pythonanywhere.com:3128",
+                "https": "http://proxy.pythonanywhere.com:3128"
+            }
+            transport = httpx.HTTPTransport(
+                proxy=proxies["https"],
+                verify=False,  # Disable SSL verification for proxy
+                retries=3  # Enable retries at transport level
+            )
             http_client = httpx.Client(
-                timeout=30.0,  # Increased timeout
-                transport=httpx.HTTPTransport(proxy=proxy),
-                verify=False  # Disable SSL verification for proxy
+                transport=transport,
+                timeout=60.0,  # Increased timeout further
+                verify=False  # Disable SSL verification
             )
         else:
             logger.info("Local environment — no proxy needed.")
             http_client = httpx.Client(
-                timeout=30.0  # Increased timeout
+                timeout=60.0  # Increased timeout
             )
 
         client = openai.OpenAI(
             api_key=OPENAI_API_KEY,
             http_client=http_client,
-            timeout=30.0  # Set timeout at client level
+            max_retries=5,  # Increase max retries
+            timeout=60.0  # Set timeout at client level
         )
         logger.info("✅ OpenAI client initialized")
         return client
@@ -650,7 +660,7 @@ def subscribe():
 @limiter.limit("10 per minute")
 def chat():
     """Handle chat interactions with DAISY™"""
-    global client  # Add global declaration
+    global client
     
     try:
         logger.info("\n=== DAISY Chat Debug ===")
@@ -684,13 +694,12 @@ def chat():
                 logger.info("No existing thread found, creating new one...")
                 try:
                     # Create thread with retry logic and timeout
-                    max_attempts = 3
+                    max_attempts = 5  # Increased max attempts
                     for attempt in range(max_attempts):
                         try:
                             logger.info(f"Attempting to create thread (attempt {attempt + 1}/{max_attempts})")
-                            # Create thread with increased timeout
                             thread = client.beta.threads.create(
-                                timeout=30.0  # Increased timeout
+                                timeout=60.0  # Increased timeout
                             )
                             thread_id = thread.id
                             session["thread_id"] = thread_id
@@ -700,7 +709,7 @@ def chat():
                         except Exception as thread_error:
                             logger.error(f"Error creating thread (attempt {attempt + 1}): {str(thread_error)}")
                             if attempt < max_attempts - 1:
-                                time.sleep(2 ** attempt)  # Exponential backoff
+                                time.sleep(min(2 ** attempt, 10))  # Exponential backoff with max 10 seconds
                             else:
                                 raise
                 except Exception as thread_error:
