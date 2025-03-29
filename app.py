@@ -46,44 +46,32 @@ TIMEOUT = int(os.environ.get('TIMEOUT', '120'))
 client = None
 
 def init_openai_client():
-    """Initialize the OpenAI client with retry logic"""
+    """Initialize the OpenAI client with optional proxy support for PythonAnywhere"""
     global client
-    max_attempts = 3
-    for attempt in range(max_attempts):
-        try:
-            logger.info(f"Attempting to initialize OpenAI client (attempt {attempt + 1}/{max_attempts})")
-            
-            # Configure the base URL and proxies for httpx client
-            if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-                logger.info("Creating httpx client with PythonAnywhere proxy...")
-                proxy = "http://proxy.pythonanywhere.com:3128"
-                http_client = httpx.Client(
-                    timeout=TIMEOUT,
-                    transport=httpx.HTTPTransport(proxy=proxy)
-                )
-            else:
-                logger.info("Creating httpx client without proxy...")
-                http_client = httpx.Client(
-                    timeout=TIMEOUT
-                )
-            
-            # Initialize the OpenAI client
-            client = openai.OpenAI(
-                api_key=OPENAI_API_KEY,
+
+    try:
+        logger.info("Initializing OpenAI client...")
+        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+            logger.info("Detected PythonAnywhere — setting up proxy...")
+            proxy = "http://proxy.pythonanywhere.com:3128"
+            http_client = httpx.Client(
                 timeout=TIMEOUT,
-                max_retries=MAX_RETRIES,
-                http_client=http_client
+                transport=httpx.HTTPTransport(proxy=proxy)
             )
-            
-            logger.info("OpenAI client initialized successfully!")
-            return client
-        except Exception as e:
-            logger.error(f"Failed to initialize OpenAI client (attempt {attempt + 1}): {e}")
-            if attempt < max_attempts - 1:
-                time.sleep(2 ** attempt)  # Exponential backoff
-            else:
-                logger.error("All attempts to initialize OpenAI client failed")
-                return None
+        else:
+            logger.info("Local environment — no proxy needed.")
+            http_client = httpx.Client(timeout=TIMEOUT)
+
+        client = openai.OpenAI(
+            api_key=OPENAI_API_KEY,
+            http_client=http_client
+        )
+        logger.info("✅ OpenAI client initialized")
+        return client
+
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize OpenAI client: {e}")
+        return None
 
 # Initialize the client
 logger.info("About to initialize OpenAI client...")
@@ -685,13 +673,32 @@ def chat():
             if not thread_id:
                 logger.info("No existing thread found, creating new one...")
                 try:
-                    thread = client.beta.threads.create()
-                    thread_id = thread.id
-                    session["thread_id"] = thread_id
-                    session.modified = True  # Ensure session is saved
-                    logger.info(f"Created new thread: {thread_id}")
+                    # Verify client is properly initialized
+                    if not client:
+                        logger.error("OpenAI client is not initialized during thread creation!")
+                        client = init_openai_client()  # Try to reinitialize
+                        if not client:
+                            return jsonify({"error": "API client not configured"}), 500
+                    
+                    # Create thread with retry logic
+                    max_attempts = 3
+                    for attempt in range(max_attempts):
+                        try:
+                            logger.info(f"Attempting to create thread (attempt {attempt + 1}/{max_attempts})")
+                            thread = client.beta.threads.create()
+                            thread_id = thread.id
+                            session["thread_id"] = thread_id
+                            session.modified = True  # Ensure session is saved
+                            logger.info(f"Successfully created new thread: {thread_id}")
+                            break
+                        except Exception as thread_error:
+                            logger.error(f"Error creating thread (attempt {attempt + 1}): {str(thread_error)}")
+                            if attempt < max_attempts - 1:
+                                time.sleep(2 ** attempt)  # Exponential backoff
+                            else:
+                                raise
                 except Exception as thread_error:
-                    logger.error(f"Error creating thread: {str(thread_error)}")
+                    logger.error(f"All attempts to create thread failed: {str(thread_error)}")
                     return jsonify({"error": "Failed to create conversation thread"}), 500
             else:
                 logger.info(f"Using existing thread: {thread_id}")
