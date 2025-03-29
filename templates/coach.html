@@ -458,6 +458,16 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     
+    function formatMessage(text) {
+        // Split text into paragraphs on double newlines
+        const paragraphs = text.split(/\n\s*\n/);
+        // Create paragraph elements for each non-empty paragraph
+        return paragraphs
+            .filter(p => p.trim())
+            .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
+            .join('');
+    }
+    
     function addMessage(content, isUser = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
@@ -467,14 +477,14 @@ document.addEventListener('DOMContentLoaded', function() {
             chatMessages.appendChild(messageDiv);
             scrollToBottom();
         } else {
-            // Create typing indicator
+            // Create and immediately show typing indicator
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message assistant typing-indicator';
             typingDiv.innerHTML = '<span></span><span></span><span></span>';
             chatMessages.appendChild(typingDiv);
             scrollToBottom();
 
-            // Start streaming the response
+            // Start streaming the response immediately
             let index = 0;
             messageDiv.style.display = 'none';
             chatMessages.appendChild(messageDiv);
@@ -486,12 +496,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         typingDiv.remove();
                         messageDiv.style.display = 'block';
                     }
-                    messageDiv.textContent = content.substring(0, index + 1);
+                    
+                    // Format the text that has been typed so far
+                    const textSoFar = content.substring(0, index + 1);
+                    messageDiv.innerHTML = formatMessage(textSoFar);
+                    
                     scrollToBottom();
                     index++;
-                    // Adjust the timeout for typing speed (lower = faster)
-                    setTimeout(typeNextCharacter, 20);
+                    
+                    // Consistent, readable typing speed (12ms = about 83 characters per second)
+                    setTimeout(typeNextCharacter, 12);
                 } else {
+                    // Final formatting when typing is complete
+                    messageDiv.innerHTML = formatMessage(content);
+                    
                     // Render math when typing is complete
                     if (typeof MathJax !== 'undefined') {
                         MathJax.typesetPromise([messageDiv]).catch((err) => console.log('MathJax error:', err));
@@ -500,6 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
+            // Start typing immediately
             typeNextCharacter();
         }
     }
@@ -539,6 +558,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add these styles to the head
     const style = document.createElement('style');
     style.textContent = `
+        .message p {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .message p + p {
+            margin-top: 1em;
+        }
+        
         .typing-indicator {
             display: flex;
             align-items: center;
