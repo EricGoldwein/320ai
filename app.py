@@ -55,16 +55,20 @@ def init_openai_client():
             logger.info("Detected PythonAnywhere — setting up proxy...")
             proxy = "http://proxy.pythonanywhere.com:3128"
             http_client = httpx.Client(
-                timeout=TIMEOUT,
-                transport=httpx.HTTPTransport(proxy=proxy)
+                timeout=30.0,  # Increased timeout
+                transport=httpx.HTTPTransport(proxy=proxy),
+                verify=False  # Disable SSL verification for proxy
             )
         else:
             logger.info("Local environment — no proxy needed.")
-            http_client = httpx.Client(timeout=TIMEOUT)
+            http_client = httpx.Client(
+                timeout=30.0  # Increased timeout
+            )
 
         client = openai.OpenAI(
             api_key=OPENAI_API_KEY,
-            http_client=http_client
+            http_client=http_client,
+            timeout=30.0  # Set timeout at client level
         )
         logger.info("✅ OpenAI client initialized")
         return client
@@ -684,9 +688,9 @@ def chat():
                     for attempt in range(max_attempts):
                         try:
                             logger.info(f"Attempting to create thread (attempt {attempt + 1}/{max_attempts})")
-                            # Create thread with timeout in the client configuration
+                            # Create thread with increased timeout
                             thread = client.beta.threads.create(
-                                timeout=10.0  # 10 second timeout
+                                timeout=30.0  # Increased timeout
                             )
                             thread_id = thread.id
                             session["thread_id"] = thread_id
