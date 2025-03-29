@@ -52,26 +52,16 @@ def init_openai_client():
     try:
         logger.info("Initializing OpenAI client...")
         if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-            logger.info("Detected PythonAnywhere — setting up proxy...")
-            # Configure both HTTP and HTTPS proxies
-            proxies = {
-                "http": "http://proxy.pythonanywhere.com:3128",
-                "https": "http://proxy.pythonanywhere.com:3128"
-            }
-            transport = httpx.HTTPTransport(
-                proxy=proxies["https"],
-                verify=False,  # Disable SSL verification for proxy
-                retries=3  # Enable retries at transport level
-            )
+            logger.info("Detected PythonAnywhere — setting up client...")
+            # Use a simpler configuration without proxy
             http_client = httpx.Client(
-                transport=transport,
-                timeout=60.0,  # Increased timeout further
-                verify=False  # Disable SSL verification
+                timeout=httpx.Timeout(60.0, connect=30.0, read=60.0, write=30.0, pool=60.0),
+                verify=True  # Enable SSL verification
             )
         else:
             logger.info("Local environment — no proxy needed.")
             http_client = httpx.Client(
-                timeout=60.0  # Increased timeout
+                timeout=httpx.Timeout(60.0, connect=30.0, read=60.0, write=30.0, pool=60.0)
             )
 
         client = openai.OpenAI(
@@ -694,7 +684,7 @@ def chat():
                 logger.info("No existing thread found, creating new one...")
                 try:
                     # Create thread with retry logic and timeout
-                    max_attempts = 5  # Increased max attempts
+                    max_attempts = 5
                     for attempt in range(max_attempts):
                         try:
                             logger.info(f"Attempting to create thread (attempt {attempt + 1}/{max_attempts})")
