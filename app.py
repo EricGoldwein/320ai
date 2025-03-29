@@ -684,29 +684,21 @@ def chat():
                     for attempt in range(max_attempts):
                         try:
                             logger.info(f"Attempting to create thread (attempt {attempt + 1}/{max_attempts})")
-                            # Set a timeout for the thread creation
-                            with httpx.Timeout(10.0):  # 10 second timeout
-                                thread = client.beta.threads.create()
-                                thread_id = thread.id
-                                session["thread_id"] = thread_id
-                                session.modified = True  # Ensure session is saved
-                                logger.info(f"Successfully created new thread: {thread_id}")
-                                break
-                        except httpx.TimeoutException:
-                            logger.error(f"Timeout while creating thread (attempt {attempt + 1})")
-                            if attempt < max_attempts - 1:
-                                time.sleep(2 ** attempt)  # Exponential backoff
-                            else:
-                                raise TimeoutError("Thread creation timed out after all attempts")
+                            # Create thread with timeout in the client configuration
+                            thread = client.beta.threads.create(
+                                timeout=10.0  # 10 second timeout
+                            )
+                            thread_id = thread.id
+                            session["thread_id"] = thread_id
+                            session.modified = True  # Ensure session is saved
+                            logger.info(f"Successfully created new thread: {thread_id}")
+                            break
                         except Exception as thread_error:
                             logger.error(f"Error creating thread (attempt {attempt + 1}): {str(thread_error)}")
                             if attempt < max_attempts - 1:
                                 time.sleep(2 ** attempt)  # Exponential backoff
                             else:
                                 raise
-                except TimeoutError as te:
-                    logger.error(f"Thread creation timed out: {str(te)}")
-                    return jsonify({"error": "Thread creation timed out"}), 504
                 except Exception as thread_error:
                     logger.error(f"All attempts to create thread failed: {str(thread_error)}")
                     return jsonify({"error": "Failed to create conversation thread"}), 500
