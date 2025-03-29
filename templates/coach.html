@@ -156,6 +156,12 @@ body {
     border-radius: 8px;
     font-size: clamp(0.9rem, 2.5vw, 1rem);
     line-height: 1.5;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.message.typing {
+    opacity: 0.7;
 }
 
 .message.user {
@@ -374,6 +380,40 @@ body {
     scrollbar-width: thin;
     scrollbar-color: rgba(46, 204, 113, 0.3) rgba(0, 0, 0, 0.2);
 }
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.8rem 1.2rem;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out;
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.3);
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 </style>
 {% endblock %}
 
@@ -413,24 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     
     let isProcessing = false;
-    let conversationHistory = [{
-        role: "assistant",
-        content: "Hay hay hay! I'm Coach DAISY™, your AI-powered running coach and also a horse. How can I help you?"
-    }];
-    
-    // Handle mobile viewport height
-    function setVHOffset() {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh-offset', `${vh}px`);
-    }
-    
-    // Set initial viewport height
-    setVHOffset();
-    
-    // Update on resize and orientation change
-    window.addEventListener('resize', setVHOffset);
-    window.addEventListener('orientationchange', setVHOffset);
-    
+
     function scrollToBottom() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -439,58 +462,48 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
         
-        // Add tex2jax_process class to assistant messages
-        if (!isUser) {
-            messageDiv.classList.add('tex2jax_process');
-        }
-        
-        const formattedContent = content
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br>')
-            .replace(/^(.+)$/, '<p>$1</p>');
-        
-        messageDiv.innerHTML = formattedContent;
-        chatMessages.appendChild(messageDiv);
-        
-        // Add message to conversation history
-        conversationHistory.push({
-            role: isUser ? "user" : "assistant",
-            content: content
-        });
-        
-        // Typeset any math in the new message with retry mechanism
-        if (!isUser && window.MathJax) {
-            const typesetMessage = () => {
-                try {
-                    MathJax.typesetPromise([messageDiv])
-                        .then(() => {
-                            console.log('Math typeset successful');
-                        })
-                        .catch((err) => {
-                            console.log('MathJax error:', err);
-                            // Retry after a short delay
-                            setTimeout(typesetMessage, 500);
-                        });
-                } catch (err) {
-                    console.log('MathJax not ready, retrying...');
-                    setTimeout(typesetMessage, 500);
+        if (isUser) {
+            messageDiv.textContent = content;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        } else {
+            // Create typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+
+            // Start streaming the response
+            let index = 0;
+            messageDiv.style.display = 'none';
+            chatMessages.appendChild(messageDiv);
+
+            function typeNextCharacter() {
+                if (index < content.length) {
+                    if (index === 0) {
+                        // Remove typing indicator and show message div on first character
+                        typingDiv.remove();
+                        messageDiv.style.display = 'block';
+                    }
+                    messageDiv.textContent = content.substring(0, index + 1);
+                    scrollToBottom();
+                    index++;
+                    // Adjust the timeout for typing speed (lower = faster)
+                    setTimeout(typeNextCharacter, 20);
+                } else {
+                    // Render math when typing is complete
+                    if (typeof MathJax !== 'undefined') {
+                        MathJax.typesetPromise([messageDiv]).catch((err) => console.log('MathJax error:', err));
+                    }
+                    isProcessing = false;
                 }
-            };
-            typesetMessage();
+            }
+
+            typeNextCharacter();
         }
-        
-        scrollToBottom();
     }
-    
-    function addLoadingIndicator() {
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'message assistant loading-message';
-        loadingDiv.innerHTML = '<div class="loading"><div></div><div></div><div></div><div></div></div>';
-        chatMessages.appendChild(loadingDiv);
-        scrollToBottom();
-        return loadingDiv;
-    }
-    
+
     chatForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -499,11 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         isProcessing = true;
         userInput.value = '';
-        userInput.disabled = true;
-        sendButton.disabled = true;
-        
         addMessage(message, true);
-        const loadingMessage = addLoadingIndicator();
         
         try {
             const response = await fetch('/api/chat', {
@@ -511,59 +520,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    message: message,
-                    conversation_history: conversationHistory
-                })
+                body: JSON.stringify({ message: message })
             });
             
             const data = await response.json();
             
-            loadingMessage.remove();
-            
             if (data.error) {
-                const errorMessage = 'Sorry, I encountered an error. Please try again.';
-                addMessage(errorMessage, false);
-                // Remove the error message from conversation history since it's not part of the actual conversation
-                conversationHistory.pop();
+                addMessage('Sorry, I encountered an error: ' + data.error);
             } else {
-                addMessage(data.response, false);
-                // Update conversation history with the server's version if provided
-                if (data.conversation_history) {
-                    conversationHistory = data.conversation_history;
-                }
+                addMessage(data.response);
             }
         } catch (error) {
-            loadingMessage.remove();
-            const errorMessage = 'Sorry, I encountered an error. Please try again.';
-            addMessage(errorMessage, false);
-            // Remove the error message from conversation history
-            conversationHistory.pop();
-            console.error('Error:', error);
-        } finally {
+            addMessage('Sorry, I encountered an error. Please try again.');
             isProcessing = false;
-            userInput.disabled = false;
-            sendButton.disabled = false;
-            userInput.focus();
         }
     });
-    
-    // Focus input on page load
-    userInput.focus();
-    
-    // Handle Enter key
-    userInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            chatForm.dispatchEvent(new Event('submit'));
+
+    // Add these styles to the head
+    const style = document.createElement('style');
+    style.textContent = `
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
         }
-    });
-    
-    // Add submitMessage function for suggestion buttons
-    window.submitMessage = function(message) {
-        userInput.value = message;
-        chatForm.dispatchEvent(new Event('submit'));
-    };
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
 });
 </script>
 {% endblock %} 
