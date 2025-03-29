@@ -646,13 +646,19 @@ def subscribe():
 @limiter.limit("10 per minute")
 def chat():
     """Handle chat interactions with DAISY™"""
+    global client  # Add global declaration
+    
     try:
         logger.info("\n=== DAISY Chat Debug ===")
         logger.info("1. Checking API client...")
 
+        # Ensure client is initialized
         if not client:
-            logger.error("OpenAI client is not initialized!")
-            return jsonify({"error": "API client not configured"}), 500
+            logger.info("Client not initialized, attempting to initialize...")
+            client = init_openai_client()
+            if not client:
+                logger.error("Failed to initialize OpenAI client!")
+                return jsonify({"error": "API client not configured"}), 500
 
         logger.info("2. Client initialized successfully")
 
@@ -673,13 +679,6 @@ def chat():
             if not thread_id:
                 logger.info("No existing thread found, creating new one...")
                 try:
-                    # Verify client is properly initialized
-                    if not client:
-                        logger.error("OpenAI client is not initialized during thread creation!")
-                        client = init_openai_client()  # Try to reinitialize
-                        if not client:
-                            return jsonify({"error": "API client not configured"}), 500
-                    
                     # Create thread with retry logic
                     max_attempts = 3
                     for attempt in range(max_attempts):
