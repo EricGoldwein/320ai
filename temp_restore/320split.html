@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}$320SPLIT • 320AI{% endblock %}
+
+{% block content %}
+<div class="matrix-bg" id="matrix-bg"></div>
+
+<div class="ai-banner">
+    🏃 MINE $320SPLIT BY RUNNING LAPS • CURRENT MINING RATE: 3.20 $SPLIT/LAP
+</div>
+
+<div class="crypto-header">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="320SPLIT Logo" class="divot-logo">
+    <h1>$320SPLIT</h1>
+    <p>The First AI-Powered Track & Field Cryptocurrency</p>
+    <p><em>Powered by Quantum Lane Detection™ and Neural Stride Analysis™</em></p>
+    <div class="header-buttons">
+        <a href="{{ url_for('whitepaper') }}" class="quantum-button">READ THE WHITEPAPER</a>
+        <button class="quantum-button" onclick="window.location.href='#swap'">TRADE NOW</button>
+    </div>
+</div>
+
+<div class="price-ticker">
+    <div class="price-stat">
+        <h3>CURRENT PRICE</h3>
+        <div class="price-value">${{ price }}</div>
+        <p>+320% (Last 24h)</p>
+    </div>
+    <div class="price-stat">
+        <h3>MARKET CAP</h3>
+        <div class="price-value">${{ "{:,.2f}".format(market_cap) }}</div>
+        <p>Fully Diluted: $320T</p>
+    </div>
+    <div class="price-stat">
+        <h3>24H VOLUME</h3>
+        <div class="price-value">${{ "{:,.2f}".format(volume) }}</div>
+        <p>320k Transactions</p>
+    </div>
+</div>
+
+<div class="swap-interface" id="swap">
+    <h2>QUANTUM SWAP</h2>
+    <div class="swap-box">
+        <div class="token-input">
+            <input type="number" placeholder="0.0" class="swap-input">
+            <select class="token-select">
+                <option value="eth">ETH</option>
+                <option value="usdc">USDC</option>
+                <option value="usdt">USDT</option>
+            </select>
+        </div>
+        <div class="swap-arrow">↓</div>
+        <div class="token-input">
+            <input type="number" placeholder="0.0" class="swap-input" disabled>
+            <div class="token-select">$SPLIT</div>
+        </div>
+        <button class="quantum-button" onclick="initiateSwap()">QUANTUM SWAP</button>
+        <p class="swap-info">1 $SPLIT = ${{ price }} • Slippage: 3.20%</p>
+        <p class="swap-warning">* Swaps are validated by our AI and may require proof of running</p>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🏃‍♂️ RUN-TO-EARN</h3>
+        <p>Mine new tokens by running 320m repeats. Each lap = 3.20 $SPLIT</p>
+        <button class="quantum-button">START MINING</button>
+    </div>
+    <div class="feature-card">
+        <h3>🔄 AUTO-STAKING</h3>
+        <p>Stake your $SPLIT in our Quantum Pool for 320% APY</p>
+        <button class="quantum-button">ENTER QUANTUM POOL</button>
+    </div>
+    <div class="feature-card">
+        <h3>🎯 TRACK DAO</h3>
+        <p>Governance token for the world's first AI-powered track</p>
+        <button class="quantum-button">JOIN DAO</button>
+    </div>
+</div>
+
+<div class="tokenomics">
+    <h2>TOKENOMICS</h2>
+    <ul>
+        <li>Total Supply: 320,000,000 $SPLIT</li>
+        <li>Initial Price: $3.20</li>
+        <li>320% of fees go to track maintenance</li>
+        <li>3.20% burned every lap</li>
+        <li>Liquidity locked for 320 years</li>
+    </ul>
+    <div class="chart"></div>
+</div>
+
+<div style="text-align: center; padding: 2rem;">
+    <h2>WARNING</h2>
+    <p style="color: #666;">This is not financial advice. Only invest what you can afford to run off.</p>
+    <p style="font-size: 0.8em">* All metrics quantum-verified by our AI</p>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.crypto-header {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.divot-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: block;
+    animation: spin 320s linear infinite;
+}
+
+.price-ticker {
+    background: rgba(44, 62, 80, 0.9);
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 800px;
+    text-align: center;
+    color: white;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.price-stat {
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.price-value {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #2ecc71;
+    word-break: break-word;
+}
+
+.swap-interface {
+    max-width: 400px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.swap-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.token-input {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.swap-input {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 1.2rem;
+    outline: none;
+    min-width: 0;
+}
+
+.token-select {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #e9ecef;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.quantum-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+.quantum-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.swap-arrow {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: #3498db;
+}
+
+.swap-info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.swap-warning {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    margin-top: 0.5rem;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.tokenomics {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chart {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #3498db 0%, #2ecc71 100%);
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart::after {
+    content: '↗️ Number only go up';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add price animation
+setInterval(() => {
+    const priceElement = document.querySelector('.price-value');
+    const currentPrice = parseFloat(priceElement.textContent.substring(1));
+    const newPrice = currentPrice + (Math.random() - 0.3) * 0.01;
+    priceElement.textContent = '$' + newPrice.toFixed(8);
+}, 3200);
+
+function initiateSwap() {
+    const loadingMessages = [
+        "Initializing quantum tunneling...",
+        "Calculating stride vectors...",
+        "Validating with track oracle...",
+        "Optimizing gas fees using AI...",
+        "Consulting ancient track gods..."
+    ];
+    
+    let i = 0;
+    const btn = document.querySelector('.swap-interface .quantum-button');
+    const originalText = btn.textContent;
+    
+    const interval = setInterval(() => {
+        btn.textContent = loadingMessages[i];
+        i = (i + 1) % loadingMessages.length;
+    }, 800);
+    
+    setTimeout(() => {
+        clearInterval(interval);
+        btn.textContent = "INSUFFICIENT QUANTUM ENERGY";
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    }, 4000);
+}
+
+// Matrix background effect
+const canvas = document.createElement('canvas');
+canvas.style.position = 'fixed';
+canvas.style.top = '0';
+canvas.style.left = '0';
+canvas.style.width = '100%';
+canvas.style.height = '100%';
+canvas.style.zIndex = '-1';
+canvas.style.opacity = '0.05';
+document.getElementById('matrix-bg').appendChild(canvas);
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const chars = '320';
+const fontSize = 10;
+const columns = canvas.width/fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(draw, 33);
+</script>
+{% endblock %} 

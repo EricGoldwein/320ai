@@ -68,7 +68,7 @@ body {
 
 .brand h1 .d { color: white; }
 .brand h1 .ai {
-    background: linear-gradient(45deg, #3498db, #2ecc71);
+    background: linear-gradient(45deg, #00ffff, #00cccc);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -158,6 +158,12 @@ body {
     line-height: 1.5;
     opacity: 1;
     transition: opacity 0.3s ease;
+}
+
+.message p {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .message.typing {
@@ -345,11 +351,6 @@ body {
     100% { transform: scale(0); }
 }
 
-.message p {
-    margin: 0;
-    padding: 0;
-}
-
 .message p + p {
     margin-top: 0.5em;
 }
@@ -453,6 +454,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     
     let isProcessing = false;
+    let lastMessageTime = 0;
+    const MESSAGE_COOLDOWN = 1000; // 1 second cooldown between messages
 
     function scrollToBottom() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -528,6 +531,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const message = userInput.value.trim();
         if (!message || isProcessing) return;
+        
+        // Spam protection
+        const now = Date.now();
+        if (now - lastMessageTime < MESSAGE_COOLDOWN) {
+            addMessage("Hold your horses! Let's wait a moment between messages.", true);
+            return;
+        }
+        
+        // Message length check
+        if (message.length > 500) {
+            addMessage("Whoa, that's a long gallop. Try something shorter.", true);
+            return;
+        }
+        
+        lastMessageTime = now;
         
         isProcessing = true;
         userInput.value = '';

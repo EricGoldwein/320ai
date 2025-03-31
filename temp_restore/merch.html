@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Merch • 320AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.price-tag {
+    display: inline-block;
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.product-card h4 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.product-card .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.product-card .btn-primary {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.product-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">320 x Christina Collection</h1>
+            <p class="lead mb-4">Limited Edition Performance Gear</p>
+            <div class="track-badge">OFFICIAL MERCH</div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border">
+                <div class="row g-4">
+                    <!-- Genie in a Bottle Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">BESTSELLER</div>
+                            <img src="{{ url_for('static', filename='images/socks-genie.jpg') }}" 
+                                 alt="Genie Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Genie in a Bottle Socks</h4>
+                            <p class="text-muted">One sock grants wishes, the other just makes your foot sweaty. The genie escaped from washing.</p>
+                            <div class="price-tag mb-3">$19.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Fighter Compression Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">PRE-ORDER</div>
+                            <img src="{{ url_for('static', filename='images/socks-fighter.jpg') }}" 
+                                 alt="Fighter Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Fighter Compression Socks</h4>
+                            <p class="text-muted">Makes your calves feel like they're being squeezed by a backup dancer. One size squeezes all.</p>
+                            <div class="price-tag mb-3">$24.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Dirrty Running Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">LIMITED EDITION</div>
+                            <img src="{{ url_for('static', filename='images/socks-dirrty.jpg') }}" 
+                                 alt="Dirrty Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Dirrty Running Socks</h4>
+                            <p class="text-muted">They start clean but somehow always end up looking dirrty. Chaps not included.</p>
+                            <div class="price-tag mb-3">$22.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Beautiful Toe Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">NEW ARRIVAL</div>
+                            <img src="{{ url_for('static', filename='images/socks-beautiful.jpg') }}" 
+                                 alt="Beautiful Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Beautiful Toe Socks</h4>
+                            <p class="text-muted">Each toe gets its own solo performance space. Warning: May cause impromptu toe choreography.</p>
+                            <div class="price-tag mb-3">$21.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Lady Marmalade Performance Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">EXCLUSIVE</div>
+                            <img src="{{ url_for('static', filename='images/socks-marmalade.jpg') }}" 
+                                 alt="Lady Marmalade Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Lady Marmalade Performance Socks</h4>
+                            <p class="text-muted">Voulez-vous courir avec moi? These socks speak French but only after mile 3.</p>
+                            <div class="price-tag mb-3">$23.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Candyman Recovery Socks -->
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="track-badge mb-2">RECOVERY GEAR</div>
+                            <img src="{{ url_for('static', filename='images/socks-candyman.jpg') }}" 
+                                 alt="Candyman Socks" 
+                                 class="img-fluid rounded mb-3">
+                            <h4>Candyman Recovery Socks</h4>
+                            <p class="text-muted">Sweet like candy but actually good for your feet. Extra cushioning in all the right places.</p>
+                            <div class="price-tag mb-3">$25.99</div>
+                            <button class="btn btn-primary" onclick="alert('Your feet will have to wait a bit longer!')">Coming Soon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="quantum-border text-center">
+                <div class="track-badge mb-3">COMING SOON</div>
+                <h3 class="text-gradient mb-4">More Christina x 320 Collabs</h3>
+                <p class="lead">Stay tuned for more exclusive performance gear. Your feet won't believe what's coming.</p>
+                <div class="mt-4">
+                    <a href="https://www.instagram.com/320trackclub/" target="_blank" class="btn btn-outline-dark">
+                        <i class="fab fa-instagram"></i> Follow for Updates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.price-tag {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.track-badge {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+}
+</style>
+{% endblock %} 

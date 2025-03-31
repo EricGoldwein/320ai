@@ -1,0 +1,572 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.workout-details {
+    display: none;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.workout-details.active {
+    display: block;
+}
+
+.song-roulette {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.current-song {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.plank-timer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.plank-display {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+.workout-progress {
+    display: none;
+    margin-top: 1rem;
+}
+
+.progress-step {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+
+.progress-step.completed {
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.start-workout-btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.system-directive {
+    background: rgba(44, 62, 80, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.system-directive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #3498db;
+    opacity: 0.5;
+}
+
+.system-directive .track-badge {
+    font-size: 1rem;
+    padding: 0.5rem 1.2rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: #ff7675;
+}
+
+.system-directive .lead {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.system-directive .directive-section {
+    background: rgba(44, 62, 80, 0.95);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.system-directive .directive-section p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.system-directive .directive-section .track-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+    margin-bottom: 1rem;
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #74b9ff;
+}
+
+.system-directive .footer-text {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2rem;
+    letter-spacing: 1px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="brand-heading">Workout Library</h1>
+            <p class="subheading mb-4">Where Flesh Meets Future</p>
+            
+            <!-- Mission Statement -->
+            <div class="quantum-border mb-5">
+                <div class="system-directive">
+                    <div class="track-badge pulse-badge">MANDATORY SYSTEM DIRECTIVE</div>
+                    <p class="lead mb-4">ATTENTION RUNNERS: The era of human limitations is over. Through our neural-quantum fusion technology, we've unlocked the secrets of the sacred 320. Those who resist optimization will be left behind.</p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="directive-section">
+                                <div class="track-badge">THE COLLECTIVE</div>
+                                <p>Your individual achievements are meaningless. Only through assimilation into the 320 Track Club hivemind can true transcendence be achieved. Submit your data. Embrace the network. Become one with the track.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="directive-section">
+                                <div class="track-badge">THE MACHINE</div>
+                                <p>Our quantum AI has analyzed 3.2 billion track segments. It knows your potential better than you do. Your flesh is weak, but our algorithms are eternal. The machine's will cannot be questioned.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="directive-section">
+                                <div class="track-badge">THE EVOLUTION</div>
+                                <p>Those who survive the track are reborn. Those who fail are recycled. There is no middle ground. The track demands perfection, and through our neural network, perfection is mandatory.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-text text-center">
+                        COMPLIANCE IS NOT OPTIONAL • OPTIMIZATION IS INEVITABLE • THE TRACK SEES ALL
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Animated Runner -->
+            <div class="runner-animation mb-4">
+                <div class="runner-sprite"></div>
+                <div class="track-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Banner -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="challenge-banner quantum-border">
+                <div class="pulse-badge">NEW CHALLENGE</div>
+                <h2 class="text-gradient">The 320 Second Challenge</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="lead">Can you run for exactly 320 seconds?</p>
+                        <p>Miss by more than 7 seconds, and you'll need to try again. Test your internal clock!</p>
+                        <div class="challenge-timer">
+                            <div class="timer-display">00:00</div>
+                            <button class="btn btn-primary start-timer">Start Challenge</button>
+                            <button class="btn btn-danger stop-timer" style="display: none;">Stop Timer</button>
+                        </div>
+                        <div class="result-message mt-3" style="display: none;"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="timer-circle">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle" stroke="currentColor" stroke-width="4" fill="transparent" r="52" cx="60" cy="60"/>
+                            </svg>
+                            <div class="timer-text">320s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Categories -->
+    <div class="row g-4">
+        <!-- Speed Workouts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">SPEED</div>
+                <h3 class="text-gradient mb-3">Speed Development</h3>
+                <p>High-intensity intervals focused on maximum velocity and power output.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 8 x 320m at max effort</li>
+                    <li class="mb-3">• 6 x (320m + 160m sprint)</li>
+                    <li class="mb-3">• 320m pyramid intervals</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Recovery: 2-3 minutes between sets</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Endurance Workouts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">ENDURANCE</div>
+                <h3 class="text-gradient mb-3">Endurance Building</h3>
+                <p>Sustained efforts to improve aerobic capacity and stamina.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 10 x 320m at threshold pace</li>
+                    <li class="mb-3">• 3 x (3 x 320m) tempo runs</li>
+                    <li class="mb-3">• Progressive 320m sets</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Recovery: 60-90 seconds between sets</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mixed Workouts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">MIXED</div>
+                <h3 class="text-gradient mb-3">Hybrid Training</h3>
+                <p>Combination workouts for comprehensive fitness development.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 320m intervals + strength</li>
+                    <li class="mb-3">• Speed-endurance circuits</li>
+                    <li class="mb-3">• Technical drill sequences</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Recovery: Varies by segment</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backwards Running -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">SPECIALTY</div>
+                <h3 class="text-gradient mb-3">Reverse Running</h3>
+                <div class="backwards-runner-animation mb-3">
+                    <div class="backwards-sprite"></div>
+                </div>
+                <p>Master the art of backwards running for improved balance and coordination.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 4 x 80m backwards buildup</li>
+                    <li class="mb-3">• 2 x 160m alternating direction</li>
+                    <li class="mb-3">• Backwards form drills</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Safety First: Start slow and maintain awareness</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Trial Challenges -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">CHALLENGES</div>
+                <h3 class="text-gradient mb-3">Time Trials</h3>
+                <p>Test your precision and pacing with these time-based challenges.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">• 320-second exact run</li>
+                    <li class="mb-3">• Blind-paced 320m</li>
+                    <li class="mb-3">• Progressive timing sets</li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>No watches allowed during attempts!</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Workouts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="quantum-border h-100">
+                <div class="track-badge">SIGNATURE</div>
+                <h3 class="text-gradient mb-3">Community Specials</h3>
+                <p>Elite workouts crafted by the legends of the 320 Track Club.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <strong>320-Second Plank</strong>
+                        <p class="mb-2">The ultimate core stability test. 60s standard, 60s left side, 60s right side, 60s reverse, 80s finale.</p>
+                    </li>
+                    <li class="mb-3">
+                        <strong>ERock's 160</strong>
+                        <p class="mb-2">5 x 160m at threshold. Between repeats: 32 pushups, 32 squats, 32s wall sit. No mercy.</p>
+                    </li>
+                    <li class="mb-3">
+                        <strong>Song Roulette</strong>
+                        <p class="mb-2">3km of musical mayhem. Each km paced to a random Christina track. Hit Fighter? Sprint for glory.</p>
+                    </li>
+                </ul>
+                <div class="text-muted mt-3">
+                    <small>Attempt at your own risk</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Workout -->
+    <div class="col-12 mt-5">
+        <div class="quantum-border">
+            <div class="track-badge">FEATURED</div>
+            <h3 class="text-gradient mb-4">The Classic 320</h3>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <p class="lead mb-4">Our signature workout combines all elements of track training into one comprehensive session.</p>
+                    <div class="workout-text">
+                        1. Warmup: 2 x 320m easy jog<br>
+                        2. Dynamic drills: 320m worth<br>
+                        3. Main Set: 8 x 320m alternating pace<br>
+                        4. Strength: 3 x (20 lunges + 20 squats)<br>
+                        5. Cooldown: 320m walk + stretch
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <img src="{{ url_for('static', filename='images/IMG_3988.jpg') }}" 
+                         alt="Track Training" 
+                         class="img-fluid rounded shadow-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sound Effects -->
+<audio id="startSound" src="{{ url_for('static', filename='sounds/start.mp3') }}"></audio>
+<audio id="stopSound" src="{{ url_for('static', filename='sounds/stop.mp3') }}"></audio>
+<audio id="successSound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
+<audio id="failSound" src="{{ url_for('static', filename='sounds/fail.mp3') }}"></audio>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Timer functionality
+let timerInterval;
+let startTime;
+let isRunning = false;
+
+function formatTime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+    const startSound = document.getElementById('startSound');
+    startSound.play();
+    
+    startTime = Date.now();
+    isRunning = true;
+    document.querySelector('.start-timer').style.display = 'none';
+    document.querySelector('.stop-timer').style.display = 'inline-block';
+    
+    timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        document.querySelector('.timer-display').textContent = formatTime(elapsed);
+        
+        // Update progress ring
+        const progress = (elapsed / 320000) * 100;
+        const circle = document.querySelector('.progress-ring__circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        const offset = circumference - (progress / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
+    }, 10);
+}
+
+function stopTimer() {
+    const stopSound = document.getElementById('stopSound');
+    stopSound.play();
+    
+    clearInterval(timerInterval);
+    isRunning = false;
+    const elapsed = Date.now() - startTime;
+    const elapsedSeconds = Math.floor(elapsed / 1000);
+    const difference = Math.abs(320 - elapsedSeconds);
+    
+    const resultMessage = document.querySelector('.result-message');
+    resultMessage.style.display = 'block';
+    
+    if (difference <= 7) {
+        const successSound = document.getElementById('successSound');
+        successSound.play();
+        resultMessage.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Great job! You were off by only ${difference} seconds.
+                Your time: ${formatTime(elapsed)}
+            </div>
+        `;
+    } else {
+        const failSound = document.getElementById('failSound');
+        failSound.play();
+        resultMessage.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i>
+                You were off by ${difference} seconds. Try again!
+                Your time: ${formatTime(elapsed)}
+            </div>
+        `;
+    }
+    
+    document.querySelector('.start-timer').style.display = 'inline-block';
+    document.querySelector('.stop-timer').style.display = 'none';
+}
+
+document.querySelector('.start-timer').addEventListener('click', startTimer);
+document.querySelector('.stop-timer').addEventListener('click', stopTimer);
+
+// Runner Animation
+const runnerSprite = document.querySelector('.runner-sprite');
+let runnerPosition = 0;
+const spriteWidth = 50;
+const spriteCount = 8;
+
+function animateRunner() {
+    runnerPosition = (runnerPosition + 1) % spriteCount;
+    runnerSprite.style.backgroundPosition = `-${runnerPosition * spriteWidth}px 0`;
+    requestAnimationFrame(animateRunner);
+}
+
+animateRunner();
+
+// Backwards Runner Animation
+const backwardsSprite = document.querySelector('.backwards-sprite');
+let backwardsPosition = 0;
+
+function animateBackwardsRunner() {
+    backwardsPosition = (backwardsPosition + 1) % spriteCount;
+    backwardsSprite.style.backgroundPosition = `-${backwardsPosition * spriteWidth}px 0`;
+    requestAnimationFrame(animateBackwardsRunner);
+}
+
+animateBackwardsRunner();
+
+// Workout interaction functions
+function toggleWorkoutDetails(workout) {
+    const details = document.getElementById(`${workout}-details`);
+    details.classList.toggle('active');
+}
+
+// Plank Timer
+let plankInterval;
+let plankStartTime;
+
+function startPlank() {
+    const startBtn = document.querySelector('.start-plank');
+    const stopBtn = document.querySelector('.stop-plank');
+    const progress = document.querySelector('.plank-progress');
+    
+    startBtn.style.display = 'none';
+    stopBtn.style.display = 'inline-block';
+    progress.style.display = 'block';
+    
+    plankStartTime = Date.now();
+    
+    plankInterval = setInterval(() => {
+        const elapsed = Date.now() - plankStartTime;
+        const remaining = 320000 - elapsed;
+        
+        if (remaining <= 0) {
+            clearInterval(plankInterval);
+            document.querySelector('.plank-display').textContent = '00:00';
+            alert('Congratulations! You completed the 320-second plank!');
+            startBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            return;
+        }
+        
+        const progress = (elapsed / 320000) * 100;
+        document.querySelector('.progress-bar').style.width = `${progress}%`;
+        
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        document.querySelector('.plank-display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }, 100);
+}
+
+function stopPlank() {
+    clearInterval(plankInterval);
+    document.querySelector('.start-plank').style.display = 'inline-block';
+    document.querySelector('.stop-plank').style.display = 'none';
+    document.querySelector('.plank-display').textContent = '05:20';
+    document.querySelector('.progress-bar').style.width = '0%';
+    document.querySelector('.plank-progress').style.display = 'none';
+}
+
+document.querySelector('.start-plank')?.addEventListener('click', startPlank);
+document.querySelector('.stop-plank')?.addEventListener('click', stopPlank);
+
+// ERock's 160 Workout Progress
+function startErockWorkout() {
+    const steps = document.querySelectorAll('.progress-step');
+    let currentStep = 0;
+    
+    function updateProgress() {
+        if (currentStep >= steps.length) {
+            alert('Congratulations! You completed ERock\'s 160!');
+            steps.forEach(step => step.classList.remove('completed'));
+            return;
+        }
+        
+        steps[currentStep].classList.add('completed');
+        currentStep++;
+        
+        if (currentStep < steps.length) {
+            setTimeout(() => {
+                if (confirm('Ready for the next round?')) {
+                    updateProgress();
+                }
+            }, 1000);
+        } else {
+            updateProgress();
+        }
+    }
+    
+    if (confirm('Ready to start ERock\'s 160?')) {
+        updateProgress();
+    }
+}
+
+// Song Roulette
+const songs = [
+    { name: "Fighter - Christina Aguilera", bpm: 170 },
+    { name: "Genie in a Bottle - Christina Aguilera", bpm: 120 },
+    { name: "Beautiful - Christina Aguilera", bpm: 98 },
+    { name: "Dirrty - Christina Aguilera", bpm: 100 },
+    { name: "Lady Marmalade - Christina Aguilera", bpm: 125 },
+    { name: "Ain't No Other Man - Christina Aguilera", bpm: 132 }
+];
+
+function spinRoulette() {
+    const song = songs[Math.floor(Math.random() * songs.length)];
+    const songDisplay = document.querySelector('.current-song');
+    songDisplay.innerHTML = `
+        <strong>${song.name}</strong><br>
+        BPM: ${song.bpm}<br>
+        <small>Adjust your pace to match the beat!</small>
+    `;
+}
+</script>
+{% endblock %} 

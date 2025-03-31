@@ -557,7 +557,7 @@
                         <h2 class="daisy-header">The D<span class="ai-part">AI</span>SY<span class="tm-part">™</span> Collection</h2>
                         <p class="lead">Inspired by the pioneer of non-linear progression. Each piece is a unique Neigh-Fungible Token (NFT), a one-of-a-kind digital collectible minted on our carbon plate-neutral blockchain.</p>
                         <p class="price-tag">Starting at 120 $WINGO</p>
-                        <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary btn-lg mt-3">Buy "The Kick" NFT</a>
+                        <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" class="btn btn-primary btn-lg mt-3 youtube-link">Buy "The Kick" NFT</a>
                     </div>
                 </div>
             </div>
@@ -754,6 +754,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (viewCollectionBtn) {
         viewCollectionBtn.href = '#nft-section';
     }
+
+    // Ensure YouTube links are not overridden
+    document.querySelectorAll('.youtube-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(this.href, '_blank');
+        });
+    });
 });
 </script>
 {% endblock %} 

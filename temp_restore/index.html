@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(52, 152, 219, 0.8));
+    }
+    
+    .hero-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0.6;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: white;
+        padding: 2rem;
+        max-width: 800px;
+    }
+    
+    .brand-heading {
+        font-size: 4.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .subheading {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .track-badge {
+        display: inline-block;
+        background: #2c3e50;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-weight: bold;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .manifesto {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin: 2rem auto;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        max-width: 600px;
+    }
+    
+    .cta-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .start-button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+    
+    .start-button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #405DE6;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        transition: opacity 0.3s ease;
+    }
+
+    .social-link:hover {
+        opacity: 0.9;
+        color: white;
+        text-decoration: none;
+    }
+
+    .social-link i {
+        font-size: 1.1rem;
+    }
+    
+    /* Questionnaire styling */
+    .question-section {
+        display: none;
+        padding: 2rem;
+        background: rgba(44, 62, 80, 0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .question-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .question-section h4 {
+        display: inline-block;
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .question-section .form-label {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .question-section .form-control {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(52, 152, 219, 0.3);
+        border-radius: 8px;
+        padding: 0.8rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .question-section .form-control:focus {
+        background: white;
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .question-section .btn {
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .question-section .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        border: none;
+    }
+    
+    .question-section .btn-secondary {
+        background: rgba(44, 62, 80, 0.8);
+        border: none;
+    }
+    
+    .question-section .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Loading animation enhancement */
+    .loading-animation {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .loading-animation .track-badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <video class="hero-video" autoplay loop muted playsinline>
+        <source src="{{ url_for('static', filename='images/EBvid.MOV') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="hero-content">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" 
+                 alt="320 Track Club" 
+                 class="img-fluid"
+                 style="max-width: 180px;">
+        </div>
+        <h1 class="brand-heading">320AI</h1>
+        <p class="subheading">Advanced Training System</p>
+        <div class="track-badge">WINGATE TRACK • HOME OF THE 320</div>
+        <p class="manifesto">
+            Experience a new era of track training at the legendary Wingate Track. 
+            Our AI system analyzes your athletic profile to generate optimized workouts, 
+            all centered around the iconic 320-meter distance that makes Wingate special.
+        </p>
+        <div class="cta-container">
+            <button class="start-button" onclick="document.getElementById('questionnaireForm').scrollIntoView({behavior: 'smooth'})">
+                Start Training
+            </button>
+            <a href="https://www.instagram.com/320trackclub/" target="_blank" class="social-link">
+                <i class="fab fa-instagram"></i> Follow @320trackclub
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="quantum-border mx-auto">
+        <!-- Questionnaire Form -->
+        <div id="questionnaireForm">
+            <!-- Question 1 -->
+            <div class="question-section active" id="q1">
+                <div class="track-badge pulse-badge">SYSTEM INITIALIZATION</div>
+                <h4>Identity Verification 1/9</h4>
+                <div class="mb-4">
+                    <label class="form-label">Enter your designation:</label>
+                    <input type="text" class="form-control" id="name" placeholder="Your name here..." required>
+                </div>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(1)">
+                    <i class="fas fa-arrow-right"></i> Proceed
+                </button>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-section" id="q2">
+                <h4>Question 2/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Miles run in the past 320 days?</label>
+                    <input type="number" class="form-control" id="miles_past_320_days" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(2)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(2)">Next</button>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-section" id="q3">
+                <h4>Question 3/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Kilometers planned for 2025?</label>
+                    <input type="number" class="form-control" id="kilometers_2025" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(3)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(3)">Next</button>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-section" id="q4">
+                <h4>Question 4/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Average heart rate while walking?</label>
+                    <input type="number" class="form-control" id="avg_hr_walking" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(4)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(4)">Next</button>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-section" id="q5">
+                <h4>Question 5/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Days since last haircut?</label>
+                    <input type="number" class="form-control" id="recent_haircut" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(5)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(5)">Next</button>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-section" id="q6">
+                <h4>Question 6/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Current iron levels?</label>
+                    <input type="number" class="form-control" id="iron_levels" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(6)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(6)">Next</button>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-section" id="q7">
+                <h4>Question 7/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Date of your last race?</label>
+                    <input type="date" class="form-control" id="last_race_date" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(7)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(7)">Next</button>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-section" id="q8">
+                <h4>Question 8/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Race of your last date?</label>
+                    <input type="text" class="form-control" id="last_date_race" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(8)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="nextQuestion(8)">Next</button>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-section" id="q9">
+                <h4>Question 9/9</h4>
+                <div class="mb-3">
+                    <label class="form-label">Sum of last four digits of your SSN divided by 2?</label>
+                    <input type="number" class="form-control" id="ssn_digit_sum" required>
+                </div>
+                <button class="btn btn-secondary" onclick="prevQuestion(9)">Back</button>
+                <button class="btn btn-primary hover-lift" onclick="submitForm()">Generate Workout</button>
+            </div>
+        </div>
+
+        <!-- Loading Animation -->
+        <div id="loadingSection" class="loading-animation">
+            <h3 class="calculating mb-4">Quantum Calculations in Progress...</h3>
+            <div class="progress mb-3">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+            </div>
+            <div id="calculationStatus" class="text-muted"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="result" class="mt-4" style="display: none;"></div>
+
+        <div id="homeButton" style="display: none;" class="text-center mt-4">
+            <button onclick="location.reload()" class="btn btn-outline-dark hover-lift">
+                ← Generate Another Workout
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function nextQuestion(current) {
+    document.getElementById(`q${current}`).classList.remove('active');
+    document.getElementById(`q${current + 1}`).classList.add('active');
+}
+
+function prevQuestion(current) {
+    document.getElementById(`q${current}`).classList.remove('active');
+    document.getElementById(`q${current - 1}`).classList.add('active');
+}
+
+async function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value,
+        miles_past_320_days: document.getElementById('miles_past_320_days').value,
+        kilometers_2025: document.getElementById('kilometers_2025').value,
+        avg_hr_walking: document.getElementById('avg_hr_walking').value,
+        recent_haircut: document.getElementById('recent_haircut').value,
+        iron_levels: document.getElementById('iron_levels').value,
+        last_race_date: document.getElementById('last_race_date').value,
+        last_date_race: document.getElementById('last_date_race').value,
+        ssn_digit_sum: document.getElementById('ssn_digit_sum').value
+    };
+
+    // Hide form, show loading
+    document.getElementById('questionnaireForm').style.display = 'none';
+    const loadingSection = document.getElementById('loadingSection');
+    loadingSection.style.display = 'block';
+
+    // Fake loading sequence
+    const progressBar = document.querySelector('.progress-bar');
+    const statusDiv = document.getElementById('calculationStatus');
+    const statuses = [
+        "Analyzing track conditions...",
+        "Processing community insights...",
+        "Calibrating workout parameters...",
+        "Validating with track veterans...",
+        "Optimizing for 320m segments...",
+        "Fine-tuning intensity levels...",
+        "Preparing your custom session..."
+    ];
+
+    for (let i = 0; i < statuses.length; i++) {
+        statusDiv.textContent = statuses[i];
+        progressBar.style.width = `${(i + 1) * (100 / statuses.length)}%`;
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    try {
+        const response = await fetch('/generate_workout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+
+        // Hide loading, show results
+        loadingSection.style.display = 'none';
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+
+        // Update result template
+        resultDiv.innerHTML = `
+            <div class="alert" style="background: #f8f9fa; border: 1px solid #000; border-radius: 12px;">
+                <div class="track-badge mb-3">SESSION ${Math.floor(Math.random() * 900000) + 100000}</div>
+                <h4 class="alert-heading mb-4">${data.workout_intro}</h4>
+                <div class="workout-text">
+                    <h3 class="text-gradient mb-3">${data.workout_details.intensity}</h3>
+                    ${data.workout_details.workout.replace(/\n/g, '<br>')}
+                </div>
+                <hr>
+                <p><em>${data.workout_details.science}</em></p>
+                <p class="mb-0"><small class="text-uppercase" style="letter-spacing: 1px;">${data.ai_insight}</small></p>
+                <div class="mt-3 text-muted" style="font-size: 0.8rem;">
+                    <span class="text-uppercase">Custom Workout</span> • 
+                    Validated by ${data.meta.models_consulted} track club members • 
+                    Analysis time: ${data.meta.processing_time_ms}ms
+                </div>
+            </div>
+        `;
+
+        document.getElementById('homeButton').style.display = 'block';
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Email signup form handler
+document.getElementById('emailSignupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const emailInput = this.querySelector('input[type="email"]');
+    const submitButton = this.querySelector('button[type="submit"]');
+    const email = emailInput.value;
+
+    // Disable form while submitting
+    emailInput.disabled = true;
+    submitButton.disabled = true;
+    submitButton.innerHTML = 'Subscribing...';
+
+    // Send to backend
+    fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            this.reset();
+        } else {
+            alert(data.message || 'Something went wrong. Please try again.');
+        }
+    })
+    .catch(error => {
+        alert('Error subscribing. Please try again.');
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Re-enable form
+        emailInput.disabled = false;
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Subscribe';
+    });
+});
+</script>
+{% endblock %} 

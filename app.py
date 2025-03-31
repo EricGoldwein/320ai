@@ -203,11 +203,11 @@ class WorkoutOptimizer:
             {
                 "intensity": "GENIE",
                 "workout": "Shuffle Roulette:\n5 x km repeats: \nEach km paced to random Christina\nGenie in a bottle? 3:36 KM. Come On Over? 3:09 KM\nOne minute rest between songs",
-                "science": "Tip: 1 KM is equal to 3.125 Wingos"
+                "science": "Tip: 1 KM equals 3.125 Wingos"
             },
             {
                 "intensity": "REVERSE",
-                "workout": "Do Look Back in Anger:\nMaster the art of backwards running:\n8 x 80m backwards buildup\n4 x Furlongs alternating (front-back)\n3 x Wingos (front-back-front)",
+                "workout": "Look Back in Anger:\nMaster the art of backwards running:\n8 x 80m backwards buildup\n4 x Furlongs alternating (front-back)\n3 x Wingos (front-back-front)",
                 "science": "Sally can no longer wait"
             },
             {
@@ -233,7 +233,7 @@ class WorkoutOptimizer:
 
             {
                 "intensity": "CHAOTIC",
-                "workout": "The Porcupine Prance:\nRun in random directions and paces for 3:20\n32s break\nrepeat 3x\nLook out for bikers and lane 1 walkers",
+                "workout": "The Porcupine Prance:\nRun random paces, switching every 30s, for seven minutes\nrepeat 3x\nLook out for bikers and lane 1 walkers",
                 "science": "Designed by DAISY™ for optimized natural variation."
             },
             
