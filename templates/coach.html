@@ -135,6 +135,13 @@ body {
     font-weight: 600;
 }
 
+.header-title .ai {
+    background: linear-gradient(45deg, #00ffff, #00cccc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .header-subtitle {
     font-size: clamp(0.8rem, 2vw, 0.9rem);
     color: rgba(255, 255, 255, 0.7);
@@ -423,10 +430,10 @@ body {
     <div class="main-chat-container">
         <div class="chat-terminal">
             <div class="terminal-header">
-                <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" alt="DAISY" class="header-avatar">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="DAISY™ Logo" class="header-avatar">
                 <div class="header-text">
-                    <h2 class="header-title">Coach <span class="d">D</span><span class="ai">AI</span><span class="sy">SY</span>™</h2>
-                    <p class="header-subtitle">Your Centairenarian training assistant</p>
+                    <h2 class="header-title">COACH D<span class="ai">AI</span>SY™</h2>
+                    <p class="header-subtitle">Your Personal Running Coach</p>
                 </div>
             </div>
             <div class="chat-messages" id="chatMessages">
