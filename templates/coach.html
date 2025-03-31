@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Coach DAISY™{% endblock %}
+{% block title %}Coach D<span class="title-ai">AI</span>SY™{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -133,13 +133,6 @@ body {
     font-size: clamp(1.2rem, 3vw, 1.5rem);
     margin: 0;
     font-weight: 600;
-}
-
-.header-title .ai {
-    background: linear-gradient(45deg, #00ffff, #00cccc);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .header-subtitle {
@@ -422,6 +415,10 @@ body {
         opacity: 1;
     }
 }
+
+.title-ai {
+    color: #00ffff;
+}
 </style>
 {% endblock %}
 
@@ -430,10 +427,10 @@ body {
     <div class="main-chat-container">
         <div class="chat-terminal">
             <div class="terminal-header">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="DAISY™ Logo" class="header-avatar">
+                <img src="{{ url_for('static', filename='images/daisy_headshot.png') }}" alt="DAISY" class="header-avatar">
                 <div class="header-text">
-                    <h2 class="header-title">COACH D<span class="ai">AI</span>SY™</h2>
-                    <p class="header-subtitle">Your Personal Running Coach</p>
+                    <h2 class="header-title">Coach <span class="d">D</span><span class="ai">AI</span><span class="sy">SY</span>™</h2>
+                    <p class="header-subtitle">Your Centairenarian training assistant</p>
                 </div>
             </div>
             <div class="chat-messages" id="chatMessages">
