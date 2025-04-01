@@ -975,7 +975,7 @@ def view_subscribers():
         return response
     except Exception as e:
         logger.error(f"Error viewing subscribers: {str(e)}")
-        return render_template('admin/subscribers.html', error="Error loading subscribers")
+        return render_template('admin/subscribers.html', error="Error loading subscribers"), 500
 
 @app.route("/admin/logout")
 def admin_logout():
