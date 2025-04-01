@@ -1032,5 +1032,17 @@ def random_workout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.before_request
+def enforce_canonical_url():
+    url = request.url
+    # Redirect www to non-www
+    if request.host.startswith("www."):
+        url = url.replace("://www.", "://")
+    # Redirect http to https
+    if request.scheme == "http":
+        url = url.replace("http://", "https://")
+    if url != request.url:
+        return redirect(url, code=301)
+
 if __name__ == "__main__":
     app.run(port=5009, debug=False)
