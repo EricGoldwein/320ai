@@ -1072,13 +1072,14 @@ def random_workout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Add this after other imports but before any routes
 @app.before_request
 def redirect_to_custom_domain():
-    # Only redirect in production environment
+    # Make sure the host is what we want
     if os.environ.get('FLASK_ENV') != 'development' and request.host != "www.daisy320.com":
-        return redirect(f"https://www.daisy320.com{request.full_path}", code=301)
-    return None  # Allow request to continue normally
+        target_url = f"https://www.daisy320.com{request.full_path}"
+        logger.info(f"Redirecting from {request.host} to {target_url}")
+        return redirect(target_url, code=301)
+    return None
 
 if __name__ == "__main__":
     # Development configuration
