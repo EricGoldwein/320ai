@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}DAISY™ • 320{% endblock %}</title>
     
+    <!-- OpenGraph Meta Tags for Social Media -->
+    <meta property="og:title" content="DAISY™ • 320">
+    <meta property="og:description" content="Data Activated Individualized System for You - A creative, cost-effective, data-powered solution for your organization.">
+    <meta property="og:image" content="{{ url_for('static', filename='images/daisy_headshot.png', _external=True) }}">
+    <meta property="og:url" content="https://daisy320.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DAISY™ • 320">
+    <meta name="twitter:description" content="Data Activated Individualized System for You - A creative, cost-effective, data-powered solution for your organization.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/daisy_headshot.png', _external=True) }}">
+    
     <!-- Favicons -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">

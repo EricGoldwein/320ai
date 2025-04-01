@@ -12,6 +12,8 @@ import openai
 from dotenv import load_dotenv
 import time
 import httpx
+from functools import wraps
+from flask import Response
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -23,6 +25,25 @@ logger = logging.getLogger(__name__)
 # Initialize environment variables first
 logger.info("Loading environment variables...")
 load_dotenv()
+
+# Add this near the top of the file with other constants
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'subscribers.db')
+
+# Initialize database
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS subscribers
+        (email TEXT PRIMARY KEY,
+         signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+    ''')
+    conn.commit()
+    conn.close()
+    logger.info("Database initialized successfully")
+
+# Initialize the database
+init_db()
 
 # Set proxy configuration for PythonAnywhere
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
@@ -620,8 +641,7 @@ def subscribe():
             return jsonify({"error": "Valid email is required"}), 400
             
         # Connect to database
-        db_path = os.path.join(app.root_path, 'subscribers.db')
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
         try:
@@ -914,6 +934,14 @@ wingateState = {
 def transformation():
     return render_template("transformation.html")
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     """Handle admin login"""
@@ -921,24 +949,30 @@ def admin_login():
         password = request.form.get('password')
         if password == os.environ.get('ADMIN_PASSWORD', '320admin'):  # Default password if not set
             session['admin_logged_in'] = True
-            return redirect(url_for('view_subscribers'))
+            session.permanent = True  # Make session last longer
+            response = redirect(url_for('view_subscribers'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            return response
         return render_template('admin/login.html', error='Invalid password')
     return render_template('admin/login.html')
 
 @app.route("/admin/subscribers", methods=["GET"])
+@admin_required
 def view_subscribers():
     """Display the subscribers admin page"""
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin_login'))
-        
     try:
-        db_path = os.path.join(app.root_path, 'subscribers.db')
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute('SELECT email, signup_date FROM subscribers ORDER BY signup_date DESC')
         subscribers = c.fetchall()
         conn.close()
-        return render_template('admin/subscribers.html', subscribers=subscribers)
+        response = render_template('admin/subscribers.html', subscribers=subscribers)
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        return response
     except Exception as e:
         logger.error(f"Error viewing subscribers: {str(e)}")
         return render_template('admin/subscribers.html', error="Error loading subscribers")
@@ -947,7 +981,11 @@ def view_subscribers():
 def admin_logout():
     """Handle admin logout"""
     session.pop('admin_logged_in', None)
-    return redirect(url_for('admin_login'))
+    response = redirect(url_for('admin_login'))
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 @app.route("/wingo-converter", methods=["GET"])
 def wingo_converter():
