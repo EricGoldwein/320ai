@@ -1072,6 +1072,14 @@ def random_workout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Add this after other imports but before any routes
+@app.before_request
+def redirect_to_custom_domain():
+    # Only redirect in production environment
+    if os.environ.get('FLASK_ENV') != 'development' and request.host != "www.daisy320.com":
+        return redirect(f"https://www.daisy320.com{request.full_path}", code=301)
+    return None  # Allow request to continue normally
+
 if __name__ == "__main__":
     # Development configuration
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max request size
