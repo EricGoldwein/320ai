@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect
+from flask import Flask, request, jsonify, render_template, url_for, send_from_directory, session, redirect, make_response
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import random
@@ -968,7 +968,7 @@ def view_subscribers():
         c.execute('SELECT email, signup_date FROM subscribers ORDER BY signup_date DESC')
         subscribers = c.fetchall()
         conn.close()
-        response = render_template('admin/subscribers.html', subscribers=subscribers)
+        response = make_response(render_template('admin/subscribers.html', subscribers=subscribers))
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'

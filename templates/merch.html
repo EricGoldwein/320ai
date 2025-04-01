@@ -750,10 +750,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Update view collection button to link to NFT section
-    const viewCollectionBtn = document.querySelector('.btn-primary');
-    if (viewCollectionBtn) {
-        viewCollectionBtn.href = '#nft-section';
-    }
+    const viewCollectionBtn = document.querySelectorAll('.btn-primary');
+    viewCollectionBtn.forEach(btn => {
+        if (!btn.hasAttribute('target')) {
+            btn.href = '#nft-section';
+        }
+    });
 });
 </script>
 {% endblock %} 
