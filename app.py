@@ -122,7 +122,47 @@ app = Flask(__name__,
     static_url_path='/static',
     template_folder=template_dir
 )
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')  # Get from environment variable
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
+
+# Global error handlers
+@app.errorhandler(400)
+def bad_request_error(error):
+    logger.error(f"Bad Request: {error}")
+    return jsonify({'error': 'Bad Request', 'message': str(error)}), 400
+
+@app.errorhandler(404)
+def not_found_error(error):
+    logger.error(f"Not Found: {error}")
+    return jsonify({'error': 'Not Found', 'message': 'The requested resource was not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    logger.error(f"Internal Server Error: {error}")
+    return jsonify({'error': 'Internal Server Error', 'message': 'An unexpected error occurred'}), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.error(f"Unhandled Exception: {str(e)}")
+    return jsonify({'error': 'Server Error', 'message': 'An unexpected error occurred'}), 500
+
+# Request validation middleware
+@app.before_request
+def validate_incoming_request():
+    # Validate content length
+    if request.content_length and request.content_length > 16 * 1024 * 1024:  # 16MB limit
+        return jsonify({'error': 'Request too large'}), 413
+        
+    # Validate content type for API endpoints
+    if request.path.startswith('/api/') and request.method == 'POST':
+        if not request.is_json:
+            return jsonify({'error': 'Content-Type must be application/json'}), 415
+            
+    # Rate limiting check (in addition to existing limiter)
+    if getattr(request, 'limit_exempt', False):
+        return
+        
+    # Add request logging
+    logger.info(f"Request: {request.method} {request.path} from {request.remote_addr}")
 
 # Initialize rate limiter with simpler configuration
 limiter = Limiter(
@@ -1032,17 +1072,26 @@ def random_workout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.before_request
-def enforce_canonical_url():
-    url = request.url
-    # Redirect www to non-www
-    if request.host.startswith("www."):
-        url = url.replace("://www.", "://")
-    # Redirect http to https
-    if request.scheme == "http":
-        url = url.replace("http://", "https://")
-    if url != request.url:
-        return redirect(url, code=301)
-
 if __name__ == "__main__":
-    app.run(port=5009, debug=False)
+    # Development configuration
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max request size
+    
+    # Add security headers
+    @app.after_request
+    def add_security_headers(response):
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        return response
+
+    try:
+        # Simple development server configuration
+        app.run(
+            host='0.0.0.0',
+            port=5009,
+            threaded=True,
+            debug=False
+        )
+    except Exception as e:
+        logger.error(f"Server failed to start: {e}")
+        raise
