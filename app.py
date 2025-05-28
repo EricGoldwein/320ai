@@ -1074,8 +1074,16 @@ def random_workout():
 
 @app.before_request
 def redirect_to_custom_domain():
-    # Make sure the host is what we want
-    if os.environ.get('FLASK_ENV') != 'development' and request.host != "www.daisy320.com":
+    # Skip redirection for development or local access
+    if (os.environ.get('FLASK_ENV') == 'development' or 
+        request.host in ['localhost:5009', '127.0.0.1:5009', '172.20.10.5:5009'] or
+        'localhost' in request.host or
+        '127.0.0.1' in request.host or
+        '172.20.10.5' in request.host):
+        return None
+        
+    # Only redirect if we're in production and not on the main domain
+    if request.host != "www.daisy320.com":
         target_url = f"https://www.daisy320.com{request.full_path}"
         logger.info(f"Redirecting from {request.host} to {target_url}")
         return redirect(target_url, code=301)
